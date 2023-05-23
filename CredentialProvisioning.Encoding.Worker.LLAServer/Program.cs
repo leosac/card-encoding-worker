@@ -28,6 +28,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            {
+                var actionJsonBuilder = JsonSubTypes.JsonSubtypesConverterBuilder
+                    .Of(typeof(EncodingActionProperties), EncodingActionProperties.Discriminator);
+                var actions = EncodingActionProperties.GetAllTypes();
+                foreach (var actionType in actions)
+                {
+                    actionJsonBuilder.RegisterSubtype(actionType, actionType.Name);
+                }
+                options.SerializerSettings.Converters.Add(actionJsonBuilder.SerializeDiscriminatorProperty().Build());
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
