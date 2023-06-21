@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
 {
-    public class EncodingWorker : ProductionSetWorker<EncodingFragmentTemplateContent>
+    public class EncodingWorker : WorkerBase<EncodingFragmentTemplateContent>
     {
         public EncodingWorker() : base()
         {

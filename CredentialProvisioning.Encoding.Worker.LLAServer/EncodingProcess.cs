@@ -1,17 +1,8 @@
-﻿using Leosac.CredentialProvisioning.Core;
-using Leosac.CredentialProvisioning.Core.Contexts;
+﻿using Leosac.CredentialProvisioning.Core.Contexts;
 using Leosac.CredentialProvisioning.Worker;
 using log4net;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using static System.Collections.Specialized.BitVector32;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
 {
