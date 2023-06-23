@@ -6,7 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 {
     public abstract class EncodingActionProperties
     {
-        public static readonly string Discriminator = "ActionType";
+        public static readonly string Discriminator = "actionType";
 
         public class ActionTrigger
         {
@@ -16,10 +16,6 @@ namespace Leosac.CredentialProvisioning.Encoding
 
             public string? ThrowCustomMessage { get; set; }
         }
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
-        public Guid Id { get; set; }
 
         public abstract string Name { get; }
 

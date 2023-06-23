@@ -3,34 +3,66 @@ using Leosac.CredentialProvisioning.Core;
 using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Encoding;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
+using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Net;
+using System.Security.Claims;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
 {
     class Program
     {
-        public class Options
-        {
-            [Option('r', "Template Repository", Required = false, HelpText = "Folder where template files are located")]
-            public string? TemplateRepository { get; set; }
-
-            [Option('m', "managementApi", Required = false, HelpText = "Enable Worker Management API")]
-            public bool? ManagementApi { get; set; }
-
-            [Option('k', "apiKey", Required = false, Default = null, HelpText = "API key. Undefined means unsecure API calls.")]
-            public string? APIKey { get; set; }
-
-            [Option('s', "secret", Required = false, Default = null, HelpText = "Secret key. Undefined means unsecure API calls.")]
-            public string? SecretKey { get; set; }
-        }
-
         static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "Leosac Card Encoding Worker API",
+                        Version = "v1"
+                    }
+                );
+                c.UseAllOfToExtendReferenceSchemas();
+                c.UseAllOfForInheritance();
+                c.UseOneOfForPolymorphism();
+                /*c.SelectSubTypesUsing(baseType =>
+                {
+                    var types = new List<Type>();
+                    var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetName().Name.StartsWith("CredentialProvisioning."));
+                    foreach (var assembly in assemblies)
+                    {
+                        types.AddRange(assembly.GetTypes().Where(type => type.IsSubclassOf(baseType)));
+                    }
+                    return types;
+                });*/
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
 
             builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
             {
@@ -43,15 +75,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
                 }
                 options.SerializerSettings.Converters.Add(actionJsonBuilder.SerializeDiscriminatorProperty().Build());
             });
-
-            var configOptions = builder.Configuration.GetSection("Options").Get<Options>();
-            // Override options from config file by options from command lines
-            var options = Parser.Default.ParseArguments(() => { return configOptions ?? new Options(); }, args);
-            builder.Services.ConfigureOptions(options.Value);
-
+            var optionsSetup = new OptionsSetup(builder.Configuration, args);
+            builder.Services.ConfigureOptions(optionsSetup);
             builder.Services.AddSignalR();
 
-            if (!string.IsNullOrEmpty(options.Value.APIKey) && !string.IsNullOrEmpty(options.Value.SecretKey))
+            var options = new Options();
+            optionsSetup.Configure(options);
+            if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
             {
                 builder.Services.AddAuthentication(o =>
                 {
@@ -91,14 +121,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
 
             app.UseHttpsRedirection();
 
+            var jwtService = new JwtService(options.JWT);
             var worker = new EncodingWorker();
-            if (options.Value.ManagementApi.GetValueOrDefault(true))
+            if (options.ManagementApi.GetValueOrDefault(true))
             {
-                app.MapPost("/auth", (string secret) =>
+                app.MapPost("/auth", (AuthenticateWithAPIKeyRequest req) =>
                 {
+                    if (req.ApiKey == options.APIKey && !string.IsNullOrEmpty(options.JWT?.Key))
+                    {
+                        var claims = new List<Claim>(jwtService.CreateBaseClaims());
+                        if (!string.IsNullOrEmpty(req.Application))
+                            claims.Add(new Claim("application", req.Application));
+                        if (req.Context != null)
+                            claims.Add(new Claim("context", req.Context.ToString()));
 
+                        return Results.Ok(jwtService.CreateToken(claims.ToArray()));
+                    }
+
+                    return Results.Unauthorized();
                 })
-                .WithName("Authenticate");
+                .WithName("Authenticate").WithTags("authentication");
 
                 app.MapPost("/template", (EncodingFragmentTemplateContent template) =>
                 {
@@ -106,39 +148,39 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
                     worker.LoadTemplate(templateId, template);
                     return templateId;
                 })
-                .WithName("LoadTemplate");
+                .WithName("LoadTemplate").WithTags("template");
 
                 app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template) =>
                 {
                     worker.LoadTemplate(Guid.Parse(templateId), template);
                     return templateId;
                 })
-                .WithName("LoadTemplateWithId");
+                .WithName("LoadTemplateWithId").WithTags("template");
 
                 app.MapGet("/templates", () =>
                 {
                     return worker.GetTemplates();
                 })
-                .WithName("GetTemplates");
+                .WithName("GetTemplates").WithTags("template");
 
                 app.MapGet("/template/{templateId}/check", (string templateId) =>
                 {
                     return (worker.GetTemplate(Guid.Parse(templateId)) != null);
                 })
-                .WithName("CheckTemplate");
+                .WithName("CheckTemplate").WithTags("template");
 
                 app.MapGet("/template/{templateId}/fields", (string templateId) =>
                 {
 
                 })
-                .WithName("GetTemplateFields");
+                .WithName("GetTemplateFields").WithTags("template");
 
                 app.MapPost("/template/{templateId}/queue", (string templateId, CredentialBase credential) =>
                 {
                     var itemId = worker.Queue.Add(Guid.Parse(templateId), credential);
                     return new ObjectIdResponse<Guid>() { Id = itemId };
                 })
-                .WithName("AddToQueue");
+                .WithName("AddToQueue").WithTags("template", "queue");
 
                 app.MapGet("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
                 {
@@ -148,13 +190,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
 
                     return Results.Ok(item.Credential);
                 })
-                .WithName("GetFromQueue");
+                .WithName("GetFromQueue").WithTags("template", "queue");
 
                 app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
                 {
                     worker.Queue.Remove(Guid.Parse(templateId));
                 })
-                .WithName("DeleteFromQueue");
+                .WithName("DeleteFromQueue").WithTags("template", "queue");
             }
 
             app.MapHub<ReaderHub>("/reader");

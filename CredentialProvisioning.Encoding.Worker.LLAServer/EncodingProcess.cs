@@ -41,7 +41,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
         {
             if (actionProp != null)
             {
-                logger.Info(String.Format("Handling encoding action `{0}` (`{1}`), labeled `{2}`", actionProp.Id, actionProp.Name, actionProp.Label));
+                logger.Info(String.Format("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label));
 
                 try
                 {
