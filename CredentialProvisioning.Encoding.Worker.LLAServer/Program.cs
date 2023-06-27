@@ -1,13 +1,8 @@
-using CommandLine;
-using Leosac.CredentialProvisioning.Core;
 using Leosac.CredentialProvisioning.Core.Models;
-using Leosac.CredentialProvisioning.Encoding;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Net;
 using System.Security.Claims;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
@@ -31,16 +26,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
                 c.UseAllOfToExtendReferenceSchemas();
                 c.UseAllOfForInheritance();
                 c.UseOneOfForPolymorphism();
-                /*c.SelectSubTypesUsing(baseType =>
-                {
-                    var types = new List<Type>();
-                    var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetName().Name.StartsWith("CredentialProvisioning."));
-                    foreach (var assembly in assemblies)
-                    {
-                        types.AddRange(assembly.GetTypes().Where(type => type.IsSubclassOf(baseType)));
-                    }
-                    return types;
-                });*/
+                c.SelectDiscriminatorNameUsing((baseType) => "typeName");
+                c.SelectDiscriminatorValueUsing((subType) => subType.FullName);
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -64,17 +51,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLAServer
                 });
             });
 
-            builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
+            builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
             {
-                var actionJsonBuilder = JsonSubTypes.JsonSubtypesConverterBuilder
-                    .Of(typeof(EncodingActionProperties), EncodingActionProperties.Discriminator);
-                var actions = EncodingActionProperties.GetAllTypes();
-                foreach (var actionType in actions)
-                {
-                    actionJsonBuilder.RegisterSubtype(actionType, actionType.Name);
-                }
-                options.SerializerSettings.Converters.Add(actionJsonBuilder.SerializeDiscriminatorProperty().Build());
+                options.SerializerOptions.TypeInfoResolver = new PolymorphicTypeResolver();
             });
+
             var optionsSetup = new OptionsSetup(builder.Configuration, args);
             builder.Services.ConfigureOptions(optionsSetup);
             builder.Services.AddSignalR();

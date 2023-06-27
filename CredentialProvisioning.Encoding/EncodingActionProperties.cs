@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Leosac.CredentialProvisioning.Encoding
 {
     public abstract class EncodingActionProperties
     {
-        public static readonly string Discriminator = "actionType";
+        public const string Discriminator = "typeName";
 
         public class ActionTrigger
         {
