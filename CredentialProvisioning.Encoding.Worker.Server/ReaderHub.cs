@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
-    public class ReaderHub : Hub<IReaderClient>
+    public class ReaderHub : Hub<IReaderClient>, IReaderHub
     {
         EncodingWorker _worker;
 
@@ -18,7 +18,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _worker = worker;
         }
 
-        public Task Encode(Guid itemId)
+        public Task EncodeFromQueue(Guid templateId, Guid itemId)
         {
             return Encode(_worker.InitializeProcess(itemId));
         }
