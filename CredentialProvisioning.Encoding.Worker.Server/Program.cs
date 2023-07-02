@@ -91,6 +91,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 });
             }
 
+            var worker = new EncodingWorker();
+            builder.Services.AddSingleton(worker);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -103,7 +105,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             app.UseHttpsRedirection();
 
             var jwtService = new JwtService(options.JWT);
-            var worker = new EncodingWorker();
             if (options.ManagementApi.GetValueOrDefault(true))
             {
                 app.MapPost("/auth", (AuthenticateWithAPIKeyRequest req) =>
@@ -159,13 +160,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 app.MapPost("/template/{templateId}/queue", (string templateId, CredentialBase credential) =>
                 {
                     var itemId = worker.Queue.Add(Guid.Parse(templateId), credential);
-                    return new ObjectIdResponse<Guid>() { Id = itemId };
+                    return new ObjectIdResponse<string>() { Id = itemId };
                 })
                 .WithName("AddToQueue").WithTags("template", "queue");
 
                 app.MapGet("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
                 {
-                    var item = worker.Queue.Get(Guid.Parse(templateId));
+                    var item = worker.Queue.Get(itemId);
                     if (item == null)
                         return Results.NotFound();
 
@@ -175,7 +176,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
                 {
-                    worker.Queue.Remove(Guid.Parse(templateId));
+                    worker.Queue.Remove(templateId);
                 })
                 .WithName("DeleteFromQueue").WithTags("template", "queue");
             }

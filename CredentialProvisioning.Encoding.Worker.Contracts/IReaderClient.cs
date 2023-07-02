@@ -1,7 +1,11 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
+﻿using Leosac.CredentialProvisioning.Core.Models;
+
+namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
 {
     public interface IReaderClient
     {
+        Task NotifyProcessCompleted(string processId, ProvisioningState state);
+
         Task<bool> ConnectToReader(string alias);
 
         Task DisconnectFromReader(string alias);

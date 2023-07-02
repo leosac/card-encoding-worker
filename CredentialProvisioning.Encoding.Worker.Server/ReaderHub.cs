@@ -18,17 +18,17 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _worker = worker;
         }
 
-        public Task EncodeFromQueue(Guid templateId, Guid itemId)
+        public Task<string> EncodeFromQueue(Guid templateId, string itemId)
         {
             return Encode(_worker.InitializeProcess(itemId));
         }
 
-        public Task Encode(Guid templateId, CredentialBase credential)
+        public Task<string> Encode(Guid templateId, CredentialBase credential)
         {
             return Encode(_worker.InitializeProcess(templateId, credential));
         }
 
-        private Task Encode(CredentialProcess<EncodingFragmentTemplateContent> process)
+        private Task<string> Encode(CredentialProcess<EncodingFragmentTemplateContent> process)
         {
             var clDevice = new LLADeviceContext();
             clDevice.ReaderUnit = new WorkerReaderUnit(Clients.Caller, string.Empty);
@@ -48,8 +48,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
             }
 
+            process.ProcessCompleted += (sender, state) =>
+            {
+                Clients.Caller.NotifyProcessCompleted(process.Id, state);
+            };
             process.Run(clDevice);
-            return Task.CompletedTask;
+            return Task.FromResult(process.Id);
         }
     }
 }

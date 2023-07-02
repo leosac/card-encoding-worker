@@ -1,4 +1,5 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
+using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Worker;
 using log4net;
 using System.Diagnostics;
@@ -30,6 +31,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             {
                 logger.Info(String.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", CredentialContext.Credential.Id, CredentialContext.Credential.Name, CredentialContext.TemplateId));
                 HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, deviceCtx);
+                OnProcessCompleted(ProvisioningState.Completed);
             }
             else
             {
@@ -61,6 +63,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     logger.Info("Action failed, running OnFailure trigger");
                     ActionTrigger(actionProp.OnFailure, encodingCtx, deviceCtx, ex);
+                    OnProcessCompleted(ProvisioningState.Failed);
                 }
             }
         }
