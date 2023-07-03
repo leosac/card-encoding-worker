@@ -28,6 +28,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return Encode(_worker.InitializeProcess(templateId, credential));
         }
 
+        public Task<string> Encode(Guid templateId, CredentialBase[] credentials)
+        {
+            return Encode(_worker.InitializeProcess(templateId, credentials));
+        }
+
         private Task<string> Encode(CredentialProcess<EncodingFragmentTemplateContent> process)
         {
             var clDevice = new LLADeviceContext();

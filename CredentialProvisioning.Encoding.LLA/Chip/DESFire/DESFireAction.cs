@@ -5,9 +5,9 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public abstract class DESFireAction<T> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new()
     {
-        public override void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, DeviceContext deviceCtx)
+        public override void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
-            var llaCtx = deviceCtx as LLADeviceContext;
+            var llaCtx = cardCtx as LLACardContext;
             if (llaCtx == null)
             {
                 throw new EncodingException("Device context must be of type LLA");
@@ -19,7 +19,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                 throw new EncodingException("Wrong chip type");
             }
 
-            RunDESFire(chip.getDESFireCommands(), encodingCtx as EncodingContext, llaCtx);
+            RunDESFire(chip.getDESFireCommands(), encodingCtx as EncodingContext, llaCtx.LLADeviceContext);
         }
 
         public abstract void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLADeviceContext deviceCtx);

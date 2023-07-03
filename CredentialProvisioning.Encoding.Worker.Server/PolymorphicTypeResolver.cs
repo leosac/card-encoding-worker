@@ -16,7 +16,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions
                 {
                     TypeDiscriminatorPropertyName = EncodingActionProperties.Discriminator,
-                    IgnoreUnrecognizedTypeDiscriminators = true,
+                    IgnoreUnrecognizedTypeDiscriminators = false,
                     UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization
                 };
                 var actions = EncodingActionProperties.GetAllTypes();

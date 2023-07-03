@@ -4,7 +4,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 {
     public abstract class EncodingAction
     {
-        public abstract void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, DeviceContext deviceCtx);
+        public abstract void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx);
     }
 
     public abstract class EncodingAction<T> : EncodingAction where T : EncodingActionProperties, new()

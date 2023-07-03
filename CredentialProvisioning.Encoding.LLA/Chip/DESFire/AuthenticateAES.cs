@@ -16,7 +16,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                 throw new EncodingException("The key must be of type DESFire.");
             }
             // Temporary hack until AuthenticateAES get overloaded with Key on argument list
-            var crypto = (deviceCtx.Chip as DESFireEV1Chip).getCrypto();
+            var crypto = (cmd.getChip() as DESFireEV1Chip).getCrypto();
             crypto.setKey(crypto.d_currentAid, 0, Properties.KeyNo, desfireKey);
             cmd.authenticateAES(Properties.KeyNo);
         }

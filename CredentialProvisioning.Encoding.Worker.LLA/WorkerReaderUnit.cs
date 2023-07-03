@@ -14,7 +14,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
         IReaderClient _readerClient;
         WorkerDataTransport? _dataTransport;
         bool _disposed;
-        ChipContext? _chipContext;
+        string? _cardContext;
 
         public WorkerReaderUnit(IReaderClient readerClient, string alias) : base("")
         {
@@ -67,22 +67,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             var task = _readerClient.ConnectToCard(Alias);
             task.Wait();
             var ret = task.Result;
-            if (ret && _chipContext == null)
+            if (ret && _cardContext == null)
             {
-                var ctxTask = CreateChipContext();
+                var ctxTask = _readerClient.CreateCardContext(Alias);
                 ctxTask.Wait();
-                _chipContext = ctxTask.Result;
+                _cardContext = ctxTask.Result;
             }
             return ret;
-        }
-
-        protected async Task<ChipContext> CreateChipContext()
-        {
-            var context = new ChipContext();
-            context.ContextId = await _readerClient.CreateCardContext(Alias);
-            context.CardType = await _readerClient.GetCardType(Alias, context.ContextId);
-            context.ChipIdentifier = await _readerClient.GetChipIdentifier(Alias, context.ContextId);
-            return context;
         }
 
         public override bool isConnected()
@@ -96,18 +87,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
         {
             var task = _readerClient.DisconnectFromCard(Alias);
             task.Wait();
-            if (_chipContext != null)
+            if (_cardContext != null)
             {
-                _chipContext = null;
+                _cardContext = null;
             }
         }
 
         public byte[] sendRawCmd(byte[] data)
         {
-            if (_chipContext == null)
+            if (_cardContext == null)
                 return null;
 
-            var task = _readerClient.SendRawCmd(Alias, _chipContext.ContextId, data);
+            var task = _readerClient.SendRawCmd(Alias, _cardContext, data);
             task.Wait();
             return task.Result;
         }
@@ -179,10 +170,17 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 
         public override LibLogicalAccess.Chip getSingleChip()
         {
-            if (_chipContext == null)
+            if (_cardContext == null)
                 return null;
 
-            return createChip(_chipContext.CardType, new LibLogicalAccess.ByteVector(Convert.FromHexString(_chipContext.ChipIdentifier)));
+            var ctTask = _readerClient.GetCardType(Alias, _cardContext);
+            ctTask.Wait();
+            var ct = ctTask.Result;
+            var csnTask = _readerClient.GetChipIdentifier(Alias, _cardContext);
+            csnTask.Wait();
+            var csn = csnTask.Result;
+
+            return createChip(ct, new LibLogicalAccess.ByteVector(Convert.FromHexString(csn)));
         }
 
         public override void Dispose()

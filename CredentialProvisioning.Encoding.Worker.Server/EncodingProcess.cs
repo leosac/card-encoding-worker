@@ -23,23 +23,42 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             this.assembly = assembly;
         }
 
-        public override void Run(DeviceContext deviceCtx)
+        public override async Task Run(DeviceContext context)
         {
-            Trace.Assert(CredentialContext?.Credential != null, "Credential cannot be null");
-
-            if (CredentialContext?.TemplateContent != null)
+            Trace.Assert(CredentialContext?.Credentials != null, "Credentials cannot be null");
+            if (context is EncodingDeviceContext deviceCtx)
             {
-                logger.Info(String.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", CredentialContext.Credential.Id, CredentialContext.Credential.Name, CredentialContext.TemplateId));
-                HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, deviceCtx);
-                OnProcessCompleted(ProvisioningState.Completed);
+                if (CredentialContext?.TemplateContent != null)
+                {
+                    if (!await deviceCtx.Initialize())
+                        throw new EncodingException("Device initialization failed.");
+
+                    foreach (var credential in CredentialContext.Credentials)
+                    {
+                        logger.Info(String.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", credential.Id, credential.Name, CredentialContext.TemplateId));
+
+                        var cardCtx = await deviceCtx.PrepareCard();
+                        if (cardCtx == null)
+                            throw new EncodingException("Card preparation failed.");
+
+                        HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
+                        await deviceCtx.CompleteCard(cardCtx);
+                    }
+                    await deviceCtx.UnInitialize();
+                    OnProcessCompleted(ProvisioningState.Completed);
+                }
+                else
+                {
+                    throw new EncodingException("Template cannot be null");
+                }
             }
             else
             {
-                throw new EncodingException("Template cannot be null");
+                throw new EncodingException("Unexpected device context type.");
             }
         }
 
-        private void HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, DeviceContext deviceCtx)
+        private void HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             if (actionProp != null)
             {
@@ -50,9 +69,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     var action = CreateAction(actionProp);
                     if (action != null)
                     {
-                        action.Run(encodingCtx, deviceCtx);
+                        action.Run(encodingCtx, cardCtx);
                         logger.Info("Action passed, running OnSuccess trigger");
-                        ActionTrigger(actionProp.OnSuccess, encodingCtx, deviceCtx);
+                        ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
                     }
                     else
                     {
@@ -62,7 +81,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 catch (EncodingException ex)
                 {
                     logger.Info("Action failed, running OnFailure trigger");
-                    ActionTrigger(actionProp.OnFailure, encodingCtx, deviceCtx, ex);
+                    ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
                     OnProcessCompleted(ProvisioningState.Failed);
                 }
             }
@@ -81,11 +100,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private void ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, DeviceContext deviceCtx, EncodingException? ex = null)
+        private void ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, EncodingException? ex = null)
         {
             if (trigger.CallAction != null)
             {
-                HandleAction(trigger.CallAction, encodingCtx, deviceCtx);
+                HandleAction(trigger.CallAction, encodingCtx, cardCtx);
             }
             if (trigger.Throw)
             {
