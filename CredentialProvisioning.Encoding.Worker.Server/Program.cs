@@ -128,14 +128,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     var templateId = Guid.NewGuid();
                     worker.LoadTemplate(templateId, template);
-                    return templateId;
+                    return new ObjectIdResponse<string> { Id = templateId.ToString() };
                 })
                 .WithName("LoadTemplate").WithTags("template");
 
                 app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template) =>
                 {
                     worker.LoadTemplate(Guid.Parse(templateId), template);
-                    return templateId;
+                    return new ObjectIdResponse<string> { Id = templateId };
                 })
                 .WithName("LoadTemplateWithId").WithTags("template");
 

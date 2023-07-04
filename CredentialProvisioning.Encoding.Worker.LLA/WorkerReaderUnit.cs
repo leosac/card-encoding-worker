@@ -39,26 +39,28 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 
         public override bool waitInsertion(uint maxwait)
         {
-            var task = _readerClient.WaitCardInsertion(Alias, maxwait);
-            task.Wait();
-            var inserted = task.Result;
-            if (inserted)
+            var inserted = false;
+            Task.Run(async () =>
             {
-                // limit communication to the unique Reader session here ?
-                // We want to create appropriate "reader proxy" on LLA at that time, based on the reader name...
-                // We also copy the SAM reader unit and SAM chip instances from base to proxy for now until next release of LLA
-                var samru = getSAMReaderUnit();
-                var samchip = getSAMChip();
-                setName(getConnectedName());
-                if (samru != null)
+                inserted = await _readerClient.WaitCardInsertion(Alias, maxwait);
+                if (inserted)
                 {
-                    setSAMReaderUnit(samru);
+                    // limit communication to the unique Reader session here ?
+                    // We want to create appropriate "reader proxy" on LLA at that time, based on the reader name...
+                    // We also copy the SAM reader unit and SAM chip instances from base to proxy for now until next release of LLA
+                    var samru = getSAMReaderUnit();
+                    var samchip = getSAMChip();
+                    setName(getConnectedName());
+                    if (samru != null)
+                    {
+                        setSAMReaderUnit(samru);
+                    }
+                    if (samchip != null)
+                    {
+                        setSAMChip(samchip);
+                    }
                 }
-                if (samchip != null)
-                {
-                    setSAMChip(samchip);
-                }
-            }
+            }).Wait();
             return inserted;
         }
 

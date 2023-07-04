@@ -28,7 +28,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return Encode(_worker.InitializeProcess(templateId, credential));
         }
 
-        public Task<string> Encode(Guid templateId, CredentialBase[] credentials)
+        public Task<string> EncodeAll(Guid templateId, CredentialBase[] credentials)
         {
             return Encode(_worker.InitializeProcess(templateId, credentials));
         }
@@ -53,10 +53,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
             }
 
-            process.ProcessCompleted += (sender, state) =>
+            var caller = Clients.Caller;
+            if (caller != null)
             {
-                Clients.Caller.NotifyProcessCompleted(process.Id, state);
-            };
+                process.ProcessCompleted += async (sender, state) =>
+                {
+                    await caller.NotifyProcessCompleted(process.Id, state);
+                };
+            }
             process.Run(clDevice);
             return Task.FromResult(process.Id);
         }

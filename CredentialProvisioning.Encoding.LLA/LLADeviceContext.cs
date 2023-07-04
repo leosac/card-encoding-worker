@@ -6,33 +6,41 @@
 
         public override Task<bool> Initialize()
         {
-            if (ReaderUnit == null)
-                return Task.FromResult(false);
+            return Task.Run(() =>
+            {
+                if (ReaderUnit == null)
+                    return false;
 
-            return Task.FromResult(ReaderUnit.connectToReader());
+                return ReaderUnit.connectToReader();
+            });
         }
 
         public override Task UnInitialize()
         {
-            if (ReaderUnit != null)
+            return Task.Run(() =>
             {
-                ReaderUnit.disconnectFromReader();
-            }
-            return Task.CompletedTask;
+                if (ReaderUnit != null)
+                {
+                    ReaderUnit.disconnectFromReader();
+                }
+            });
         }
 
         public override Task<CardContext> PrepareCard()
         {
-            if (ReaderUnit == null)
-                throw new EncodingException("Reader Unit is not defined.");
+            return Task.Run(() =>
+            {
+                if (ReaderUnit == null)
+                    throw new EncodingException("Reader Unit is not defined.");
 
-            if (!ReaderUnit.waitInsertion(0))
-                throw new EncodingException("No card inserted.");
+                if (!ReaderUnit.waitInsertion(0))
+                    throw new EncodingException("No card inserted.");
 
-            if (!ReaderUnit.connect())
-                throw new EncodingException("Cannot connect to the card.");
+                if (!ReaderUnit.connect())
+                    throw new EncodingException("Cannot connect to the card.");
 
-            return CreateCardContext();
+                return CreateCardContext();
+            });
         }
 
         public override Task CompleteCard(CardContext context)
@@ -40,19 +48,24 @@
             if (context == null)
                 throw new EncodingException("The card context is null.");
 
-            if (ReaderUnit != null)
+            return Task.Run(() =>
             {
-                ReaderUnit.disconnect();
-                ReaderUnit.waitRemoval(0);
-            }
-            return Task.CompletedTask;
+                if (ReaderUnit != null)
+                {
+                    ReaderUnit.disconnect();
+                    ReaderUnit.waitRemoval(0);
+                }
+            });
         }
 
         protected Task<CardContext> CreateCardContext()
         {
-            var context = new LLACardContext(this);
-            context.Chip = ReaderUnit?.getSingleChip();
-            return Task.FromResult<CardContext>(context);
+            return Task.Run<CardContext>(() =>
+            {
+                var context = new LLACardContext(this);
+                context.Chip = ReaderUnit?.getSingleChip();
+                return context;
+            });
         }
     }
 }
