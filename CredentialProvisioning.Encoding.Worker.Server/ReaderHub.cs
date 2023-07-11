@@ -35,13 +35,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         private Task<string> Encode(CredentialProcess<EncodingFragmentTemplateContent> process)
         {
+            var caller = Clients.Caller;
             var clDevice = new LLADeviceContext();
-            clDevice.ReaderUnit = new WorkerReaderUnit(Clients.Caller, string.Empty);
+            clDevice.ReaderUnit = new WorkerReaderUnit(caller, string.Empty);
 
             if (process.CredentialContext != null && process.CredentialContext.TemplateContent?.SAM != null)
             {
                 var samDevice = new LLADeviceContext();
-                samDevice.ReaderUnit = new WorkerReaderUnit(Clients.Caller, "SAM");
+                samDevice.ReaderUnit = new WorkerReaderUnit(caller, "SAM");
 
                 clDevice.ReaderUnit.setSAMReaderUnit(samDevice.ReaderUnit);
                 if (clDevice.ReaderUnit.getConfiguration() is ISO7816ReaderUnitConfiguration isoConfig)
@@ -52,15 +53,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     clDevice.ReaderUnit.setConfiguration(isoConfig);
                 }
             }
-
-            var caller = Clients.Caller;
-            if (caller != null)
+            process.ProcessCompleted += async (sender, state) =>
             {
-                process.ProcessCompleted += async (sender, state) =>
-                {
-                    await caller.NotifyProcessCompleted(process.Id, state);
-                };
-            }
+                await caller.NotifyProcessCompleted(process.Id, state);
+            };
             process.Run(clDevice);
             return Task.FromResult(process.Id);
         }

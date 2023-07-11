@@ -41,11 +41,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         if (cardCtx == null)
                             throw new EncodingException("Card preparation failed.");
 
-                        HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
+                        await HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
                         await deviceCtx.CompleteCard(cardCtx);
                     }
                     await deviceCtx.UnInitialize();
-                    OnProcessCompleted(ProvisioningState.Completed);
+                    await OnProcessCompleted(ProvisioningState.Completed);
                 }
                 else
                 {
@@ -58,7 +58,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private void HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
+        private async Task HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             if (actionProp != null)
             {
@@ -82,7 +82,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     logger.Info("Action failed, running OnFailure trigger");
                     ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
-                    OnProcessCompleted(ProvisioningState.Failed);
+                    await OnProcessCompleted(ProvisioningState.Failed);
                 }
             }
         }
