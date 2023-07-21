@@ -4,7 +4,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public class ChangeKeySettings : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKeySettings>
     {
-        public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLADeviceContext deviceCtx)
+        public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.changeKeySettings((DESFireKeySettings)Properties.KeySettings);
         }

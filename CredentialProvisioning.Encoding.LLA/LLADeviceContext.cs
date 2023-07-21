@@ -1,4 +1,6 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.LLA
+﻿using Leosac.CredentialProvisioning.Core.Models;
+
+namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
     public class LLADeviceContext : EncodingDeviceContext
     {
@@ -26,7 +28,7 @@
             });
         }
 
-        public override Task<CardContext> PrepareCard()
+        public override Task<CardContext> PrepareCard(CredentialBase? credential = null)
         {
             return Task.Run(() =>
             {
@@ -39,7 +41,7 @@
                 if (!ReaderUnit.connect())
                     throw new EncodingException("Cannot connect to the card.");
 
-                return CreateCardContext();
+                return CreateCardContext(credential);
             });
         }
 
@@ -58,11 +60,11 @@
             });
         }
 
-        protected Task<CardContext> CreateCardContext()
+        protected Task<CardContext> CreateCardContext(CredentialBase? credential = null)
         {
             return Task.Run<CardContext>(() =>
             {
-                var context = new LLACardContext(this);
+                var context = new LLACardContext(this, credential);
                 context.Chip = ReaderUnit?.getSingleChip();
                 return context;
             });

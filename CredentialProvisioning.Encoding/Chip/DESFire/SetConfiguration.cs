@@ -1,4 +1,4 @@
-﻿using Leosac.CredentialProvisioning.Core.Models;
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
 
 namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 {
@@ -10,6 +10,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 
         public bool RandomIdEnabled { get; set; }
 
-        public CredentialKey? DefaultKey { get; set; }
+        public KeyReference? DefaultKey { get; set; }
     }
 }

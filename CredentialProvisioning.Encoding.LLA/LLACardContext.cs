@@ -1,8 +1,10 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.LLA
+﻿using Leosac.CredentialProvisioning.Core.Models;
+
+namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
     public class LLACardContext : CardContext
     {
-        public LLACardContext(EncodingDeviceContext deviceContext) : base(deviceContext) { }
+        public LLACardContext(EncodingDeviceContext deviceContext, CredentialBase? credential = null) : base(deviceContext, credential) { }
 
         public LLADeviceContext LLADeviceContext
         {

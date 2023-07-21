@@ -5,8 +5,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class Options
     {
-        [Option('r', "Template Repository", Required = false, HelpText = "Folder where template files are located")]
+        [Option('r', "templateRepository", Required = false, HelpText = "Folder where template files are located")]
         public string? TemplateRepository { get; set; }
+
+        [Option('s', "keyStore", Required = false, HelpText = "File key store to load")]
+        public string? KeyStore { get; set; }
 
         [Option('m', "managementApi", Required = false, HelpText = "Enable Worker Management API")]
         public bool? ManagementApi { get; set; }

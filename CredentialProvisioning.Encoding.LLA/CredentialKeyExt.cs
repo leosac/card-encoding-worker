@@ -1,14 +1,16 @@
 ﻿using LibLogicalAccess.Card;
 using LibLogicalAccess;
 using Leosac.CredentialProvisioning.Core.Models;
+using System.Collections;
+using Leosac.CredentialProvisioning.Encoding.Key;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
     public static class CredentialKeyExt
     {
-        public static Key? CreateKey(this CredentialKey k)
+        public static LibLogicalAccess.Key? CreateKey(this CredentialKey k, LLACardContext? cardCtx = null, Key.KeyDiversification? div = null)
         {
-            Key? key = null;
+            LibLogicalAccess.Key? key = null;
             if (k.KeyType == "aes128")
             {
                 var dkey = new DESFireKey();
@@ -45,9 +47,83 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                 {
                     key.fromString(k.Value);
                 }
+
+                if (div != null)
+                {
+                    if (div.Algorithm == "an0945")
+                    {
+                        var kd = new NXPAV1KeyDiversification();
+                        key.setKeyDiversification(kd);
+                    }
+                    else if (div.Algorithm == "an10922")
+                    {
+                        var kd = new NXPAV2KeyDiversification();
+                        if (div.Input != null && div.Input.Length > 0)
+                        {
+                            kd.setDivInput(new ByteVector(ComputeDivInput(cardCtx?.Credential?.Data, div.Input)));
+                        }
+                        else
+                        {
+                            if (div.RevertAID != null)
+                            {
+                                kd.setRevertAID(div.RevertAID.Value);
+                            }
+                            if (div.ForceK2Use != null)
+                            {
+                                kd.setForceK2Use(div.ForceK2Use.Value);
+                            }
+                            if (div.SystemIdentifier != null)
+                            {
+                                kd.setSystemIdentifier(new ByteVector(Convert.FromHexString(div.SystemIdentifier)));
+                            }
+                        }
+                        key.setKeyDiversification(kd);
+                    }
+                    else if (div.Algorithm == "sagem")
+                    {
+                        var kd = new SagemKeyDiversification();
+                        key.setKeyDiversification(kd);
+                    }
+                    else if (div.Algorithm == "omnitech")
+                    {
+                        var kd = new OmnitechKeyDiversification();
+                        key.setKeyDiversification(kd);
+                    }
+                }
             }
 
             return key;
+        }
+
+        /// <summary>
+        /// Compute div input using credential data and input fragments
+        /// </summary>
+        /// <param name="data">The credential data</param>
+        /// <param name="input">The input fragments</param>
+        /// <returns>The div input</returns>
+        /// <remarks>It is assumed that all fragment values are hexstring.</remarks>
+        private static byte[] ComputeDivInput(ICollection<CredentialDataValue>? data, DivInputFragment[] input)
+        {
+            var ret = new List<byte>();
+            foreach(var i in input)
+            {
+                if (i.Type == DivInputFragmentType.DataField)
+                {
+                    if (data != null)
+                    {
+                        var d = data.FirstOrDefault(d => d.DataField.Name == i.Value);
+                        if (!string.IsNullOrEmpty(d?.Value))
+                        {
+                            ret.AddRange(Convert.FromHexString(d.Value));
+                        }
+                    }
+                }
+                else
+                {
+                    ret.AddRange(Convert.FromHexString(i.Value));
+                }
+            }
+            return ret.ToArray();
         }
     }
 }

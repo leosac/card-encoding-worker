@@ -1,4 +1,4 @@
-﻿using Leosac.CredentialProvisioning.Core.Models;
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
 
 namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 {
@@ -8,6 +8,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 
         public byte KeyNo { get; set; }
 
-        public CredentialKey? Key { get; set; }
+        public KeyReference? Key { get; set; }
     }
 }

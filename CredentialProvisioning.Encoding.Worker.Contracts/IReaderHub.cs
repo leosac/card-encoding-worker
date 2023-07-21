@@ -4,8 +4,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
 {
     public interface IReaderHub
     {
-        Task<string> EncodeFromQueue(Guid templateId, string itemId);
+        Task<string> EncodeFromQueue(string templateId, string itemId);
 
-        Task<string> Encode(Guid templateId, CredentialBase credential);
+        Task<string> Encode(string templateId, CredentialBase credential);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
+using Leosac.CredentialProvisioning.Core.Models;
 
 namespace Leosac.CredentialProvisioning.Encoding
 {
@@ -8,7 +9,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 
         public abstract Task UnInitialize();
 
-        public abstract Task<CardContext> PrepareCard();
+        public abstract Task<CardContext> PrepareCard(CredentialBase? credential = null);
 
         public abstract Task CompleteCard(CardContext context);
     }

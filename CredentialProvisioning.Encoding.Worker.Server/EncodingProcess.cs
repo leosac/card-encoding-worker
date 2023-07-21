@@ -35,9 +35,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                     foreach (var credential in CredentialContext.Credentials)
                     {
-                        logger.Info(String.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", credential.Id, credential.Name, CredentialContext.TemplateId));
+                        logger.Info(string.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", credential.Id, credential.Name, CredentialContext.TemplateId));
 
-                        var cardCtx = await deviceCtx.PrepareCard();
+                        var cardCtx = await deviceCtx.PrepareCard(credential);
                         if (cardCtx == null)
                             throw new EncodingException("Card preparation failed.");
 
@@ -62,7 +62,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             if (actionProp != null)
             {
-                logger.Info(String.Format("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label));
+                logger.Info(string.Format("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label));
 
                 try
                 {
@@ -95,7 +95,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 return Activator.CreateInstance(actionType) as EncodingAction;
             else
             {
-                logger.Error(String.Format("Cannot found dedicated EncodingAction with properties type `{0}` on assembly `{1}`.", actionProp.GetType().FullName, this.assembly.FullName));
+                logger.Error(string.Format("Cannot found dedicated EncodingAction with properties type `{0}` on assembly `{1}`.", actionProp.GetType().FullName, this.assembly.FullName));
                 return null;
             }
         }
@@ -108,7 +108,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
             if (trigger.Throw)
             {
-                if (!String.IsNullOrEmpty(trigger.ThrowCustomMessage))
+                if (!string.IsNullOrEmpty(trigger.ThrowCustomMessage))
                 {
                     throw new EncodingException(trigger.ThrowCustomMessage, ex);
                 }

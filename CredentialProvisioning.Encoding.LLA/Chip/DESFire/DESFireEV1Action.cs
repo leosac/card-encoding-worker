@@ -19,9 +19,9 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                 throw new EncodingException("Wrong chip type");
             }
 
-            RunDESFireEV1(chip.getDESFireEV1Commands(), encodingCtx as EncodingContext, llaCtx.LLADeviceContext);
+            RunDESFireEV1(chip.getDESFireEV1Commands(), encodingCtx as EncodingContext, llaCtx);
         }
 
-        public abstract void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLADeviceContext deviceCtx);
+        public abstract void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx);
     }
 }

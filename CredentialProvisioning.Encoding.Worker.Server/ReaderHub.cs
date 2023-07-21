@@ -18,17 +18,17 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _worker = worker;
         }
 
-        public Task<string> EncodeFromQueue(Guid templateId, string itemId)
+        public Task<string> EncodeFromQueue(string templateId, string itemId)
         {
             return Encode(_worker.InitializeProcess(itemId));
         }
 
-        public Task<string> Encode(Guid templateId, CredentialBase credential)
+        public Task<string> Encode(string templateId, CredentialBase credential)
         {
             return Encode(_worker.InitializeProcess(templateId, credential));
         }
 
-        public Task<string> EncodeAll(Guid templateId, CredentialBase[] credentials)
+        public Task<string> EncodeAll(string templateId, CredentialBase[] credentials)
         {
             return Encode(_worker.InitializeProcess(templateId, credentials));
         }
@@ -49,7 +49,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     isoConfig.setCheckSAMReaderIsAvailable(false);
                     isoConfig.setAutoConnectToSAMReader(true);
-                    isoConfig.setSAMUnlockKey(process.CredentialContext.TemplateContent.SAM.UnlockKey.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
+                    isoConfig.setSAMUnlockKey(process.CredentialContext.TemplateContent.SAM.UnlockKey?.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
                     clDevice.ReaderUnit.setConfiguration(isoConfig);
                 }
             }

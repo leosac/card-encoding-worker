@@ -1,8 +1,10 @@
 using Leosac.CredentialProvisioning.Core.Models;
+using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
@@ -92,7 +94,39 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
 
             var worker = new EncodingWorker();
+            if (!string.IsNullOrEmpty(options.TemplateRepository))
+            {
+                if (!Directory.Exists(options.TemplateRepository))
+                {
+                    throw new Exception("The template repository folder doesn't exist.");
+                }
+
+                var files = Directory.GetFiles(options.TemplateRepository, "*.json");
+                foreach (var file in files)
+                {
+                    var id = Path.GetFileNameWithoutExtension(file);
+                    var content = JsonConvert.DeserializeObject<EncodingFragmentTemplateContent>(File.ReadAllText(file));
+                    if (content != null)
+                    {
+                        worker.LoadTemplate(id, content);
+                    }
+                }
+            }
             builder.Services.AddSingleton(worker);
+            KeyProvider? keystore = null;
+            if (!string.IsNullOrEmpty(options.KeyStore))
+            {
+                if (!File.Exists(options.KeyStore))
+                {
+                    throw new Exception("The Key Store file doesn't exist.");
+                }
+                keystore = JsonConvert.DeserializeObject<KeyProvider>(File.ReadAllText(options.KeyStore));
+            }
+            if (keystore == null)
+            {
+                keystore = new KeyProvider();
+            }
+            builder.Services.AddSingleton(keystore);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -124,9 +158,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 })
                 .WithName("Authenticate").WithTags("authentication");
 
+                app.MapPost("/key", (CredentialKey key) =>
+                {
+                    keystore.Add(key);
+                    return true;
+                })
+                .WithName("LoadKey").WithTags("key");
+
+                app.MapPost("/keys", (CredentialKey[] keys) =>
+                {
+                    foreach (var key in keys)
+                    {
+                        keystore.Add(key);
+                    }
+                    return true;
+                })
+                .WithName("LoadKeys").WithTags("key");
+
                 app.MapPost("/template", (EncodingFragmentTemplateContent template) =>
                 {
-                    var templateId = Guid.NewGuid();
+                    var templateId = Guid.NewGuid().ToString();
                     worker.LoadTemplate(templateId, template);
                     return new ObjectIdResponse<string> { Id = templateId.ToString() };
                 })
@@ -134,7 +185,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template) =>
                 {
-                    worker.LoadTemplate(Guid.Parse(templateId), template);
+                    worker.LoadTemplate(templateId, template);
                     return new ObjectIdResponse<string> { Id = templateId };
                 })
                 .WithName("LoadTemplateWithId").WithTags("template");
@@ -147,7 +198,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 app.MapGet("/template/{templateId}/check", (string templateId) =>
                 {
-                    return (worker.GetTemplate(Guid.Parse(templateId)) != null);
+                    return (worker.GetTemplate(templateId) != null);
                 })
                 .WithName("CheckTemplate").WithTags("template");
 
@@ -159,7 +210,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 app.MapPost("/template/{templateId}/queue", (string templateId, CredentialBase credential) =>
                 {
-                    var itemId = worker.Queue.Add(Guid.Parse(templateId), credential);
+                    var itemId = worker.Queue.Add(templateId, credential);
                     return new ObjectIdResponse<string>() { Id = itemId };
                 })
                 .WithName("AddToQueue").WithTags("template", "queue");
