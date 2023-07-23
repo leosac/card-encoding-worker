@@ -28,7 +28,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
             });
         }
 
-        public override Task<CardContext> PrepareCard(CredentialBase? credential = null)
+        public override Task<CardContext> PrepareCard(WorkerCredentialBase? credential = null)
         {
             return Task.Run(() =>
             {
@@ -60,7 +60,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
             });
         }
 
-        protected Task<CardContext> CreateCardContext(CredentialBase? credential = null)
+        protected Task<CardContext> CreateCardContext(WorkerCredentialBase? credential = null)
         {
             return Task.Run<CardContext>(() =>
             {

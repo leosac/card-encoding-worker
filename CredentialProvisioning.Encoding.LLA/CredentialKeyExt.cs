@@ -3,6 +3,7 @@ using LibLogicalAccess;
 using Leosac.CredentialProvisioning.Core.Models;
 using System.Collections;
 using Leosac.CredentialProvisioning.Encoding.Key;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
@@ -102,19 +103,19 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
         /// <param name="input">The input fragments</param>
         /// <returns>The div input</returns>
         /// <remarks>It is assumed that all fragment values are hexstring.</remarks>
-        private static byte[] ComputeDivInput(ICollection<CredentialDataValue>? data, DivInputFragment[] input)
+        private static byte[] ComputeDivInput(IDictionary<string, object> data, DivInputFragment[] input)
         {
             var ret = new List<byte>();
             foreach(var i in input)
             {
                 if (i.Type == DivInputFragmentType.DataField)
                 {
-                    if (data != null)
+                    if (data != null && data.ContainsKey(i.Value))
                     {
-                        var d = data.FirstOrDefault(d => d.DataField.Name == i.Value);
-                        if (!string.IsNullOrEmpty(d?.Value))
+                        var v = data[i.Value]?.ToString();
+                        if (!string.IsNullOrEmpty(v))
                         {
-                            ret.AddRange(Convert.FromHexString(d.Value));
+                            ret.AddRange(Convert.FromHexString(v));
                         }
                     }
                 }

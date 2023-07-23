@@ -2,20 +2,24 @@
 using Leosac.CredentialProvisioning.Encoding.LLA;
 using Leosac.CredentialProvisioning.Encoding.Worker.Contracts;
 using Leosac.CredentialProvisioning.Encoding.Worker.LLA;
+using Leosac.CredentialProvisioning.Server.Shared;
 using Leosac.CredentialProvisioning.Worker;
 using LibLogicalAccess.Card;
 using LibLogicalAccess.Reader;
 using Microsoft.AspNetCore.SignalR;
+using System.Net;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class ReaderHub : Hub<IReaderClient>, IReaderHub
     {
-        EncodingWorker _worker;
+        protected readonly EncodingWorker _worker;
+        protected readonly WorkerCredentialDataIntegrity _integrity;
 
-        public ReaderHub(EncodingWorker worker)
+        public ReaderHub(EncodingWorker worker, WorkerCredentialDataIntegrity integrity)
         {
             _worker = worker;
+            _integrity = integrity;
         }
 
         public Task<string> EncodeFromQueue(string templateId, string itemId)
@@ -23,13 +27,27 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return Encode(_worker.InitializeProcess(itemId));
         }
 
-        public Task<string> Encode(string templateId, CredentialBase credential)
+        public Task<string> Encode(string templateId, WorkerCredentialBase credential)
         {
+            if (_integrity.IsEnabled() && !_integrity.Verify(credential))
+            {
+                throw new Exception("Invalid credential signature.");
+            }
             return Encode(_worker.InitializeProcess(templateId, credential));
         }
 
-        public Task<string> EncodeAll(string templateId, CredentialBase[] credentials)
+        public Task<string> EncodeAll(string templateId, WorkerCredentialBase[] credentials)
         {
+            if (_integrity.IsEnabled())
+            {
+                foreach (var credential in credentials)
+                {
+                    if (!_integrity.Verify(credential))
+                    {
+                        throw new Exception("Invalid credential signature.");
+                    }
+                }
+            }
             return Encode(_worker.InitializeProcess(templateId, credentials));
         }
 

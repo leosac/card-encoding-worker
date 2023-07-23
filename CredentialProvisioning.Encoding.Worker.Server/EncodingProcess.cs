@@ -35,7 +35,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                     foreach (var credential in CredentialContext.Credentials)
                     {
-                        logger.Info(string.Format("Starting new encoding process for credential `{0}` ({1}) with template `{2}`", credential.Id, credential.Name, CredentialContext.TemplateId));
+                        logger.Info(string.Format("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId));
 
                         var cardCtx = await deviceCtx.PrepareCard(credential);
                         if (cardCtx == null)

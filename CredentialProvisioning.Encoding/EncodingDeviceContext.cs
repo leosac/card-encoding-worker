@@ -9,7 +9,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 
         public abstract Task UnInitialize();
 
-        public abstract Task<CardContext> PrepareCard(CredentialBase? credential = null);
+        public abstract Task<CardContext> PrepareCard(WorkerCredentialBase? credential = null);
 
         public abstract Task CompleteCard(CardContext context);
     }

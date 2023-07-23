@@ -17,6 +17,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         [Option('k', "apiKey", Required = false, Default = null, HelpText = "API key. Undefined means unsecure API calls.")]
         public string? APIKey { get; set; }
 
+        [Option('i', "dataIntegrityKey", Required = false, Default = null, HelpText = "The public key for data integrity verification. Undefined means data integrity is not checked.")]
+        public string? DataIntegrityKey { get; set; }
+
         public JwtSettings? JWT { get; set; }
     }
 }

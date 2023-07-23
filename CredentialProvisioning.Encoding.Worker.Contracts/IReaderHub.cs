@@ -6,6 +6,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
     {
         Task<string> EncodeFromQueue(string templateId, string itemId);
 
-        Task<string> Encode(string templateId, CredentialBase credential);
+        Task<string> Encode(string templateId, WorkerCredentialBase credential);
     }
 }

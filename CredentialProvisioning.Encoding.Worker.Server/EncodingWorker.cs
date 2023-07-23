@@ -11,7 +11,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
         }
 
-        protected override CredentialContext<EncodingFragmentTemplateContent> CreateCredentialContext(string templateId, EncodingFragmentTemplateContent template, IList<CredentialBase> credentials)
+        protected override CredentialContext<EncodingFragmentTemplateContent> CreateCredentialContext(string templateId, EncodingFragmentTemplateContent template, IList<WorkerCredentialBase> credentials)
         {
             return new EncodingContext() { TemplateId = templateId, TemplateContent = template, Credentials = credentials.ToArray() };
         }

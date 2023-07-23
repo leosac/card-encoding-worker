@@ -138,6 +138,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             app.UseHttpsRedirection();
 
+            var integrity = new WorkerCredentialDataIntegrity();
+            if (!string.IsNullOrEmpty(options.DataIntegrityKey))
+            {
+                integrity.LoadPublicKey(options.DataIntegrityKey);
+            }
+            builder.Services.AddSingleton(integrity);
+
             var jwtService = new JwtService(options.JWT);
             if (options.ManagementApi.GetValueOrDefault(true))
             {
@@ -207,30 +214,34 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 })
                 .WithName("GetTemplateFields").WithTags("template");
-
-                app.MapPost("/template/{templateId}/queue", (string templateId, CredentialBase credential) =>
-                {
-                    var itemId = worker.Queue.Add(templateId, credential);
-                    return new ObjectIdResponse<string>() { Id = itemId };
-                })
-                .WithName("AddToQueue").WithTags("template", "queue");
-
-                app.MapGet("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
-                {
-                    var item = worker.Queue.Get(itemId);
-                    if (item == null)
-                        return Results.NotFound();
-
-                    return Results.Ok(item.Credential);
-                })
-                .WithName("GetFromQueue").WithTags("template", "queue");
-
-                app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
-                {
-                    worker.Queue.Remove(templateId);
-                })
-                .WithName("DeleteFromQueue").WithTags("template", "queue");
             }
+
+            app.MapPost("/template/{templateId}/queue", (string templateId, WorkerCredentialBase credential) =>
+            {
+                if (integrity.IsEnabled() && !integrity.Verify(credential))
+                {
+                    return Results.BadRequest("Invalid credential signature.");
+                }
+                var itemId = worker.Queue.Add(templateId, credential);
+                return Results.Ok(new ObjectIdResponse<string>() { Id = itemId });
+            })
+            .WithName("AddToQueue").WithTags("template", "queue");
+
+            app.MapGet("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
+            {
+                var item = worker.Queue.Get(itemId);
+                if (item == null)
+                    return Results.NotFound();
+
+                return Results.Ok(item.Credential);
+            })
+            .WithName("GetFromQueue").WithTags("template", "queue");
+
+            app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
+            {
+                worker.Queue.Remove(templateId);
+            })
+            .WithName("DeleteFromQueue").WithTags("template", "queue");
 
             app.MapHub<ReaderHub>("/reader");
 

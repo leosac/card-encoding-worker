@@ -4,7 +4,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 {
     public abstract class CardContext
     {
-        protected CardContext(EncodingDeviceContext deviceContext, CredentialBase? credential = null)
+        protected CardContext(EncodingDeviceContext deviceContext, WorkerCredentialBase? credential = null)
         {
             DeviceContext = deviceContext;
             Credential = credential;
@@ -12,6 +12,6 @@ namespace Leosac.CredentialProvisioning.Encoding
 
         public EncodingDeviceContext DeviceContext { get; private set; }
 
-        public CredentialBase? Credential { get; private set; }
+        public WorkerCredentialBase? Credential { get; private set; }
     }
 }
