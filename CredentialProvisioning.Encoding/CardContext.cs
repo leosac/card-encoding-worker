@@ -8,10 +8,15 @@ namespace Leosac.CredentialProvisioning.Encoding
         {
             DeviceContext = deviceContext;
             Credential = credential;
+            FieldsChanged = new List<string>();
         }
 
         public EncodingDeviceContext DeviceContext { get; private set; }
 
         public WorkerCredentialBase? Credential { get; private set; }
+
+        public IList<string> FieldsChanged { get; private set; }
+
+        public byte[]? Buffer { get; set; }
     }
 }

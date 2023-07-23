@@ -43,6 +43,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                         await HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
                         await deviceCtx.CompleteCard(cardCtx);
+                        await OnCredentialCompleted(GetFieldChanges(cardCtx));
                     }
                     await deviceCtx.UnInitialize();
                     await OnProcessCompleted(ProvisioningState.Completed);
@@ -58,6 +59,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
+        private IDictionary<string, object>? GetFieldChanges(CardContext cardCtx)
+        {
+            if (cardCtx.Credential == null || cardCtx.FieldsChanged == null)
+                return null;
+
+            var changes = new Dictionary<string, object>();
+            var fields = cardCtx.Credential as IDictionary<string, object>;
+            if (fields != null)
+            {
+                foreach (var fieldName in cardCtx.FieldsChanged)
+                {
+                    if (fields.ContainsKey(fieldName))
+                    {
+                        changes.Add(fieldName, fields[fieldName]);
+                    }
+                }
+            }
+            return changes;
+        }
+
         private async Task HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             if (actionProp != null)
@@ -69,7 +90,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     var action = CreateAction(actionProp);
                     if (action != null)
                     {
+                        CreateAndRunServices(actionProp.ServicesBefore, cardCtx, action);
                         action.Run(encodingCtx, cardCtx);
+                        CreateAndRunServices(actionProp.ServicesAfter, cardCtx, action);
+
                         logger.Info("Action passed, running OnSuccess trigger");
                         ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
                     }
@@ -87,16 +111,41 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
+        private void CreateAndRunServices(IEnumerable<EncodingServiceProperties>? servicesProp, CardContext cardCtx, EncodingAction currentAction)
+        {
+            if (servicesProp != null)
+            {
+                foreach (var serviceProp in servicesProp)
+                {
+                    var service = CreateEncodingService(serviceProp);
+                    if (service != null)
+                    {
+                        service.Run(cardCtx, currentAction);
+                    }
+                }
+            }
+        }
+
         private EncodingAction? CreateAction(EncodingActionProperties actionProp)
         {
-            var baseType = typeof(EncodingAction<>).MakeGenericType(actionProp.GetType());
-            var actionType = this.assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
-            if (actionType != null)
-                return Activator.CreateInstance(actionType) as EncodingAction;
+            return CreateMiddlewareImpl<EncodingAction, EncodingActionProperties>(typeof(EncodingAction<>), actionProp);
+        }
+
+        private EncodingService? CreateEncodingService(EncodingServiceProperties serviceProp)
+        {
+            return CreateMiddlewareImpl<EncodingService, EncodingServiceProperties>(typeof(EncodingService<>), serviceProp);
+        }
+
+        private T1? CreateMiddlewareImpl<T1, T2>(Type baseGeneric, T2 properties) where T1 : class
+        {
+            var baseType = baseGeneric.MakeGenericType(properties.GetType());
+            var type = this.assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
+            if (type != null)
+                return Activator.CreateInstance(type) as T1;
             else
             {
-                logger.Error(string.Format("Cannot found dedicated EncodingAction with properties type `{0}` on assembly `{1}`.", actionProp.GetType().FullName, this.assembly.FullName));
-                return null;
+                logger.Error(string.Format("Cannot found dedicated {0} with properties type `{1}` on assembly `{2}`.", nameof(T1), properties.GetType().FullName, this.assembly.FullName));
+                return default(T1);
             }
         }
 

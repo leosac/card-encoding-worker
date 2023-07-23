@@ -10,23 +10,27 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             var jsonTypeInfo = base.GetTypeInfo(type, options);
 
-            var basePointType = typeof(EncodingActionProperties);
+            HandlePolymorphism(jsonTypeInfo, typeof(EncodingActionProperties), EncodingActionProperties.Discriminator, EncodingActionProperties.GetAllTypes());
+            HandlePolymorphism(jsonTypeInfo, typeof(EncodingServiceProperties), EncodingServiceProperties.Discriminator, EncodingServiceProperties.GetAllTypes());
+
+            return jsonTypeInfo;
+        }
+
+        public void HandlePolymorphism(JsonTypeInfo jsonTypeInfo, Type basePointType, string discriminator, IEnumerable<Type> derivedTypes)
+        {
             if (jsonTypeInfo.Type == basePointType)
             {
                 jsonTypeInfo.PolymorphismOptions = new JsonPolymorphismOptions
                 {
-                    TypeDiscriminatorPropertyName = EncodingActionProperties.Discriminator,
+                    TypeDiscriminatorPropertyName = discriminator,
                     IgnoreUnrecognizedTypeDiscriminators = false,
                     UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization
                 };
-                var actions = EncodingActionProperties.GetAllTypes();
-                foreach (var actionType in actions)
+                foreach (var derivedType in derivedTypes)
                 {
-                    jsonTypeInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(actionType, actionType.FullName));
+                    jsonTypeInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(derivedType, derivedType.FullName));
                 }
             }
-
-            return jsonTypeInfo;
         }
     }
 }

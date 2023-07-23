@@ -19,6 +19,12 @@ namespace Leosac.CredentialProvisioning.Encoding
 
         public string? Label { get; set; }
 
+        public string? Group { get; set; }
+
+        public EncodingServiceProperties[]? ServicesBefore { get; set; }
+
+        public EncodingServiceProperties[]? ServicesAfter { get; set; }
+
         public ActionTrigger OnSuccess { get; } = new ActionTrigger();
 
         public ActionTrigger OnFailure { get; } = new ActionTrigger() { Throw = true };
