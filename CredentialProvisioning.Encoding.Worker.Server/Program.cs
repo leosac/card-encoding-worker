@@ -127,6 +127,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 keystore = new KeyProvider();
             }
             builder.Services.AddSingleton(keystore);
+            var integrity = new WorkerCredentialDataIntegrity();
+            if (!string.IsNullOrEmpty(options.DataIntegrityKey))
+            {
+                integrity.LoadPublicKey(options.DataIntegrityKey);
+            }
+            builder.Services.AddSingleton(integrity);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -137,13 +144,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
 
             app.UseHttpsRedirection();
-
-            var integrity = new WorkerCredentialDataIntegrity();
-            if (!string.IsNullOrEmpty(options.DataIntegrityKey))
-            {
-                integrity.LoadPublicKey(options.DataIntegrityKey);
-            }
-            builder.Services.AddSingleton(integrity);
 
             var jwtService = new JwtService(options.JWT);
             if (options.ManagementApi.GetValueOrDefault(true))
