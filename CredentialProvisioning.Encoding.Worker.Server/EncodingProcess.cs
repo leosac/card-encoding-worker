@@ -65,7 +65,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 return null;
 
             var changes = new Dictionary<string, object>();
-            var fields = cardCtx.Credential as IDictionary<string, object>;
+            var fields = cardCtx.Credential?.Data as IDictionary<string, object>;
             if (fields != null)
             {
                 foreach (var fieldName in cardCtx.FieldsChanged)

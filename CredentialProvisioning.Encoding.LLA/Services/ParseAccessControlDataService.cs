@@ -9,50 +9,45 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
         {
             if (cardCtx.Buffer == null)
                 throw new EncodingException("No access control data to parse.");
-            SyncCredentialDataWithFormat(cardCtx.Credential?.Data, format, cardCtx.FieldsChanged);
+            SyncCredentialDataWithFormat(cardCtx, format);
             format.setLinearData(new ByteVector(cardCtx.Buffer));
             HandleBuffer(cardCtx, null);
         }
 
-        private void SyncCredentialDataWithFormat(IDictionary<string, object> credentialData, Format format, IList<string>? fieldsChanged)
+        private void SyncCredentialDataWithFormat(CardContext cardCtx, Format format)
         {
             if (format == null)
                 throw new ArgumentNullException("format");
 
-            if (credentialData == null)
-                throw new ArgumentNullException("credentialData");
+            if (cardCtx?.Credential == null)
+                throw new ArgumentNullException("cardCtx.Credential");
 
             var fieldNames = format.getValuesFieldList();
             foreach (var fieldName in fieldNames)
             {
                 var credFieldName = GetCredentialFieldName(fieldName);
-                if (credentialData.ContainsKey(credFieldName))
+                string? v = null;
+                var field = format.getFieldFromName(fieldName);
+                if (field is StringDataField sf)
                 {
-                    string? v = null;
-                    var field = format.getFieldFromName(fieldName);
-                    if (field is StringDataField sf)
+                    v = sf.getValue();
+                }
+                else if (field is NumberDataField nf)
+                {
+                    v = nf.getValue().ToString();
+                }
+                else if (field is BinaryDataField bf)
+                {
+                    var bv = bf.getValue()?.ToArray();
+                    if (bv != null)
                     {
-                        v = sf.getValue();
+                        v = Convert.ToHexString(bv);
                     }
-                    else if (field is NumberDataField nf)
-                    {
-                        v = nf.getValue().ToString();
-                    }
-                    else if (field is BinaryDataField bf)
-                    {
-                        var bv = bf.getValue()?.ToArray();
-                        if (bv != null)
-                        {
-                            v = Convert.ToHexString(bv);
-                        }
-                    }
+                }
 
-                    if (v != null && credentialData[credFieldName]?.ToString() != v)
-                    {
-                        credentialData[credFieldName] = v;
-                        if (fieldsChanged != null && !fieldsChanged.Contains(credFieldName))
-                            fieldsChanged.Add(credFieldName);
-                    }
+                if (v != null)
+                {
+                    cardCtx.UpdateFieldValue(credFieldName, v);
                 }
             }
         }

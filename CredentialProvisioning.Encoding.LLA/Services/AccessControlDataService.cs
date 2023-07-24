@@ -3,7 +3,7 @@ using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public abstract class AccessControlDataService<T> : EncodingService<T> where T: AccessControlServiceProperties, new()
+    public abstract class AccessControlDataService<T> : EncodingService<T> where T: AccessControlDataServiceProperties, new()
     {
         public override void Run(CardContext cardCtx, EncodingAction currentAction)
         {
