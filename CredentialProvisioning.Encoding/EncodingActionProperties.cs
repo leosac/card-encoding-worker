@@ -25,9 +25,9 @@ namespace Leosac.CredentialProvisioning.Encoding
 
         public EncodingServiceProperties[]? ServicesAfter { get; set; }
 
-        public ActionTrigger OnSuccess { get; } = new ActionTrigger();
+        public ActionTrigger OnSuccess { get; set; } = new ActionTrigger();
 
-        public ActionTrigger OnFailure { get; } = new ActionTrigger() { Throw = true };
+        public ActionTrigger OnFailure { get; set;  } = new ActionTrigger() { Throw = true };
 
         public static IEnumerable<Type> GetAllTypes()
         {

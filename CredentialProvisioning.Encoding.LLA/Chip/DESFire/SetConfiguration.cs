@@ -4,6 +4,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public class SetConfiguration : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration>
     {
+        public SetConfiguration(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration properties) : base(properties)
+        {
+
+        }
+
         public override void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.DefaultKey != null)

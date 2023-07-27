@@ -3,8 +3,13 @@ using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public abstract class AccessControlDataService<T> : EncodingService<T> where T: AccessControlDataServiceProperties, new()
+    public abstract class AccessControlDataService<T> : EncodingService<T> where T: AccessControlDataService, new()
     {
+        protected AccessControlDataService(T properties) : base(properties)
+        {
+
+        }
+
         public override void Run(CardContext cardCtx, EncodingAction currentAction)
         {
             var cfc = new CardsFormatComposite();

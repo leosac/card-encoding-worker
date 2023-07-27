@@ -1,10 +1,14 @@
-﻿using Leosac.CredentialProvisioning.Encoding.Services;
-using LibLogicalAccess;
+﻿using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class ParseAccessControlDataService : AccessControlDataService<PrepareAccessControlDataServiceProperties>
+    public class ParseAccessControlDataService : AccessControlDataService<Encoding.Services.PrepareAccessControlDataService>
     {
+        public ParseAccessControlDataService(Encoding.Services.PrepareAccessControlDataService properties) : base(properties)
+        {
+
+        }
+
         protected override void Run(CardContext cardCtx, Format format)
         {
             if (cardCtx.Buffer == null)

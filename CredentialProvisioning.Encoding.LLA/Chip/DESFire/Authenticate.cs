@@ -4,6 +4,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public class Authenticate : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate>
     {
+        public Authenticate(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate properties) : base(properties)
+        {
+
+        }
+
         public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)

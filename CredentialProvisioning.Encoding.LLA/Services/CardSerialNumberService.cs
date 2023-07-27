@@ -3,8 +3,13 @@ using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class CardSerialNumberService : EncodingService<CardSerialNumberServiceProperties>
+    public class CardSerialNumberService : EncodingService<Encoding.Services.CardSerialNumberService>
     {
+        public CardSerialNumberService(Encoding.Services.CardSerialNumberService properties) : base(properties)
+        {
+
+        }
+
         public override void Run(CardContext cardCtx, EncodingAction currentAction)
         {
             string? csn = null;

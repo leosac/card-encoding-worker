@@ -1,4 +1,6 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Key
+﻿using System.Text.Json.Serialization;
+
+namespace Leosac.CredentialProvisioning.Encoding.Key
 {
     public class KeyReference
     {

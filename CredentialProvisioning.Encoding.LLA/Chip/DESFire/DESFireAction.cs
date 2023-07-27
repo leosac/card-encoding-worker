@@ -5,6 +5,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public abstract class DESFireAction<T> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new()
     {
+        protected DESFireAction(T properties) : base(properties)
+        {
+
+        }
+
         public override void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             var llaCtx = cardCtx as LLACardContext;

@@ -15,17 +15,20 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
             if (k.KeyType == "aes128")
             {
                 var dkey = new DESFireKey();
-                dkey.setKeyType(DESFireKeyType.DF_KEY_AES); 
+                dkey.setKeyType(DESFireKeyType.DF_KEY_AES);
+                key = dkey;
             }
             else if (k.KeyType == "2k3des")
             {
                 var dkey = new DESFireKey();
                 dkey.setKeyType(DESFireKeyType.DF_KEY_DES);
+                key = dkey;
             }
             else if (k.KeyType == "3k3des")
             {
                 var dkey = new DESFireKey();
                 dkey.setKeyType(DESFireKeyType.DF_KEY_3K3DES);
+                key = dkey;
             }
 
             if (key != null)

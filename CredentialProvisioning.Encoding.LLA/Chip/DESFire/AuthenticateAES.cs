@@ -4,6 +4,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public class AuthenticateAES : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AuthenticateAES>
     {
+        public AuthenticateAES(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AuthenticateAES properties) : base(properties)
+        {
+
+        }
+
         public override void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)

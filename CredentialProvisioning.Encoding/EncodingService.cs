@@ -7,6 +7,11 @@
 
     public abstract class EncodingService<T> : EncodingService where T : EncodingServiceProperties, new()
     {
+        protected EncodingService(T properties)
+        {
+            Properties = properties;
+        }
+
         public T Properties { get; set; } = new T();
 
         protected void HandleBuffer(CardContext cardCtx, byte[]? data)

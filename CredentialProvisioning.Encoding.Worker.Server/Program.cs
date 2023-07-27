@@ -93,26 +93,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 });
             }
 
-            var worker = new EncodingWorker();
-            if (!string.IsNullOrEmpty(options.TemplateRepository))
-            {
-                if (!Directory.Exists(options.TemplateRepository))
-                {
-                    throw new Exception("The template repository folder doesn't exist.");
-                }
-
-                var files = Directory.GetFiles(options.TemplateRepository, "*.json");
-                foreach (var file in files)
-                {
-                    var id = Path.GetFileNameWithoutExtension(file);
-                    var content = JsonConvert.DeserializeObject<EncodingFragmentTemplateContent>(File.ReadAllText(file));
-                    if (content != null)
-                    {
-                        worker.LoadTemplate(id, content);
-                    }
-                }
-            }
-            builder.Services.AddSingleton(worker);
             KeyProvider? keystore = null;
             if (!string.IsNullOrEmpty(options.KeyStore))
             {
@@ -127,6 +107,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 keystore = new KeyProvider();
             }
             builder.Services.AddSingleton(keystore);
+            var worker = new EncodingWorker(keystore);
+            if (!string.IsNullOrEmpty(options.TemplateRepository))
+            {
+                if (!Directory.Exists(options.TemplateRepository))
+                {
+                    throw new Exception("The template repository folder doesn't exist.");
+                }
+
+                var files = Directory.GetFiles(options.TemplateRepository, "*.json");
+                foreach (var file in files)
+                {
+                    var id = Path.GetFileNameWithoutExtension(file);
+                    var content = JsonConvert.DeserializeObject<EncodingFragmentTemplateContent>(File.ReadAllText(file));
+                    if (content != null)
+                    {
+                        worker.LoadTemplate(id, content, ((DateTimeOffset)File.GetLastWriteTimeUtc(file)).ToUnixTimeSeconds());
+                    }
+                }
+            }
+            builder.Services.AddSingleton(worker);
             var integrity = new WorkerCredentialDataIntegrity();
             if (!string.IsNullOrEmpty(options.DataIntegrityKey))
             {
@@ -203,9 +203,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 })
                 .WithName("GetTemplates").WithTags("template");
 
-                app.MapGet("/template/{templateId}/check", (string templateId) =>
+                app.MapGet("/template/{templateId}/check", (string templateId, long? revision) =>
                 {
-                    return (worker.GetTemplate(templateId) != null);
+                    return (worker.GetTemplate(templateId, revision) != null);
                 })
                 .WithName("CheckTemplate").WithTags("template");
 

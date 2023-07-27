@@ -4,6 +4,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
     public class ChangeKey : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKey>
     {
+        public ChangeKey(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKey properties) : base(properties)
+        {
+
+        }
+
         public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)

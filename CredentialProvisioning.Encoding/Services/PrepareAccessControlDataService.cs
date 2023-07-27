@@ -1,8 +1,8 @@
 ﻿namespace Leosac.CredentialProvisioning.Encoding.Services
 {
-    public class PrepareAccessControlDataServiceProperties : AccessControlDataServiceProperties
+    public class PrepareAccessControlDataService : AccessControlDataService
     {
-        public PrepareAccessControlDataServiceProperties()
+        public PrepareAccessControlDataService()
         {
             BufferBehavior = EncodingServiceBufferBehavior.Overwrite;
         }

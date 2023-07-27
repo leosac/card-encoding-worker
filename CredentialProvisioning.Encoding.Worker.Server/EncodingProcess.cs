@@ -128,7 +128,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         private EncodingAction? CreateAction(EncodingActionProperties actionProp)
         {
-            return CreateMiddlewareImpl<EncodingAction, EncodingActionProperties>(typeof(EncodingAction<>), actionProp);
+            var instance = CreateMiddlewareImpl<EncodingAction, EncodingActionProperties>(typeof(EncodingAction<>), actionProp);
+            return instance;
         }
 
         private EncodingService? CreateEncodingService(EncodingServiceProperties serviceProp)
@@ -141,7 +142,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             var baseType = baseGeneric.MakeGenericType(properties.GetType());
             var type = this.assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
             if (type != null)
-                return Activator.CreateInstance(type) as T1;
+            {
+                return Activator.CreateInstance(type, properties) as T1;
+            }
             else
             {
                 logger.Error(string.Format("Cannot found dedicated {0} with properties type `{1}` on assembly `{2}`.", nameof(T1), properties.GetType().FullName, this.assembly.FullName));

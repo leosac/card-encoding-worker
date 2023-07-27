@@ -9,6 +9,11 @@ namespace Leosac.CredentialProvisioning.Encoding
 
     public abstract class EncodingAction<T> : EncodingAction where T : EncodingActionProperties, new()
     {
+        protected EncodingAction(T properties)
+        {
+            Properties = properties;
+        }
+
         public T Properties { get; set; } = new T();
     }
 }
