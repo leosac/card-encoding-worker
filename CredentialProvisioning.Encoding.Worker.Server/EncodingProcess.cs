@@ -26,36 +26,44 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         public override async Task Run(DeviceContext context)
         {
             Trace.Assert(CredentialContext?.Credentials != null, "Credentials cannot be null");
-            if (context is EncodingDeviceContext deviceCtx)
+            try
             {
-                if (CredentialContext?.TemplateContent != null)
+                if (context is EncodingDeviceContext deviceCtx)
                 {
-                    if (!await deviceCtx.Initialize())
-                        throw new EncodingException("Device initialization failed.");
-
-                    foreach (var credential in CredentialContext.Credentials)
+                    if (CredentialContext?.TemplateContent != null)
                     {
-                        logger.Info(string.Format("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId));
+                        if (!await deviceCtx.Initialize())
+                            throw new EncodingException("Device initialization failed.");
 
-                        var cardCtx = await deviceCtx.PrepareCard(credential);
-                        if (cardCtx == null)
-                            throw new EncodingException("Card preparation failed.");
+                        foreach (var credential in CredentialContext.Credentials)
+                        {
+                            logger.Info(string.Format("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId));
 
-                        await HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
-                        await deviceCtx.CompleteCard(cardCtx);
-                        await OnCredentialCompleted(GetFieldChanges(cardCtx));
+                            var cardCtx = await deviceCtx.PrepareCard(credential);
+                            if (cardCtx == null)
+                                throw new EncodingException("Card preparation failed.");
+
+                            await HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
+                            await deviceCtx.CompleteCard(cardCtx);
+                            await OnCredentialCompleted(GetFieldChanges(cardCtx));
+                        }
+                        await deviceCtx.UnInitialize();
+                        await OnProcessCompleted(ProvisioningState.Completed);
                     }
-                    await deviceCtx.UnInitialize();
-                    await OnProcessCompleted(ProvisioningState.Completed);
+                    else
+                    {
+                        throw new EncodingException("Template cannot be null");
+                    }
                 }
                 else
                 {
-                    throw new EncodingException("Template cannot be null");
+                    throw new EncodingException("Unexpected device context type.");
                 }
             }
-            else
+            catch(Exception)
             {
-                throw new EncodingException("Unexpected device context type.");
+                //await OnProcessCompleted(ProvisioningState.Failed);
+                throw;
             }
         }
 

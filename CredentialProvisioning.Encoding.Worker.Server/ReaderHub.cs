@@ -75,7 +75,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             {
                 await caller.NotifyProcessCompleted(process.Id, state);
             };
-            process.Run(clDevice);
+            process.Run(clDevice).ContinueWith(failedTask =>
+            {
+                //caller.NotifyError(failedTask.Exception.Message);
+                Console.WriteLine(failedTask.Exception.Message);
+            }, TaskContinuationOptions.OnlyOnFaulted);
             return Task.FromResult(process.Id);
         }
     }

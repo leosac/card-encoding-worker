@@ -38,6 +38,9 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                 if (!ReaderUnit.waitInsertion(0))
                     throw new EncodingException("No card inserted.");
 
+                // We wait few ms for the chip to be really initialized / on RFID field
+                Thread.Sleep(200);
+
                 if (!ReaderUnit.connect())
                     throw new EncodingException("Cannot connect to the card.");
 

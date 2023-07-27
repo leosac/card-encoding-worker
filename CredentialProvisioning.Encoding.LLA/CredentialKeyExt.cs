@@ -4,6 +4,8 @@ using Leosac.CredentialProvisioning.Core.Models;
 using System.Collections;
 using Leosac.CredentialProvisioning.Encoding.Key;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.RegularExpressions;
+using System;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
@@ -49,7 +51,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                 }
                 else
                 {
-                    key.fromString(k.Value);
+                    if (!string.IsNullOrEmpty(k.Value))
+                    {
+                        var fvalue = Regex.Replace(k.Value, ".{2}", "$0 ").Trim();
+                        key.fromString(fvalue);
+                    }
                 }
 
                 if (div != null)

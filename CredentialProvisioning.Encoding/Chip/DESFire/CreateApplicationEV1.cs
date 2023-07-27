@@ -20,7 +20,7 @@
 
         public FidSupport FidSupport { get; set; }
 
-        public ushort IsoFID { get; set; }
+        public ushort? IsoFID { get; set; }
 
         public string? IsoDFName { get; set; }
     }

@@ -2,9 +2,9 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class ParseAccessControlDataService : AccessControlDataService<Encoding.Services.PrepareAccessControlDataService>
+    public class ParseAccessControlDataService : AccessControlDataService<Encoding.Services.ParseAccessControlDataService>
     {
-        public ParseAccessControlDataService(Encoding.Services.PrepareAccessControlDataService properties) : base(properties)
+        public ParseAccessControlDataService(Encoding.Services.ParseAccessControlDataService properties) : base(properties)
         {
 
         }
