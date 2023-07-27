@@ -5,6 +5,7 @@ using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
@@ -51,6 +52,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         new string[] { }
                     }
                 });
+
+                var xmlFile = $"{typeof(EncodingAction).Assembly.GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
             });
 
             builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>

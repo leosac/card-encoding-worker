@@ -1,15 +1,33 @@
 ﻿namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 {
+    /// <summary>
+    /// Change a file settings.
+    /// </summary>
     public class ChangeFileSettings : DESFireActionProperties
     {
+        /// <summary>
+        /// See <see cref="EncodingActionProperties.Name" />.
+        /// </summary>
         public override string Name => "Change File Settings";
 
+        /// <summary>
+        /// The targeted file number to change settings for.
+        /// </summary>
         public byte FileNo { get; set; }
 
+        /// <summary>
+        /// The new security communication with the file.
+        /// </summary>
         public EncryptionMode EncryptionMode { get; set; }
 
+        /// <summary>
+        /// The new file access rights.
+        /// </summary>
         public DESFireAccessRights AccessRights { get; set; }
 
+        /// <summary>
+        /// True if the communication is in plain mode, false otherwise.
+        /// </summary>
         public bool Plain { get; set; }
     }
 }
