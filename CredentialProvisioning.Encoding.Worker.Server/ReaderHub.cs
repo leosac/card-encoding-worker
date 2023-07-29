@@ -7,7 +7,7 @@ using Leosac.CredentialProvisioning.Worker;
 using LibLogicalAccess.Card;
 using LibLogicalAccess.Reader;
 using Microsoft.AspNetCore.SignalR;
-using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -15,11 +15,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
     {
         protected readonly EncodingWorker _worker;
         protected readonly WorkerCredentialDataIntegrity _integrity;
+        protected readonly IOptions<Options> _options;
 
-        public ReaderHub(EncodingWorker worker, WorkerCredentialDataIntegrity integrity)
+        public ReaderHub(EncodingWorker worker, WorkerCredentialDataIntegrity integrity, IOptions<Options> options)
         {
             _worker = worker;
             _integrity = integrity;
+            _options = options;
         }
 
         public Task<string> EncodeFromQueue(string templateId, string itemId)
@@ -55,12 +57,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             var caller = Clients.Caller;
             var clDevice = new LLADeviceContext();
-            clDevice.ReaderUnit = new WorkerReaderUnit(caller, string.Empty);
+            clDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.ContactlessReader);
 
             if (process.CredentialContext != null && process.CredentialContext.TemplateContent?.SAM != null)
             {
                 var samDevice = new LLADeviceContext();
-                samDevice.ReaderUnit = new WorkerReaderUnit(caller, "SAM");
+                samDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.SAMReader);
 
                 clDevice.ReaderUnit.setSAMReaderUnit(samDevice.ReaderUnit);
                 if (clDevice.ReaderUnit.getConfiguration() is ISO7816ReaderUnitConfiguration isoConfig)

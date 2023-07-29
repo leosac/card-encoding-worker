@@ -5,7 +5,7 @@ namespace Leosac.CredentialProvisioning.Encoding
 {
     public abstract class EncodingActionProperties
     {
-        public const string Discriminator = "typeName";
+        public const string Discriminator = "$type";
 
         public class ActionTrigger
         {

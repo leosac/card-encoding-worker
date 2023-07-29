@@ -2,18 +2,18 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 {
-    public class WorkerDataTransport : LibLogicalAccess.DummyDataTransport
+    public class WorkerRemoteDataTransport : LibLogicalAccess.DummyDataTransport
     {
         bool _isConnected = false;
         byte[]? _response = null;
-        WorkerReaderUnit _readerUnit;
+        WorkerRemoteReaderUnit _readerUnit;
 
-        public WorkerDataTransport(WorkerReaderUnit readerUnit) : base()
+        public WorkerRemoteDataTransport(WorkerRemoteReaderUnit readerUnit) : base()
         {
             _readerUnit = readerUnit;
         }
 
-        public WorkerReaderUnit GetWorkerReaderUnit()
+        public WorkerRemoteReaderUnit GetWorkerReaderUnit()
         {
             return _readerUnit;
         }

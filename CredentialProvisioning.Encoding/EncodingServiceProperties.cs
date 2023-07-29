@@ -7,7 +7,7 @@ namespace Leosac.CredentialProvisioning.Encoding
     /// </summary>
     public abstract class EncodingServiceProperties
     {
-        public const string Discriminator = "typeName";
+        public const string Discriminator = "$type";
 
         /// <summary>
         /// The behavior on the temporary buffer shared between services and actions.

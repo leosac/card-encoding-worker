@@ -20,6 +20,15 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         [Option('i', "dataIntegrityKey", Required = false, Default = null, HelpText = "The public key for data integrity verification. Undefined means data integrity is not checked.")]
         public string? DataIntegrityKey { get; set; }
 
+        [Option('r', "readerType", Required = false, Default = ReaderType.Remote, HelpText = "Type of reader technology. Remote = use readers from a remote client over WebSocket / Local = use local PC/SC reader resources.")]
+        public ReaderType ReaderType { get; set; } = ReaderType.Remote;
+
+        [Option('c', "contactlessReader", Required = false, Default = "", HelpText = "The contactless reader alias/name.")]
+        public string ContactlessReader { get; set; } = string.Empty;
+
+        [Option('a', "samReader", Required = false, Default = "SAM", HelpText = "The SAM reader alias/name.")]
+        public string SAMReader { get; set; } = "SAM";
+
         public JwtSettings? JWT { get; set; }
     }
 }

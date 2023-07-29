@@ -29,8 +29,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 c.UseAllOfToExtendReferenceSchemas();
                 c.UseAllOfForInheritance();
                 c.UseOneOfForPolymorphism();
-                c.SelectDiscriminatorNameUsing((baseType) => "typeName");
-                c.SelectDiscriminatorValueUsing((subType) => subType.FullName);
+                c.SelectDiscriminatorNameUsing((baseType) => "$type");
+                c.SelectDiscriminatorValueUsing((subType) => PolymorphicTypeResolver.GetSubTypeDiscriminator(subType));
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -251,7 +251,15 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             })
             .WithName("DeleteFromQueue").WithTags("template", "queue");
 
-            app.MapHub<ReaderHub>("/reader");
+            if (options.ReaderType == ReaderType.Remote)
+            {
+                app.MapHub<ReaderHub>("/reader");
+            }
+            else
+            {
+                // TODO: implements "/encode/" endpoints and use local PC/SC resources
+                throw new NotImplementedException();
+            }
 
             app.Run();
         }
