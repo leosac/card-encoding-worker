@@ -24,18 +24,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _options = options;
         }
 
-        public Task<string> EncodeFromQueue(string templateId, string itemId)
+        public Task<string> EncodeFromQueue(string templateId, string itemId, bool waitRemoval = true)
         {
-            return Encode(_worker.InitializeProcess(itemId));
+            return Encode(_worker.InitializeProcess(itemId), waitRemoval);
         }
 
-        public Task<string> Encode(string templateId, WorkerCredentialBase credential)
+        public Task<string> Encode(string templateId, WorkerCredentialBase credential, bool waitRemoval = true)
         {
             if (_integrity.IsEnabled() && !_integrity.Verify(credential))
             {
                 throw new Exception("Invalid credential signature.");
             }
-            return Encode(_worker.InitializeProcess(templateId, credential));
+            return Encode(_worker.InitializeProcess(templateId, credential), waitRemoval);
         }
 
         public Task<string> EncodeAll(string templateId, WorkerCredentialBase[] credentials)
@@ -53,11 +53,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return Encode(_worker.InitializeProcess(templateId, credentials));
         }
 
-        private Task<string> Encode(CredentialProcess<EncodingFragmentTemplateContent> process)
+        private Task<string> Encode(CredentialProcess<EncodingFragmentTemplateContent> process, bool waitRemoval = true)
         {
             var caller = Clients.Caller;
             var clDevice = new LLADeviceContext();
-            clDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.ContactlessReader);
+            clDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.ContactlessReader, waitRemoval);
 
             if (process.CredentialContext != null && process.CredentialContext.TemplateContent?.SAM != null)
             {

@@ -14,12 +14,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
         IReaderClient _readerClient;
         WorkerRemoteDataTransport? _dataTransport;
         bool _disposed;
+        bool _waitRemoval;
         string? _cardContext;
 
-        public WorkerRemoteReaderUnit(IReaderClient readerClient, string alias) : base("")
+        public WorkerRemoteReaderUnit(IReaderClient readerClient, string alias, bool waitRemoval = true) : base("")
         {
             _readerClient = readerClient;
             Alias = alias;
+            _waitRemoval = waitRemoval;
             _dataTransport = new WorkerRemoteDataTransport(this);
         }
 
@@ -107,9 +109,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 
         public override bool waitRemoval(uint maxwait)
         {
-            var task = _readerClient.WaitCardRemoval(Alias, maxwait);
+            var task = _readerClient.WaitCardRemoval(Alias, _waitRemoval ? maxwait : 1);
             task.Wait();
-            return task.Result;
+            return _waitRemoval ? task.Result : true;
         }
 
         public override void disconnectFromReader()
