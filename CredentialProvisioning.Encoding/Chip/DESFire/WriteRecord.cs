@@ -13,6 +13,9 @@
             EncryptionMode = EncryptionMode.CM_ENCRYPT;
         }
 
+        /// <summary>
+        /// See <see cref="EncodingActionProperties.Name"/>
+        /// </summary>
         public override string Name => "Write Record";
 
         /// <summary>

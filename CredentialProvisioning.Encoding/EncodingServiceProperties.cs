@@ -7,6 +7,9 @@ namespace Leosac.CredentialProvisioning.Encoding
     /// </summary>
     public abstract class EncodingServiceProperties
     {
+        /// <summary>
+        /// Discriminator for Encoding Service Properties serialization
+        /// </summary>
         public const string Discriminator = "$type";
 
         /// <summary>

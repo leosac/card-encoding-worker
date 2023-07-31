@@ -3,10 +3,19 @@ using System.Text.Json.Serialization;
 
 namespace Leosac.CredentialProvisioning.Encoding
 {
+    /// <summary>
+    /// Base class for Encoding Action Properties
+    /// </summary>
     public abstract class EncodingActionProperties
     {
+        /// <summary>
+        /// Discriminator for Encoding Action Properties serialization
+        /// </summary>
         public const string Discriminator = "$type";
 
+        /// <summary>
+        /// Action Trigger definition
+        /// </summary>
         public class ActionTrigger
         {
             /// <summary>

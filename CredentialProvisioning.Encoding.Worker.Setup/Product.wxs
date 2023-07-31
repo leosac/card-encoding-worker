@@ -74,14 +74,14 @@
       </Component>
       <Component Id="CredentialProvisioningEncodingWorkerServerExeComponent">
         <File Id="___var.CredentialProvisioning.Encoding.Worker.ServerExe.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Encoding.Worker.Server.exe" />
-        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Name="$(var.ServiceName)" DisplayName="Leosac Credential Provisioning Encoding Worker Service" Description="The background service for Leosac Credential Provisioning Encoding Worker." Start="auto" ErrorControl="normal" />
+        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Name="$(var.ServiceName)" DisplayName="Leosac Credential Provisioning Encoding Worker Service" Description="The background service for Leosac Credential Provisioning Encoding Worker." Arguments="--service" Start="auto" ErrorControl="normal" />
         <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="$(var.ServiceName)" Wait="yes" />
       </Component>
       <Component Id="CredentialProvisioningEncodingWorkerServerDepsComponent">
         <File Id="___var.CredentialProvisioning.Encoding.Worker.Server.deps.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Encoding.Worker.Server.deps.json" />
       </Component>
       <Component Id="CredentialProvisioningEncodingWorkerServersRuntimeconfigComponent">
-        <File Id="___var.CredentialProvisioning.Encoding.Worker.Server.runtimeconfig.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Encoding.Worker.Server.runtimeconfig.json" />
+        <File Id="___var.LCP.Encoding.Worker.Server.runtimeconfig.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Encoding.Worker.Server.runtimeconfig.json" />
       </Component>
       <Component Id="AppSettingsComponent">
         <File Id="___var.appsettings.json.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\appsettings.json" />
