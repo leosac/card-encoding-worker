@@ -16,9 +16,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         private readonly Option<ReaderType> _readerTypeOption;
         private readonly Option<string> _contactlessReaderOption;
         private readonly Option<string> _samReaderOption;
-        private readonly Option<bool> _svcOption;
 
-        public OptionsBinder(Options? options, Option<string?> repositoryOption, Option<string?> keyStoreOption, Option<bool?> mgtapiOption, Option<string?> apikeyOption, Option<string?> integritykeyOption, Option<ReaderType> readerTypeOption, Option<string> contactlessReaderOption, Option<string> samReaderOption, Option<bool> svcOption)
+        public OptionsBinder(Options? options, Option<string?> repositoryOption, Option<string?> keyStoreOption, Option<bool?> mgtapiOption, Option<string?> apikeyOption, Option<string?> integritykeyOption, Option<ReaderType> readerTypeOption, Option<string> contactlessReaderOption, Option<string> samReaderOption)
         {
             _options = options;
             _repositoryOption = repositoryOption;
@@ -29,7 +28,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _readerTypeOption = readerTypeOption;
             _contactlessReaderOption = contactlessReaderOption;
             _samReaderOption = samReaderOption;
-            _svcOption = svcOption;
         }
 
         protected override Options GetBoundValue(BindingContext bindingContext)
@@ -43,7 +41,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             options.ReaderType = bindingContext.ParseResult.GetValueForOption(_readerTypeOption);
             options.ContactlessReader = bindingContext.ParseResult.GetValueForOption(_contactlessReaderOption);
             options.SAMReader = bindingContext.ParseResult.GetValueForOption(_samReaderOption);
-            options.RunAsService = bindingContext.ParseResult.GetValueForOption(_svcOption);
             return options;
         }
     }

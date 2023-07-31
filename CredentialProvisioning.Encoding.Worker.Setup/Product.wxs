@@ -74,7 +74,7 @@
       </Component>
       <Component Id="CredentialProvisioningEncodingWorkerServerExeComponent">
         <File Id="___var.CredentialProvisioning.Encoding.Worker.ServerExe.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Encoding.Worker.Server.exe" />
-        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Name="$(var.ServiceName)" DisplayName="Leosac Credential Provisioning Encoding Worker Service" Description="The background service for Leosac Credential Provisioning Encoding Worker." Arguments="--service" Start="auto" ErrorControl="normal" />
+        <ServiceInstall Id="ServiceInstaller" Type="ownProcess" Name="$(var.ServiceName)" DisplayName="Leosac Credential Provisioning Encoding Worker Service" Description="The background service for Leosac Credential Provisioning Encoding Worker." Start="auto" ErrorControl="normal" />
         <ServiceControl Id="StartService" Start="install" Stop="both" Remove="uninstall" Name="$(var.ServiceName)" Wait="yes" />
       </Component>
       <Component Id="CredentialProvisioningEncodingWorkerServerDepsComponent">
@@ -85,6 +85,12 @@
       </Component>
       <Component Id="AppSettingsComponent">
         <File Id="___var.appsettings.json.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\appsettings.json" />
+      </Component>
+      <Component Id="AppSettingsProductionComponent">
+        <File Id="___var.appsettings.Production.json.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\appsettings.Production.json" />
+      </Component>
+      <Component Id="AppSettingsProductionWindowsComponent">
+        <File Id="___var.appsettings.Production.Windows.json.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\appsettings.Production.Windows.json" />
       </Component>
       <Component Id="CredentialProvisioningCoreComponent">
         <File Id="___var.CredentialProvisioning.Core.dll.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Core.dll" />

@@ -15,6 +15,7 @@ FROM build AS publish
 RUN dotnet publish "CredentialProvisioning.Encoding.Worker.Server.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
+VOLUME /data
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "CredentialProvisioning.Encoding.Worker.Server.dll", "--run"]

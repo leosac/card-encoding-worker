@@ -4,6 +4,7 @@ using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using System.CommandLine;
@@ -15,107 +16,117 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
     {
         static void Main(string[] args)
         {
+            var isService = WindowsServiceHelpers.IsWindowsService();
             var builder = WebApplication.CreateBuilder(args);
+
+            if (isService)
+            {
+                builder.Logging.AddEventLog(settings =>
+                {
+                    if (string.IsNullOrEmpty(settings.SourceName))
+                        settings.SourceName = builder.Environment.ApplicationName;
+                });
+            }
+
+            string? envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+            string? osName = null;
+            if (OperatingSystem.IsWindows())
+                osName = "Windows";
+            else if (OperatingSystem.IsLinux())
+                osName = "Linux";
+            if (!string.IsNullOrEmpty(envName) && !string.IsNullOrEmpty(osName))
+                builder.Configuration.AddJsonFile($"appsettings.{envName}.{osName}.json", optional: true, reloadOnChange: true);
 
             var optionsSetup = new OptionsSetup(builder.Configuration);
             builder.Services.ConfigureOptions(optionsSetup);
             builder.Services.AddSignalR();
 
+            builder.Host.UseWindowsService();
+            builder.Host.UseSystemd();
+
             var options = new Options();
             optionsSetup.Configure(options);
 
-            var repositoryOption = new Option<string?>(
-                name: "--template-repository",
-                description: "Folder where template files are located.",
-                getDefaultValue: () => options.TemplateRepository
-            );
-
-            var keyStoreOption = new Option<string?>(
-                name: "--keystore",
-                description: "File key store to load.",
-                getDefaultValue: () => options.KeyStore
-            );
-
-            var runCommand = new Command(
-                name: "--run",
-                description: "Run the worker server"
-            );
-
-            var svcCommand = new Command(
-                name: "--service",
-                description: "Run as a service"
-            );
-
-            var mgtapiOption = new Option<bool?>(
-                name: "--management-api",
-                description: "Enable Worker Management API.",
-                getDefaultValue: () => options.ManagementApi
-            );
-
-            var apikeyOption = new Option<string?>(
-                name: "--api-key",
-                description: "API key. Undefined means unsecure API calls.",
-                getDefaultValue: () => options.APIKey
-            );
-
-            var integritykeyOption = new Option<string?>(
-                name: "--integrity-key",
-                description: "The public key for data integrity verification. Undefined means data integrity is not checked.",
-                getDefaultValue: () => options.DataIntegrityKey
-            );
-
-            var readerTypeOption = new Option<ReaderType>(
-                name: "--reader-type",
-                description: "Type of reader technology. Remote = use readers from a remote client over WebSocket / Local = use local PC/SC reader resources.",
-                getDefaultValue: () => options.ReaderType
-            );
-
-            var contactlessReaderOption = new Option<string>(
-                name: "--reader-contactless",
-                description: "The contactless reader alias/name.",
-                getDefaultValue: () => options.ContactlessReader
-            );
-
-            var samReaderOption = new Option<string>(
-                name: "--reader-sam",
-                description: "The SAM reader alias/name.",
-                getDefaultValue: () => options.SAMReader
-            );
-
-            var svcOption = new Option<bool>(
-                name: "--service",
-                description: "Run as a service",
-                getDefaultValue: () => false
-            );
-
-            var rootCommand = new RootCommand("Leosac Credential Provisioning Encoding Worker");
-            rootCommand.AddGlobalOption(repositoryOption);
-            rootCommand.AddGlobalOption(keyStoreOption);
-            runCommand.AddOption(mgtapiOption);
-            runCommand.AddOption(apikeyOption);
-            runCommand.AddOption(integritykeyOption);
-            runCommand.AddOption(readerTypeOption);
-            runCommand.AddOption(contactlessReaderOption);
-            runCommand.AddOption(samReaderOption);
-            runCommand.AddOption(svcOption);
-            runCommand.SetHandler((o) =>
+            if (isService)
             {
-                if (o.RunAsService)
-                {
-                    if (OperatingSystem.IsWindows())
-                    {
-                        builder.Host.UseWindowsService();
-                    }
-                    else
-                    {
-                        builder.Host.UseSystemd();
-                    }
-                }
-
                 RunWorkerServer(builder, options);
-            }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption, svcOption));
-            rootCommand.AddCommand(runCommand);
-            rootCommand.Invoke(args);
+            }
+            else
+            {
+                var repositoryOption = new Option<string?>(
+                    name: "--template-repository",
+                    description: "Folder where template files are located.",
+                    getDefaultValue: () => options.TemplateRepository
+                );
+
+                var keyStoreOption = new Option<string?>(
+                    name: "--keystore",
+                    description: "File key store to load.",
+                    getDefaultValue: () => options.KeyStore
+                );
+
+                var runCommand = new Command(
+                    name: "--run",
+                    description: "Run the worker server"
+                );
+
+                var svcCommand = new Command(
+                    name: "--service",
+                    description: "Run as a service"
+                );
+
+                var mgtapiOption = new Option<bool?>(
+                    name: "--management-api",
+                    description: "Enable Worker Management API.",
+                    getDefaultValue: () => options.ManagementApi
+                );
+
+                var apikeyOption = new Option<string?>(
+                    name: "--api-key",
+                    description: "API key. Undefined means unsecure API calls.",
+                    getDefaultValue: () => options.APIKey
+                );
+
+                var integritykeyOption = new Option<string?>(
+                    name: "--integrity-key",
+                    description: "The public key for data integrity verification. Undefined means data integrity is not checked.",
+                    getDefaultValue: () => options.DataIntegrityKey
+                );
+
+                var readerTypeOption = new Option<ReaderType>(
+                    name: "--reader-type",
+                    description: "Type of reader technology. Remote = use readers from a remote client over WebSocket / Local = use local PC/SC reader resources.",
+                    getDefaultValue: () => options.ReaderType
+                );
+
+                var contactlessReaderOption = new Option<string>(
+                    name: "--reader-contactless",
+                    description: "The contactless reader alias/name.",
+                    getDefaultValue: () => options.ContactlessReader
+                );
+
+                var samReaderOption = new Option<string>(
+                    name: "--reader-sam",
+                    description: "The SAM reader alias/name.",
+                    getDefaultValue: () => options.SAMReader
+                );
+
+                var rootCommand = new RootCommand("Leosac Credential Provisioning Encoding Worker");
+                rootCommand.AddGlobalOption(repositoryOption);
+                rootCommand.AddGlobalOption(keyStoreOption);
+                runCommand.AddOption(mgtapiOption);
+                runCommand.AddOption(apikeyOption);
+                runCommand.AddOption(integritykeyOption);
+                runCommand.AddOption(readerTypeOption);
+                runCommand.AddOption(contactlessReaderOption);
+                runCommand.AddOption(samReaderOption);
+                runCommand.SetHandler((o) =>
+                {
+                    RunWorkerServer(builder, options);
+                }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption));
+                rootCommand.AddCommand(runCommand);
+                rootCommand.Invoke(args);
+            }
         }
 
         private static void RunWorkerServer(WebApplicationBuilder builder, Options options)
@@ -322,6 +333,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 .WithName("GetTemplateFields").WithTags("template");
             }
 
+            app.MapGet("/", () =>
+            {
+                return Results.Ok(new { Message = "Leosac Card Encoding Worker instance" });
+            }).WithName("Ping");
+
             app.MapPost("/template/{templateId}/queue", (string templateId, WorkerCredentialBase credential) =>
             {
                 if (integrity.IsEnabled() && !integrity.Verify(credential))
@@ -358,6 +374,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 // TODO: implements "/encode/" endpoints and use local PC/SC resources
                 throw new NotImplementedException();
             }
+
+            app.Logger.LogInformation("App Setup completed, running...");
 
             app.Run();
         }
