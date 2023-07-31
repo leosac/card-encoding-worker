@@ -14,6 +14,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         public string? DataIntegrityKey { get; set; }
 
+        public bool? EnableSwagger { get; set; }
+
         public ReaderType ReaderType { get; set; } = ReaderType.Remote;
 
         public string ContactlessReader { get; set; } = string.Empty;

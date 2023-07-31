@@ -243,14 +243,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
             }
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            if (options.EnableSwagger.GetValueOrDefault(true))
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             var jwtService = new JwtService(options.JWT);
             if (options.ManagementApi.GetValueOrDefault(true))
