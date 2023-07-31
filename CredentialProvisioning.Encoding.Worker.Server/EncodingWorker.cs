@@ -8,11 +8,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class EncodingWorker : WorkerBase<EncodingFragmentTemplateContent>
     {
+        ILogger<EncodingWorker> _logger;
         KeyProvider? _keystore;
 
-        public EncodingWorker(KeyProvider? keystore = null) : base()
+        public EncodingWorker(ILogger<EncodingWorker> logger, KeyProvider keystore) : base()
         {
             _keystore = keystore;
+            _logger = logger;
         }
 
         protected override CredentialContext<EncodingFragmentTemplateContent> CreateCredentialContext(string templateId, EncodingFragmentTemplateContent template, IList<WorkerCredentialBase> credentials)
@@ -22,7 +24,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         protected override CredentialProcess<EncodingFragmentTemplateContent> CreateProcess()
         {
-            return new EncodingProcess(typeof(LLADeviceContext).Assembly);
+            return new EncodingProcess(typeof(LLADeviceContext).Assembly, _logger);
         }
     }
 }

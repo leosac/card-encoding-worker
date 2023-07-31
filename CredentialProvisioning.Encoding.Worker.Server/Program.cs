@@ -3,9 +3,10 @@ using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using System.Reflection;
+using System.CommandLine;
 using System.Security.Claims;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
@@ -16,6 +17,109 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var optionsSetup = new OptionsSetup(builder.Configuration);
+            builder.Services.ConfigureOptions(optionsSetup);
+            builder.Services.AddSignalR();
+
+            var options = new Options();
+            optionsSetup.Configure(options);
+
+            var repositoryOption = new Option<string?>(
+                name: "--template-repository",
+                description: "Folder where template files are located.",
+                getDefaultValue: () => options.TemplateRepository
+            );
+
+            var keyStoreOption = new Option<string?>(
+                name: "--keystore",
+                description: "File key store to load.",
+                getDefaultValue: () => options.KeyStore
+            );
+
+            var runCommand = new Command(
+                name: "--run",
+                description: "Run the worker server"
+            );
+
+            var svcCommand = new Command(
+                name: "--service",
+                description: "Run as a service"
+            );
+
+            var mgtapiOption = new Option<bool?>(
+                name: "--management-api",
+                description: "Enable Worker Management API.",
+                getDefaultValue: () => options.ManagementApi
+            );
+
+            var apikeyOption = new Option<string?>(
+                name: "--api-key",
+                description: "API key. Undefined means unsecure API calls.",
+                getDefaultValue: () => options.APIKey
+            );
+
+            var integritykeyOption = new Option<string?>(
+                name: "--integrity-key",
+                description: "The public key for data integrity verification. Undefined means data integrity is not checked.",
+                getDefaultValue: () => options.DataIntegrityKey
+            );
+
+            var readerTypeOption = new Option<ReaderType>(
+                name: "--reader-type",
+                description: "Type of reader technology. Remote = use readers from a remote client over WebSocket / Local = use local PC/SC reader resources.",
+                getDefaultValue: () => options.ReaderType
+            );
+
+            var contactlessReaderOption = new Option<string>(
+                name: "--reader-contactless",
+                description: "The contactless reader alias/name.",
+                getDefaultValue: () => options.ContactlessReader
+            );
+
+            var samReaderOption = new Option<string>(
+                name: "--reader-sam",
+                description: "The SAM reader alias/name.",
+                getDefaultValue: () => options.SAMReader
+            );
+
+            var svcOption = new Option<bool>(
+                name: "--service",
+                description: "Run as a service",
+                getDefaultValue: () => false
+            );
+
+            var rootCommand = new RootCommand("Leosac Credential Provisioning Encoding Worker");
+            rootCommand.AddGlobalOption(repositoryOption);
+            rootCommand.AddGlobalOption(keyStoreOption);
+            runCommand.AddOption(mgtapiOption);
+            runCommand.AddOption(apikeyOption);
+            runCommand.AddOption(integritykeyOption);
+            runCommand.AddOption(readerTypeOption);
+            runCommand.AddOption(contactlessReaderOption);
+            runCommand.AddOption(samReaderOption);
+            runCommand.AddOption(svcOption);
+            runCommand.SetHandler((o) =>
+            {
+                if (o.RunAsService)
+                {
+                    if (OperatingSystem.IsWindows())
+                    {
+                        builder.Host.UseWindowsService();
+                    }
+                    else
+                    {
+                        builder.Host.UseSystemd();
+                    }
+                }
+
+                RunWorkerServer(builder, options);
+            }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption, svcOption));
+            rootCommand.AddCommand(runCommand);
+            rootCommand.Invoke(args);
+        }
+
+        private static void RunWorkerServer(WebApplicationBuilder builder, Options options)
+        {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -66,12 +170,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 options.SerializerOptions.TypeInfoResolver = new PolymorphicTypeResolver();
             });
 
-            var optionsSetup = new OptionsSetup(builder.Configuration, args);
-            builder.Services.ConfigureOptions(optionsSetup);
-            builder.Services.AddSignalR();
-
-            var options = new Options();
-            optionsSetup.Configure(options);
             if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
             {
                 builder.Services.AddAuthentication(o =>
@@ -115,7 +213,17 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 keystore = new KeyProvider();
             }
             builder.Services.AddSingleton(keystore);
-            var worker = new EncodingWorker(keystore);
+            builder.Services.AddSingleton<EncodingWorker>();
+            var integrity = new WorkerCredentialDataIntegrity();
+            if (!string.IsNullOrEmpty(options.DataIntegrityKey))
+            {
+                integrity.LoadPublicKey(options.DataIntegrityKey);
+            }
+            builder.Services.AddSingleton(integrity);
+
+            var app = builder.Build();
+
+            var worker = app.Services.GetService<EncodingWorker>();
             if (!string.IsNullOrEmpty(options.TemplateRepository))
             {
                 if (!Directory.Exists(options.TemplateRepository))
@@ -134,15 +242,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     }
                 }
             }
-            builder.Services.AddSingleton(worker);
-            var integrity = new WorkerCredentialDataIntegrity();
-            if (!string.IsNullOrEmpty(options.DataIntegrityKey))
-            {
-                integrity.LoadPublicKey(options.DataIntegrityKey);
-            }
-            builder.Services.AddSingleton(integrity);
-
-            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -1,7 +1,6 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
 using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Worker;
-using log4net;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -9,18 +8,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class EncodingProcess : CredentialProcess<EncodingFragmentTemplateContent>
     {
-        static readonly ILog logger = LogManager.GetLogger(typeof(EncodingProcess));
-
-        Assembly assembly;
+        ILogger? _logger;
+        Assembly _assembly;
 
         public EncodingProcess()
         {
-            this.assembly = Assembly.GetCallingAssembly();
+            _assembly = Assembly.GetCallingAssembly();
         }
 
-        public EncodingProcess(Assembly assembly)
+        public EncodingProcess(Assembly assembly, ILogger logger)
         {
-            this.assembly = assembly;
+            _assembly = assembly;
+            _logger = logger;
         }
 
         public override async Task Run(DeviceContext context)
@@ -37,7 +36,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                         foreach (var credential in CredentialContext.Credentials)
                         {
-                            logger.Info(string.Format("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId));
+                            _logger?.LogInformation("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId);
 
                             var cardCtx = await deviceCtx.PrepareCard(credential);
                             if (cardCtx == null)
@@ -91,7 +90,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             if (actionProp != null)
             {
-                logger.Info(string.Format("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label));
+                _logger?.LogInformation("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label);
 
                 try
                 {
@@ -102,7 +101,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         action.Run(encodingCtx, cardCtx);
                         CreateAndRunServices(actionProp.ServicesAfter, cardCtx, action);
 
-                        logger.Info("Action passed, running OnSuccess trigger");
+                        _logger?.LogInformation("Action passed, running OnSuccess trigger");
                         ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
                     }
                     else
@@ -112,7 +111,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
                 catch (EncodingException ex)
                 {
-                    logger.Info("Action failed, running OnFailure trigger");
+                    _logger?.LogInformation("Action failed, running OnFailure trigger");
                     ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
                     await OnProcessCompleted(ProvisioningState.Failed);
                 }
@@ -148,14 +147,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         private T1? CreateMiddlewareImpl<T1, T2>(Type baseGeneric, T2 properties) where T1 : class
         {
             var baseType = baseGeneric.MakeGenericType(properties.GetType());
-            var type = this.assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
+            var type = _assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
             if (type != null)
             {
                 return Activator.CreateInstance(type, properties) as T1;
             }
             else
             {
-                logger.Error(string.Format("Cannot found dedicated {0} with properties type `{1}` on assembly `{2}`.", nameof(T1), properties.GetType().FullName, this.assembly.FullName));
+                _logger?.LogError("Cannot found dedicated {0} with properties type `{1}` on assembly `{2}`.", nameof(T1), properties.GetType().FullName, _assembly.FullName);
                 return default(T1);
             }
         }

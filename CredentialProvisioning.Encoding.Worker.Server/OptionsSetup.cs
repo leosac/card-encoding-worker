@@ -1,5 +1,6 @@
-﻿using CommandLine;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using System.CommandLine;
+using System.IO;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -7,12 +8,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
     {
         private const string SectionName = "Options";
         private readonly IConfiguration _configuration;
-        private readonly string[]? _args;
 
-        public OptionsSetup(IConfiguration configuration, string[]? args = null)
+        public OptionsSetup(IConfiguration configuration)
         {
             _configuration = configuration;
-            _args = args;
         }
 
 
@@ -21,12 +20,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             var section = _configuration.GetSection(SectionName);
             if (section.Exists())
                 section.Bind(options);
-
-            if (_args != null)
-            {
-                // Override options from config file by options from command lines
-                Parser.Default.ParseArguments(() => { return options; }, _args);
-            }
         }
     }
 }

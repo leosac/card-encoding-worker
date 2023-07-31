@@ -1,0 +1,19 @@
+﻿<Include xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <?define Manufacturer = "Leosac" ?>
+  <?define ProductName = "Leosac Credential Provisioning Encoding Worker" ?>
+  <?define Version = "0.1.0.0" ?>
+  <?define AboutURL = "https://www.leosac.com" ?>
+  <?define SupportURL = "https://www.leosac.com" ?>
+  <?define UpdatesURL = "https://www.leosac.com" ?>
+  <?define ServiceName = "Leosac.EncodingWorker" ?>
+
+  <?if $(var.Platform) = "x64" ?>
+  <?define LLAMSMPath = "packages\liblogicalaccess-swig\msm\LibLogicalAccessNetCEMerge-x64.msm" ?>
+  <?else?>
+  <?define LLAMSMPath = "packages\liblogicalaccess-swig\msm\LibLogicalAccessNetCEMerge-x86.msm" ?>
+  <?endif?>
+
+  <?define BaseGuid = "CD2EAFB1-F103-420F-B69A-8A927F97EA" ?>
+  <?define CompInstallRegDir = "$(var.BaseGuid)10" ?>
+
+</Include>
