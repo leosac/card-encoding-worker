@@ -111,7 +111,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
                 catch (EncodingException ex)
                 {
-                    _logger?.LogInformation("Action failed, running OnFailure trigger");
+                    _logger?.LogInformation("Action failed with error `{0}`, running OnFailure trigger", ex.Message);
                     ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
                     await OnProcessCompleted(ProvisioningState.Failed);
                 }

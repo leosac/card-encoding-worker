@@ -4,6 +4,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
 {
     public interface IReaderClient
     {
+        Task NotifyError(string processId, string? message);
+
         Task NotifyProcessCompleted(string processId, ProvisioningState state);
 
         Task<bool> ConnectToReader(string alias);

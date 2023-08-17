@@ -13,12 +13,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class ReaderHub : Hub<IReaderClient>, IReaderHub
     {
+        protected readonly ILogger<ReaderHub> _logger;
         protected readonly EncodingWorker _worker;
         protected readonly WorkerCredentialDataIntegrity _integrity;
         protected readonly IOptions<Options> _options;
 
-        public ReaderHub(EncodingWorker worker, WorkerCredentialDataIntegrity integrity, IOptions<Options> options)
+        public ReaderHub(ILogger<ReaderHub> logger, EncodingWorker worker, WorkerCredentialDataIntegrity integrity, IOptions<Options> options)
         {
+            _logger = logger;
             _worker = worker;
             _integrity = integrity;
             _options = options;
@@ -79,8 +81,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             };
             process.Run(clDevice).ContinueWith(failedTask =>
             {
-                //caller.NotifyError(failedTask.Exception.Message);
-                Console.WriteLine(failedTask.Exception.Message);
+                _logger.LogInformation(string.Format("Encoding Process failured: {0}", failedTask.Exception?.Message));
+                caller.NotifyError(process.Id, failedTask.Exception?.Message);
             }, TaskContinuationOptions.OnlyOnFaulted);
             return Task.FromResult(process.Id);
         }
