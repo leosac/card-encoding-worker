@@ -86,6 +86,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return changes;
         }
 
+        private async Task HandleActions(EncodingActionProperties[] actionProps, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
+        {
+            foreach (var actionProp in actionProps)
+            {
+                await HandleAction(actionProp, encodingCtx, cardCtx);
+            }
+        }
+
         private async Task HandleAction(EncodingActionProperties? actionProp, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             if (actionProp != null)
@@ -102,7 +110,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         CreateAndRunServices(actionProp.ServicesAfter, cardCtx, action);
 
                         _logger?.LogInformation("Action passed, running OnSuccess trigger");
-                        ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
+                        if (actionProp.OnSuccess != null)
+                        {
+                            await ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
+                        }
                     }
                     else
                     {
@@ -112,7 +123,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 catch (EncodingException ex)
                 {
                     _logger?.LogInformation("Action failed with error `{0}`, running OnFailure trigger", ex.Message);
-                    ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
+                    if (actionProp.OnFailure == null)
+                    {
+                        actionProp.OnFailure = new EncodingActionProperties.ActionTrigger() { Throw = true };
+                    }
+                    await ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
                     await OnProcessCompleted(ProvisioningState.Failed);
                 }
             }
@@ -159,11 +174,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private void ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, EncodingException? ex = null)
+        private async Task ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, EncodingException? ex = null)
         {
-            if (trigger.CallAction != null)
+            if (trigger.CallActions != null)
             {
-                HandleAction(trigger.CallAction, encodingCtx, cardCtx);
+                await HandleActions(trigger.CallActions, encodingCtx, cardCtx);
             }
             if (trigger.Throw)
             {

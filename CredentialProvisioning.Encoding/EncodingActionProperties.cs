@@ -21,7 +21,7 @@ namespace Leosac.CredentialProvisioning.Encoding
             /// <summary>
             /// The following action to execute.
             /// </summary>
-            public EncodingActionProperties? CallAction { get; set; }
+            public EncodingActionProperties[]? CallActions { get; set; }
 
             /// <summary>
             /// True to throw an exception and end the fragment production, false otherwise.
@@ -63,12 +63,12 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// <summary>
         /// The action to trigger on action execution success.
         /// </summary>
-        public ActionTrigger OnSuccess { get; set; } = new ActionTrigger();
+        public ActionTrigger? OnSuccess { get; set; } = new ActionTrigger();
 
         /// <summary>
         /// The action to trigger on action execution failure.
         /// </summary>
-        public ActionTrigger OnFailure { get; set;  } = new ActionTrigger() { Throw = true };
+        public ActionTrigger? OnFailure { get; set;  } = new ActionTrigger() { Throw = true };
 
         /// <summary>
         /// Get all encoding actions properties types from the executing assemblyss.
