@@ -43,67 +43,67 @@
         /// <summary>
         /// Key 0
         /// </summary>
-        AR_KEY0,
+        AR_KEY0 = 0,
         /// <summary>
         /// Key 1
         /// </summary>
-        AR_KEY1,
+        AR_KEY1 = 1,
         /// <summary>
         /// Key 2
         /// </summary>
-        AR_KEY2,
+        AR_KEY2 = 2,
         /// <summary>
         /// Key 3
         /// </summary>
-        AR_KEY3,
+        AR_KEY3 = 3,
         /// <summary>
         /// Key 4
         /// </summary>
-        AR_KEY4,
+        AR_KEY4 = 4,
         /// <summary>
         /// Key 5
         /// </summary>
-        AR_KEY5,
+        AR_KEY5 = 5,
         /// <summary>
         /// Key 6
         /// </summary>
-        AR_KEY6,
+        AR_KEY6 = 6,
         /// <summary>
         /// Key 7
         /// </summary>
-        AR_KEY7,
+        AR_KEY7 = 7,
         /// <summary>
         /// Key 8
         /// </summary>
-        AR_KEY8,
+        AR_KEY8 = 8,
         /// <summary>
         /// Key 9
         /// </summary>
-        AR_KEY9,
+        AR_KEY9 = 9,
         /// <summary>
         /// Key 10
         /// </summary>
-        AR_KEY10,
+        AR_KEY10 = 10,
         /// <summary>
         /// Key 11
         /// </summary>
-        AR_KEY11,
+        AR_KEY11 = 11,
         /// <summary>
         /// Key 12
         /// </summary>
-        AR_KEY12,
+        AR_KEY12 = 12,
         /// <summary>
         /// Key 13
         /// </summary>
-        AR_KEY13,
+        AR_KEY13 = 13,
         /// <summary>
         /// No key required
         /// </summary>
-        AR_FREE,
+        AR_FREE = 14,
         /// <summary>
         /// Access right disabled
         /// </summary>
-        AR_NEVER
+        AR_NEVER = 15
     }
 
     /// <summary>
@@ -182,7 +182,7 @@
     /// <summary>
     /// DESFire File Access Rights
     /// </summary>
-    public readonly struct DESFireAccessRights
+    public struct DESFireAccessRights
     {
         /// <summary>
         /// Constructor.
@@ -214,18 +214,18 @@
         /// <summary>
         /// Read access
         /// </summary>
-        public TaskAccessRights ReadAccess { get; }
+        public TaskAccessRights ReadAccess { get; set; }
         /// <summary>
         /// Write access
         /// </summary>
-        public TaskAccessRights WriteAccess { get; }
+        public TaskAccessRights WriteAccess { get; set; }
         /// <summary>
         /// Read and Write access
         /// </summary>
-        public TaskAccessRights ReadAndWriteAccess { get; }
+        public TaskAccessRights ReadAndWriteAccess { get; set; }
         /// <summary>
         /// Access Rights change access
         /// </summary>
-        public TaskAccessRights ChangeAccess { get; }
+        public TaskAccessRights ChangeAccess { get; set; }
     }
 }
