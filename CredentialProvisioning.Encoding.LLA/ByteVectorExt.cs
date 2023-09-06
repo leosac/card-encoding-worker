@@ -4,12 +4,7 @@
     {
         public static LibLogicalAccess.ByteVector ToByteVector(this string str)
         {
-            throw new NotImplementedException();
-        }
-
-        public static string ToString(this LibLogicalAccess.ByteVector v)
-        {
-            throw new NotImplementedException();
+            return new LibLogicalAccess.ByteVector(System.Text.Encoding.Default.GetBytes(str));
         }
     }
 }
