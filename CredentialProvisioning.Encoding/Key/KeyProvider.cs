@@ -53,6 +53,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
         /// <returns>The mmatching key, null otherwise.</returns>
         public CredentialKey? Get(KeyReference keyRef)
         {
+            if (keyRef == null)
+                return null;
+
             return Get(Guid.Parse(keyRef.KeyId));
         }
 

@@ -1,4 +1,5 @@
 ﻿using Leosac.CredentialProvisioning.Core.Models;
+using Leosac.CredentialProvisioning.Encoding.Key;
 
 namespace Leosac.CredentialProvisioning.Encoding
 {
@@ -20,7 +21,7 @@ namespace Leosac.CredentialProvisioning.Encoding
             /// <summary>
             /// The SAM unlock key details.
             /// </summary>
-            public CredentialKey? UnlockKey { get; set; }
+            public KeyReference? UnlockKey { get; set; }
         }
 
         /// <summary>

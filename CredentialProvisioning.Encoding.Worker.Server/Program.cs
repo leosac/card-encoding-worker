@@ -3,12 +3,11 @@ using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using System.CommandLine;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -179,6 +178,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
             {
                 options.SerializerOptions.TypeInfoResolver = new PolymorphicTypeResolver();
+                options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
             if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
@@ -217,7 +217,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     throw new Exception("The Key Store file doesn't exist.");
                 }
-                keystore = JsonConvert.DeserializeObject<KeyProvider>(File.ReadAllText(options.KeyStore));
+                keystore = Newtonsoft.Json.JsonConvert.DeserializeObject<KeyProvider>(File.ReadAllText(options.KeyStore));
             }
             if (keystore == null)
             {
@@ -246,7 +246,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 foreach (var file in files)
                 {
                     var id = Path.GetFileNameWithoutExtension(file);
-                    var content = JsonConvert.DeserializeObject<EncodingFragmentTemplateContent>(File.ReadAllText(file));
+                    var content = Newtonsoft.Json.JsonConvert.DeserializeObject<EncodingFragmentTemplateContent>(File.ReadAllText(file));
                     if (content != null)
                     {
                         worker.LoadTemplate(id, content, ((DateTimeOffset)File.GetLastWriteTimeUtc(file)).ToUnixTimeSeconds());

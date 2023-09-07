@@ -4,6 +4,7 @@ using Leosac.CredentialProvisioning.Encoding.Worker.Contracts;
 using Leosac.CredentialProvisioning.Encoding.Worker.LLA;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Leosac.CredentialProvisioning.Worker;
+using LibLogicalAccess;
 using LibLogicalAccess.Card;
 using LibLogicalAccess.Reader;
 using Microsoft.AspNetCore.SignalR;
@@ -71,7 +72,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     isoConfig.setCheckSAMReaderIsAvailable(false);
                     isoConfig.setAutoConnectToSAMReader(true);
-                    isoConfig.setSAMUnlockKey(process.CredentialContext.TemplateContent.SAM.UnlockKey?.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
+                    var unlockkey = _worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey);
+                    if (unlockkey == null)
+                    {
+                        throw new EncodingException("Cannot resolve the internal unlock key reference.");
+                    }
+                    isoConfig.setSAMUnlockKey(unlockkey.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
                     clDevice.ReaderUnit.setConfiguration(isoConfig);
                 }
             }

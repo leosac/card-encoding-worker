@@ -9,17 +9,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
     public class EncodingWorker : WorkerBase<EncodingFragmentTemplateContent>
     {
         ILogger<EncodingWorker> _logger;
-        KeyProvider? _keystore;
 
         public EncodingWorker(ILogger<EncodingWorker> logger, KeyProvider keystore) : base()
         {
-            _keystore = keystore;
+            KeyStore = keystore;
             _logger = logger;
         }
 
+        public KeyProvider KeyStore { get; private set; }
+
         protected override CredentialContext<EncodingFragmentTemplateContent> CreateCredentialContext(string templateId, EncodingFragmentTemplateContent template, IList<WorkerCredentialBase> credentials)
         {
-            return new EncodingContext() { TemplateId = templateId, TemplateContent = template, Keys = _keystore, Credentials = credentials.ToArray() };
+            return new EncodingContext() { TemplateId = templateId, TemplateContent = template, Keys = KeyStore, Credentials = credentials.ToArray() };
         }
 
         protected override CredentialProcess<EncodingFragmentTemplateContent> CreateProcess()
