@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
 using System.CommandLine;
 using System.Security.Claims;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
@@ -178,7 +179,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
             {
                 options.SerializerOptions.TypeInfoResolver = new PolymorphicTypeResolver();
-                options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
 
             if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
