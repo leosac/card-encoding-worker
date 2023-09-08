@@ -1,4 +1,5 @@
-﻿using LibLogicalAccess;
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
+using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
@@ -9,7 +10,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 
         }
 
-        protected override void Run(CardContext cardCtx, Format format)
+        protected override void Run(CardContext cardCtx, KeyProvider? keystore, Format format)
         {
             SyncFormatWithCredentialData(format, cardCtx.Credential?.Data);
             var data = format.getLinearData();

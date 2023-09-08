@@ -1,5 +1,6 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
 using Leosac.CredentialProvisioning.Core.Models;
+using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Worker;
 using System.Diagnostics;
 using System.Reflection;
@@ -105,9 +106,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     var action = CreateAction(actionProp);
                     if (action != null)
                     {
-                        CreateAndRunServices(actionProp.ServicesBefore, cardCtx, action);
+                        CreateAndRunServices(actionProp.ServicesBefore, cardCtx, (encodingCtx as EncodingContext)?.Keys, action);
                         action.Run(encodingCtx, cardCtx);
-                        CreateAndRunServices(actionProp.ServicesAfter, cardCtx, action);
+                        CreateAndRunServices(actionProp.ServicesAfter, cardCtx, (encodingCtx as EncodingContext)?.Keys, action);
 
                         _logger?.LogInformation("Action passed, running OnSuccess trigger");
                         if (actionProp.OnSuccess != null)
@@ -133,7 +134,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private void CreateAndRunServices(IEnumerable<EncodingServiceProperties>? servicesProp, CardContext cardCtx, EncodingAction currentAction)
+        private void CreateAndRunServices(IEnumerable<EncodingServiceProperties>? servicesProp, CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction)
         {
             if (servicesProp != null)
             {
@@ -142,7 +143,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     var service = CreateEncodingService(serviceProp);
                     if (service != null)
                     {
-                        service.Run(cardCtx, currentAction);
+                        service.Run(cardCtx, keystore, currentAction);
                     }
                 }
             }

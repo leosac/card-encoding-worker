@@ -13,7 +13,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
         {
             if (Properties.DefaultKey != null)
             {
-                var key = encodingCtx.Keys?.Get(Properties.DefaultKey);
+                var key = encodingCtx.Keys?.Get(Properties.DefaultKey, cardCtx.Credential?.VolatileKeys);
                 if (key == null)
                 {
                     throw new EncodingException("Cannot resolve the internal key reference.");

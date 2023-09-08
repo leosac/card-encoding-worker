@@ -1,4 +1,5 @@
-﻿using Leosac.CredentialProvisioning.Encoding.Services;
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
+using Leosac.CredentialProvisioning.Encoding.Services;
 using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
@@ -10,7 +11,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 
         }
 
-        public override void Run(CardContext cardCtx, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction)
         {
             string? csn = null;
             if (cardCtx is LLACardContext llacardCtx)

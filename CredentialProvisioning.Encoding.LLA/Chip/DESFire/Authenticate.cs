@@ -15,7 +15,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             {
                 throw new EncodingException("A key must be defined.");
             }
-            var key = encodingCtx.Keys?.Get(Properties.Key);
+            var key = encodingCtx.Keys?.Get(Properties.Key, cardCtx.Credential?.VolatileKeys);
             if (key == null)
             {
                 throw new EncodingException("Cannot resolve the internal key reference.");

@@ -37,12 +37,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
         /// Get a key from the list.
         /// </summary>
         /// <param name="keyId">The key identifier to look for.</param>
+        /// <param name="volatileKeys">Optional volatile keys.</param>
         /// <returns>The matching key, null otherwise.</returns>
-        public CredentialKey? Get(Guid keyId)
+        public CredentialKey? Get(Guid keyId, IEnumerable<CredentialKey>? volatileKeys = null)
         {
             lock (Items)
             {
-                return Items.FirstOrDefault(i => i.Id == keyId);
+                var key = Items.FirstOrDefault(i => i.Id == keyId);
+                if (key == null && volatileKeys != null)
+                {
+                    key = volatileKeys.FirstOrDefault(k => k.Id == keyId);
+                }
+                return key;
             }
         }
 
@@ -50,8 +56,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
         /// Get a key from th list.
         /// </summary>
         /// <param name="keyRef">The key reference.</param>
-        /// <returns>The mmatching key, null otherwise.</returns>
-        public CredentialKey? Get(KeyReference keyRef)
+        /// <param name="volatileKeys">Optional volatile keys.</param>
+        /// <returns>The matching key, null otherwise.</returns>
+        public CredentialKey? Get(KeyReference keyRef, IEnumerable<CredentialKey>? volatileKeys = null)
         {
             if (keyRef == null)
                 return null;

@@ -1,4 +1,6 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
+
+namespace Leosac.CredentialProvisioning.Encoding
 {
     /// <summary>
     /// The base class for encoding service implementation.
@@ -9,8 +11,9 @@
         /// Run the encoding service.
         /// </summary>
         /// <param name="cardCtx">The card context.</param>
+        /// <param name="keystore">The key provider.</param>
         /// <param name="currentAction">The current encoding action from where the service run.</param>
-        public abstract void Run(CardContext cardCtx, EncodingAction currentAction);
+        public abstract void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction);
     }
 
     /// <summary>
