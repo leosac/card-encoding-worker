@@ -10,7 +10,7 @@
         /// </summary>
         public ReadData()
         {
-            EncryptionMode = EncryptionMode.CM_ENCRYPT;
+            EncryptionMode = EncryptionMode.Encrypt;
         }
 
         /// <summary>

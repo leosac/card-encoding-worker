@@ -11,7 +11,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 
         public override void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtxdeviceCtx)
         {
-            if (Properties.FidSupport == Encoding.Chip.DESFire.FidSupport.FIDS_ISO_FID)
+            if (Properties.FidSupport == Encoding.Chip.DESFire.FidSupport.Enabled)
                 cmd.createApplication(Properties.AID, (DESFireKeySettings)Properties.KeySettings, Properties.MaxNbKeys, (DESFireKeyType)Properties.KeyType, (FidSupport)Properties.FidSupport, Properties.IsoFID.GetValueOrDefault(0), Properties.IsoDFName?.ToByteVector());
             else
                 cmd.createApplication(Properties.AID, (DESFireKeySettings)Properties.KeySettings, Properties.MaxNbKeys, (DESFireKeyType)Properties.KeyType, (FidSupport)Properties.FidSupport);

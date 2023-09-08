@@ -10,8 +10,8 @@
         /// </summary>
         public CreateApplicationEV1()
         {
-            KeyType = DESFireKeyType.DF_KEY_AES;
-            FidSupport = FidSupport.FIDS_NO_ISO_FID;
+            KeyType = DESFireKeyType.AES128;
+            FidSupport = FidSupport.Disabled;
         }
 
         /// <summary>
