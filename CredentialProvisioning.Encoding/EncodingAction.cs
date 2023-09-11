@@ -13,6 +13,8 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// <param name="encodingCtx">The encoding context.</param>
         /// <param name="cardCtx">The card context.</param>
         public abstract void Run(CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx);
+
+        public abstract EncodingActionProperties GetProperties();
     }
 
     /// <summary>
@@ -34,5 +36,10 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// The associated encoding action properties.
         /// </summary>
         public T Properties { get; set; } = new T();
+
+        public override EncodingActionProperties GetProperties()
+        {
+            return Properties;
+        }
     }
 }
