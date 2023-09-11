@@ -5,7 +5,7 @@ namespace Leosac.CredentialProvisioning.Encoding
     /// <summary>
     /// Base class for encoding service properties.
     /// </summary>
-    public abstract class EncodingServiceProperties
+    public abstract class EncodingServiceProperties : ICloneable
     {
         /// <summary>
         /// Discriminator for Encoding Service Properties serialization
@@ -21,6 +21,15 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// An optional prefix to apply to field names of the service.
         /// </summary>
         public string? FieldNamePrefix { get; set; }
+
+        /// <summary>
+        /// Clone the encoding service properties.
+        /// </summary>
+        /// <returns>The cloned object.</returns>
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
 
         /// <summary>
         /// Get all encoding services properties types from the executing assemblyss.

@@ -6,7 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding
     /// <summary>
     /// Base class for Encoding Action Properties
     /// </summary>
-    public abstract class EncodingActionProperties
+    public abstract class EncodingActionProperties : ICloneable
     {
         /// <summary>
         /// Discriminator for Encoding Action Properties serialization
@@ -68,7 +68,16 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// <summary>
         /// The action to trigger on action execution failure.
         /// </summary>
-        public ActionTrigger? OnFailure { get; set;  } = new ActionTrigger() { Throw = true };
+        public ActionTrigger? OnFailure { get; set; } = new ActionTrigger() { Throw = true };
+
+        /// <summary>
+        /// Clone the encoding service properties.
+        /// </summary>
+        /// <returns>The cloned object.</returns>
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
 
         /// <summary>
         /// Get all encoding actions properties types from the executing assemblyss.

@@ -160,13 +160,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return CreateMiddlewareImpl<EncodingService, EncodingServiceProperties>(typeof(EncodingService<>), serviceProp);
         }
 
-        private T1? CreateMiddlewareImpl<T1, T2>(Type baseGeneric, T2 properties) where T1 : class
+        private T1? CreateMiddlewareImpl<T1, T2>(Type baseGeneric, T2 properties) where T1 : class where T2 : class, ICloneable
         {
-            var baseType = baseGeneric.MakeGenericType(properties.GetType());
+            var cp = properties.Clone() as T2;
+            var baseType = baseGeneric.MakeGenericType(cp.GetType());
             var type = _assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
             if (type != null)
             {
-                return Activator.CreateInstance(type, properties) as T1;
+                return Activator.CreateInstance(type, cp) as T1;
             }
             else
             {
