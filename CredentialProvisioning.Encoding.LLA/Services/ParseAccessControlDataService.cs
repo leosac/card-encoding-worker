@@ -44,7 +44,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     }
                     if (encoding == null)
                     {
-                        encoding = System.Text.Encoding.Default;
+                        encoding = System.Text.Encoding.UTF8;
                     }
                     v = encoding.GetString(sf.getRawValue().ToArray());
                 }

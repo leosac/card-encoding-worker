@@ -35,6 +35,14 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
 
             if (key != null)
             {
+                if (key is DESFireKey dkey)
+                {
+                    if (k.Version != null)
+                    {
+                        dkey.setKeyVersion(k.Version.Value);
+                    }
+                }
+
                 if (k.KeyStoreType == "hsm")
                 {
                     var ks = new PKCSKeyStorage();
