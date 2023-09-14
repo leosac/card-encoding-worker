@@ -72,6 +72,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     isoConfig.setCheckSAMReaderIsAvailable(false);
                     isoConfig.setAutoConnectToSAMReader(true);
+                    isoConfig.setSAMType("SAM_AV2"); // TODO: support additional SAM technologies
                     var unlockkey = _worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey);
                     if (unlockkey == null)
                     {

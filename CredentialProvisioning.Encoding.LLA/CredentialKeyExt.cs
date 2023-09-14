@@ -56,6 +56,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                     byte slot = 0;
                     byte.TryParse(k.KeyStoreReference, out slot);
                     ks.setKeySlot(slot);
+                    key.setKeyStorage(ks);
                 }
                 else
                 {
