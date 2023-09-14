@@ -35,7 +35,18 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 var field = format.getFieldFromName(fieldName);
                 if (field is StringDataField sf)
                 {
-                    v = sf.getValue();
+                    //v = sf.getValue();
+                    System.Text.Encoding? encoding = null;
+                    var charset = sf.getCharset();
+                    if (!string.IsNullOrEmpty(charset))
+                    {
+                        encoding = System.Text.Encoding.GetEncoding(charset);
+                    }
+                    if (encoding == null)
+                    {
+                        encoding = System.Text.Encoding.Default;
+                    }
+                    v = encoding.GetString(sf.getRawValue().ToArray());
                 }
                 else if (field is NumberDataField nf)
                 {

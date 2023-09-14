@@ -1,5 +1,6 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 using LibLogicalAccess;
+using System.Text;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
@@ -39,7 +40,18 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                         var field = format.getFieldFromName(fieldName);
                         if (field is StringDataField sf)
                         {
-                            sf.setValue(v);
+                            //sf.setValue(v);
+                            System.Text.Encoding? encoding = null;
+                            var charset = sf.getCharset();
+                            if (!string.IsNullOrEmpty(charset))
+                            {
+                                encoding = System.Text.Encoding.GetEncoding(charset);
+                            }
+                            if (encoding == null)
+                            {
+                                encoding = System.Text.Encoding.Default;
+                            }
+                            sf.setRawValue(new ByteVector(encoding.GetBytes(v)));
                         }
                         else if (field is NumberDataField nf)
                         {
