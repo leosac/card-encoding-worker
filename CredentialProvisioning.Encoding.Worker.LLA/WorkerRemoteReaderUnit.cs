@@ -16,6 +16,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
         bool _disposed;
         bool _waitRemoval;
         string? _cardContext;
+        LibLogicalAccess.Chip? _cachedChip;
 
         public WorkerRemoteReaderUnit(IReaderClient readerClient, string alias, bool waitRemoval = true) : base("")
         {
@@ -23,6 +24,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             Alias = alias;
             _waitRemoval = waitRemoval;
             _dataTransport = new WorkerRemoteDataTransport(this);
+            _cachedChip = null;
         }
 
         public string Alias { get; private set; }
@@ -34,9 +36,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 
         public override bool connectToReader()
         {
-            base.connectToSAM();
-            // Do nothing else, automatically managed by the client
-            return true;
+            var task = _readerClient.ConnectToReader(Alias);
+            task.Wait();
+            if (task.Result)
+            {
+                base.connectToSAM();
+            }
+            return task.Result;
         }
 
         public override bool waitInsertion(uint maxwait)
@@ -44,14 +50,15 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             var inserted = false;
             Task.Run(async () =>
             {
+                // limit communication to the unique Reader session here ?
+                // We want to create appropriate "reader proxy" on LLA at that time, based on the reader name...
+                // We also copy the SAM reader unit and SAM chip instances from base to proxy for now until next release of LLA
+                var samru = getSAMReaderUnit();
+                var samchip = getSAMChip();
+
                 inserted = await _readerClient.WaitCardInsertion(Alias, maxwait);
                 if (inserted)
                 {
-                    // limit communication to the unique Reader session here ?
-                    // We want to create appropriate "reader proxy" on LLA at that time, based on the reader name...
-                    // We also copy the SAM reader unit and SAM chip instances from base to proxy for now until next release of LLA
-                    var samru = getSAMReaderUnit();
-                    var samchip = getSAMChip();
                     setName(getConnectedName());
                     if (samru != null)
                     {
@@ -95,6 +102,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             {
                 _cardContext = null;
             }
+            if (_cachedChip != null)
+            {
+                _cachedChip = null;
+            }
         }
 
         public byte[] sendRawCmd(byte[] data)
@@ -118,6 +129,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
         {
             base.disconnectFromSAM();
             // Do nothing else, automatically managed by the client
+            var task = _readerClient.DisconnectFromReader(Alias);
+            task.Wait();
         }
 
         public override string getName()
@@ -174,17 +187,21 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 
         public override LibLogicalAccess.Chip getSingleChip()
         {
-            if (_cardContext == null)
-                return null;
+            if (_cachedChip == null)
+            {
+                if (_cardContext == null)
+                    return null;
 
-            var ctTask = _readerClient.GetCardType(Alias, _cardContext);
-            ctTask.Wait();
-            var ct = ctTask.Result;
-            var csnTask = _readerClient.GetChipIdentifier(Alias, _cardContext);
-            csnTask.Wait();
-            var csn = csnTask.Result;
+                var ctTask = _readerClient.GetCardType(Alias, _cardContext);
+                ctTask.Wait();
+                var ct = ctTask.Result;
+                var csnTask = _readerClient.GetChipIdentifier(Alias, _cardContext);
+                csnTask.Wait();
+                var csn = csnTask.Result;
 
-            return createChip(ct, new LibLogicalAccess.ByteVector(Convert.FromHexString(csn)));
+                _cachedChip = createChip(ct, new LibLogicalAccess.ByteVector(Convert.FromHexString(csn)));
+            }
+            return _cachedChip;
         }
 
         public override void Dispose()
