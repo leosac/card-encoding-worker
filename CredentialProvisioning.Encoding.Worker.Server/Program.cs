@@ -39,7 +39,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             var optionsSetup = new OptionsSetup(builder.Configuration);
             builder.Services.ConfigureOptions(optionsSetup);
-            builder.Services.AddSignalR();
+            builder.Services.AddSignalR().AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.Converters
+                   .Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
 
             builder.Host.UseWindowsService();
             builder.Host.UseSystemd();
