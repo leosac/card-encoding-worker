@@ -21,5 +21,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
         /// The new key.
         /// </summary>
         public KeyReference? Key { get; set; }
+
+        /// <summary>
+        /// The old key. Should only be required if not authenticated with before.
+        /// </summary>
+        public KeyReference? OldKey { get; set; }
     }
 }

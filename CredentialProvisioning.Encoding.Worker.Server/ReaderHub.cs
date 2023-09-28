@@ -92,7 +92,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             };
             process.Run(clDevice).ContinueWith(failedTask =>
             {
-                _logger.LogInformation(string.Format("Encoding Process failured: {0}", failedTask.Exception?.Message));
+                _logger.LogInformation(string.Format("Encoding Process failure: {0}", failedTask.Exception?.Message));
                 caller.NotifyError(process.Id, failedTask.Exception?.Message);
             }, TaskContinuationOptions.OnlyOnFaulted);
             return Task.FromResult(process.Id);

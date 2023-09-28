@@ -25,6 +25,27 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             {
                 throw new EncodingException("The key must be of type DESFire.");
             }
+
+            if (Properties.OldKey != null)
+            {
+                var oldkey = encodingCtx.Keys?.Get(Properties.OldKey, cardCtx.Credential?.VolatileKeys);
+                if (key == null)
+                {
+                    throw new EncodingException("Cannot resolve the internal old key reference.");
+                }
+                var desfireOldKey = oldkey.CreateKey(cardCtx, Properties.OldKey?.Diversification) as DESFireKey;
+                if (desfireKey == null)
+                {
+                    throw new EncodingException("The old key must be of type DESFire.");
+                }
+
+                var crypto = (cmd.getChip() as DESFireEV1Chip)?.getCrypto();
+                if (crypto != null)
+                {
+                    crypto.setKey(crypto.d_currentAid, 0, Properties.KeyNo, desfireOldKey);
+                }
+            }
+
             cmd.changeKey(Properties.KeyNo, desfireKey);
         }
     }
