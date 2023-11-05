@@ -168,7 +168,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                                 Id = "Bearer"
                             }
                         },
-                        new string[] { }
+                        Array.Empty<string>()
                     }
                 });
 
@@ -224,10 +224,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
                 keystore = Newtonsoft.Json.JsonConvert.DeserializeObject<KeyProvider>(File.ReadAllText(options.KeyStore));
             }
-            if (keystore == null)
-            {
-                keystore = new KeyProvider();
-            }
+            keystore ??= new KeyProvider();
             builder.Services.AddSingleton(keystore);
             builder.Services.AddSingleton<EncodingWorker>();
             var integrity = new WorkerCredentialDataIntegrity();
