@@ -11,8 +11,9 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// <summary>
         /// Initialize the device context.
         /// </summary>
+        /// <param name="cardType">Force the card type</param>
         /// <returns>The executing task which returns true on initialization success, false otherwise.</returns>
-        public abstract Task<bool> Initialize();
+        public abstract Task<bool> Initialize(string? cardType = null);
 
         /// <summary>
         /// Uninitialize the device context.

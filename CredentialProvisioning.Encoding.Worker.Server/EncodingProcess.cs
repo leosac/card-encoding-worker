@@ -32,7 +32,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     if (CredentialContext?.TemplateContent != null)
                     {
-                        if (!await deviceCtx.Initialize())
+                        if (!await deviceCtx.Initialize(CredentialContext?.TemplateContent.ForceCardType))
                             throw new EncodingException("Device initialization failed.");
 
                         foreach (var credential in CredentialContext.Credentials)

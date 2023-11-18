@@ -6,14 +6,26 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
     {
         public LibLogicalAccess.Reader.ISO7816ReaderUnit? ReaderUnit { get; set; }
 
-        public override Task<bool> Initialize()
+        public override Task<bool> Initialize(string? cardType = null)
         {
             return Task.Run(() =>
             {
                 if (ReaderUnit == null)
+                {
                     return false;
+                }
 
-                return ReaderUnit.connectToReader();
+                if(!ReaderUnit.connectToReader())
+                {
+                    return false;
+                }
+
+                if (!string.IsNullOrEmpty(cardType))
+                {
+                    ReaderUnit.setCardType(cardType);
+                }
+
+                return true;
             });
         }
 

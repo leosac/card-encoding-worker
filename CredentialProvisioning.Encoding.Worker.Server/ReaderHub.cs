@@ -63,7 +63,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             var clDevice = new LLADeviceContext();
             clDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.ContactlessReader, waitRemoval);
 
-            if (process.CredentialContext != null && process.CredentialContext.TemplateContent?.SAM != null)
+            if (process.CredentialContext != null)
             {
                 var samDevice = new LLADeviceContext();
                 samDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.SAMReader);

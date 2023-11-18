@@ -17,7 +17,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             if (cardCtx is LLACardContext llacardCtx)
             {
                 var rawcsn = llacardCtx.Chip?.getChipIdentifier()?.ToArray();
-                if (rawcsn != null)
+                if (rawcsn != null && rawcsn.Length > 0)
                 {
                     csn = Convert.ToHexString(rawcsn);
                 }
