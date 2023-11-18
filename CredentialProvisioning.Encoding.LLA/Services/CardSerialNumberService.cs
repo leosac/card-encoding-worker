@@ -1,6 +1,4 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
-using Leosac.CredentialProvisioning.Encoding.Services;
-using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
@@ -16,10 +14,23 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             string? csn = null;
             if (cardCtx is LLACardContext llacardCtx)
             {
-                var rawcsn = llacardCtx.Chip?.getChipIdentifier()?.ToArray();
-                if (rawcsn != null && rawcsn.Length > 0)
+                var chip = llacardCtx.Chip;
+                if (chip != null)
                 {
-                    csn = Convert.ToHexString(rawcsn);
+                    var rawcsn = chip.getChipIdentifier();
+                    if (rawcsn == null || rawcsn.Count < 1)
+                    {
+                        if (llacardCtx.LLADeviceContext.ReaderUnit is LibLogicalAccess.Reader.PCSCReaderUnit pcscReader)
+                        {
+                            rawcsn = pcscReader.getCardSerialNumber();
+                            chip.setChipIdentifier(rawcsn);
+                        }
+                    }
+
+                    if (rawcsn != null && rawcsn.Count > 0)
+                    {
+                        csn = Convert.ToHexString(rawcsn.ToArray());
+                    }
                 }
             }
 
