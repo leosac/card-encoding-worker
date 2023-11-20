@@ -65,25 +65,28 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             if (process.CredentialContext != null)
             {
-                var samDevice = new LLADeviceContext();
-                samDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.SAMReader);
-
-                clDevice.ReaderUnit.setSAMReaderUnit(samDevice.ReaderUnit);
-                if (clDevice.ReaderUnit.getConfiguration() is ISO7816ReaderUnitConfiguration isoConfig)
+                if (process.CredentialContext.TemplateContent?.SAM != null)
                 {
-                    isoConfig.setCheckSAMReaderIsAvailable(false);
-                    isoConfig.setAutoConnectToSAMReader(true);
-                    isoConfig.setSAMType("SAM_AV2"); // TODO: support additional SAM technologies
-                    if (!string.IsNullOrEmpty(process.CredentialContext.TemplateContent.SAM.UnlockKey?.KeyId))
+                    var samDevice = new LLADeviceContext();
+                    samDevice.ReaderUnit = new WorkerRemoteReaderUnit(caller, _options.Value.SAMReader);
+
+                    clDevice.ReaderUnit.setSAMReaderUnit(samDevice.ReaderUnit);
+                    if (clDevice.ReaderUnit.getConfiguration() is ISO7816ReaderUnitConfiguration isoConfig)
                     {
-                        var unlockkey = _worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey);
-                        if (unlockkey == null)
+                        isoConfig.setCheckSAMReaderIsAvailable(false);
+                        isoConfig.setAutoConnectToSAMReader(true);
+                        isoConfig.setSAMType("SAM_AV2"); // TODO: support additional SAM technologies
+                        if (!string.IsNullOrEmpty(process.CredentialContext.TemplateContent.SAM.UnlockKey?.KeyId))
                         {
-                            throw new EncodingException("Cannot resolve the internal unlock key reference.");
+                            var unlockkey = _worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey);
+                            if (unlockkey == null)
+                            {
+                                throw new EncodingException("Cannot resolve the internal unlock key reference.");
+                            }
+                            isoConfig.setSAMUnlockKey(unlockkey.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
                         }
-                        isoConfig.setSAMUnlockKey(unlockkey.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
+                        clDevice.ReaderUnit.setConfiguration(isoConfig);
                     }
-                    clDevice.ReaderUnit.setConfiguration(isoConfig);
                 }
             }
             process.ProcessCompleted += async (sender, state) =>
