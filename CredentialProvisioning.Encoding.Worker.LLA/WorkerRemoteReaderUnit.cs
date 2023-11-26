@@ -40,6 +40,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             task.Wait();
             if (task.Result)
             {
+                var rca = getDefaultReaderCardAdapter();
+                rca.setDataTransport(_dataTransport);
+                setDefaultReaderCardAdapter(rca);
+
                 base.connectToSAM();
             }
             return task.Result;

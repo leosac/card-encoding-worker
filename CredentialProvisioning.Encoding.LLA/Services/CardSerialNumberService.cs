@@ -24,6 +24,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                         {
                             rawcsn = pcscReader.getCardSerialNumber();
                             chip.setChipIdentifier(rawcsn);
+
+                            if (chip is LibLogicalAccess.Card.DESFireChip dfChip)
+                            {
+                                dfChip.getCrypto()?.setCryptoContext(rawcsn);
+                            }
                         }
                     }
 
