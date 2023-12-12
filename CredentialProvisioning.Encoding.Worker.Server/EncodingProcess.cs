@@ -121,15 +121,15 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         throw new EncodingException("Cannot initialize the targeted action.");
                     }
                 }
-                catch (EncodingException ex)
+                catch (Exception ex)
                 {
                     _logger?.LogInformation("Action failed with error `{0}`, running OnFailure trigger", ex.Message);
                     if (actionProp.OnFailure == null)
                     {
                         actionProp.OnFailure = new EncodingActionProperties.ActionTrigger() { Throw = true };
                     }
+
                     await ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
-                    await OnProcessCompleted(ProvisioningState.Failed);
                 }
             }
         }
@@ -176,7 +176,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private async Task ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, EncodingException? ex = null)
+        private async Task ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, Exception? ex = null)
         {
             if (trigger.CallActions != null)
             {
@@ -184,6 +184,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
             if (trigger.Throw)
             {
+                await OnProcessCompleted(ProvisioningState.Failed);
                 if (!string.IsNullOrEmpty(trigger.ThrowCustomMessage))
                 {
                     throw new EncodingException(trigger.ThrowCustomMessage, ex);
