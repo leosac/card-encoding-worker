@@ -52,7 +52,7 @@
           <Directory Id="APPRUNTIMES" Name="runtimes">
             <Directory Id="RUNTIMEWIN" Name="win">
               <Directory Id="RUNTIMEWINLIB" Name="lib">
-                <Directory Id="RUNTIMEWINNET7" Name="net7.0" />
+                <Directory Id="RUNTIMEWINNET8" Name="net8.0" />
               </Directory>
             </Directory>
           </Directory>
@@ -210,9 +210,9 @@
         <File Id="___var.System.ServiceProcess.ServiceController.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.ServiceProcess.ServiceController.dll" />
       </Component>
     </ComponentGroup>
-    <ComponentGroup Id="WinRuntimeComponents" Directory="RUNTIMEWINNET7">
+    <ComponentGroup Id="WinRuntimeComponents" Directory="RUNTIMEWINNET8">
       <Component Id="SystemServiceProcessServiceControllerWinComponent">
-        <File Id="___var.System.ServiceProcess.ServiceController.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net7.0\System.ServiceProcess.ServiceController.dll" />
+        <File Id="___var.System.ServiceProcess.ServiceController.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll" />
       </Component>
     </ComponentGroup>
 
