@@ -9,7 +9,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 
         }
 
-        public override void RunDESFireEV1(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.DefaultKey != null)
             {

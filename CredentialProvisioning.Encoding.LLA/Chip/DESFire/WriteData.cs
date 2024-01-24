@@ -10,7 +10,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 
         }
 
-        public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (cardCtx.Buffer == null || cardCtx.Buffer.Length == 0)
                 throw new EncodingException("No data to write.");

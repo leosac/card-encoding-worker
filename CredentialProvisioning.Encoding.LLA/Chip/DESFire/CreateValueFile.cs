@@ -9,7 +9,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 
         }
 
-        public override void RunDESFire(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.createValueFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), Properties.LowerLimit, Properties.UpperLimit, Properties.InitialValue, Properties.LimitedCreditEnabled);
         }

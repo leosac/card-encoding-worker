@@ -2,14 +2,14 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class Authenticate : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate>
+    public class AuthenticateEV2First : DESFireEV2Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AuthenticateEV2First>
     {
-        public Authenticate(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate properties) : base(properties)
+        public AuthenticateEV2First(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AuthenticateEV2First properties) : base(properties)
         {
 
         }
 
-        public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)
             {
@@ -26,7 +26,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                 throw new EncodingException("The key must be of type DESFire.");
             }
             
-            cmd.authenticate(Properties.KeyNo, desfireKey);
+            cmd.authenticateEV2First(Properties.KeyNo, desfireKey);
         }
     }
 }

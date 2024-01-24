@@ -1,11 +1,11 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
 using LibLogicalAccess.Card;
 
-namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
+namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip
 {
-    public abstract class DESFireAction<T> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new()
+    public abstract class LLAAction<T, C> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new() where C : LibLogicalAccess.Chip
     {
-        protected DESFireAction(T properties) : base(properties)
+        protected LLAAction(T properties) : base(properties)
         {
 
         }
@@ -18,15 +18,15 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                 throw new EncodingException("Device context must be of type LLA");
             }
 
-            var chip = llaCtx.Chip as DESFireChip;
+            var chip = llaCtx.Chip as C;
             if (chip == null)
             {
                 throw new EncodingException("Wrong chip type");
             }
 
-            Run(chip.getDESFireCommands(), encodingCtx as EncodingContext, llaCtx);
+            Run(chip, encodingCtx as EncodingContext, llaCtx);
         }
 
-        public abstract void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx);
+        public abstract void Run(C chip, EncodingContext encodingCtx, LLACardContext cardCtx);
     }
 }

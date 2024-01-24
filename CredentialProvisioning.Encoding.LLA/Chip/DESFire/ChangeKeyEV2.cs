@@ -2,14 +2,14 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class ChangeKey : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKey>
+    public class ChangeKeyEV2 : DESFireEV2Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKeyEV2>
     {
-        public ChangeKey(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKey properties) : base(properties)
+        public ChangeKeyEV2(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.ChangeKeyEV2 properties) : base(properties)
         {
 
         }
 
-        public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)
             {
@@ -39,14 +39,14 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
                     throw new EncodingException("The old key must be of type DESFire.");
                 }
 
-                var crypto = (cmd.getChip() as DESFireEV1Chip)?.getCrypto();
+                var crypto = (cmd.getChip() as DESFireEV2Chip)?.getCrypto();
                 if (crypto != null)
                 {
-                    crypto.setKey(crypto.d_currentAid, 0, Properties.KeyNo, desfireOldKey);
+                    crypto.setKey(crypto.d_currentAid, Properties.KeySet, Properties.KeyNo, desfireOldKey);
                 }
             }
 
-            cmd.changeKey(Properties.KeyNo, desfireKey);
+            cmd.changeKeyEV2(Properties.KeySet, Properties.KeyNo, desfireKey);
         }
     }
 }

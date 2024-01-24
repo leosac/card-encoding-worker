@@ -2,14 +2,14 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class Authenticate : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate>
+    public class CreateTransactionMACFile : DESFireEV2Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateTransactionMACFile>
     {
-        public Authenticate(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.Authenticate properties) : base(properties)
+        public CreateTransactionMACFile(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateTransactionMACFile properties) : base(properties)
         {
 
         }
 
-        public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
+        public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)
             {
@@ -25,8 +25,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             {
                 throw new EncodingException("The key must be of type DESFire.");
             }
-            
-            cmd.authenticate(Properties.KeyNo, desfireKey);
+
+            cmd.createTransactionMACFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), desfireKey, Properties.KeyVersion);
         }
     }
 }
