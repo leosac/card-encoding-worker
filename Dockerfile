@@ -18,4 +18,5 @@ FROM base AS final
 VOLUME /data
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN echo /app/publish/runtimes/linux-x64/native>/etc/ld.so.conf.d/lla.conf & ldconfig
 ENTRYPOINT ["dotnet", "CredentialProvisioning.Encoding.Worker.Server.dll", "--run"]
