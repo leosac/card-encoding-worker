@@ -3,6 +3,7 @@ using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
 using System.CommandLine;
@@ -309,9 +310,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 })
                 .WithName("LoadTemplate").WithTags("template");
 
-                app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template) =>
+                app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template, [FromQuery] long? revision) =>
                 {
-                    worker.LoadTemplate(templateId, template);
+                    worker.LoadTemplate(templateId, template, revision);
                     return new ObjectIdResponse<string> { Id = templateId };
                 })
                 .WithName("LoadTemplateWithId").WithTags("template");
@@ -322,7 +323,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 })
                 .WithName("GetTemplates").WithTags("template");
 
-                app.MapGet("/template/{templateId}/check", (string templateId, long? revision) =>
+                app.MapGet("/template/{templateId}/check", (string templateId, [FromQuery] long? revision) =>
                 {
                     return (worker.GetTemplate(templateId, revision) != null);
                 })
