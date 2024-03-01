@@ -151,6 +151,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 c.UseOneOfForPolymorphism();
                 c.SelectDiscriminatorNameUsing((baseType) => "$type");
                 c.SelectDiscriminatorValueUsing((subType) => PolymorphicTypeResolver.GetSubTypeDiscriminator(subType));
+                c.CustomSchemaIds((type) => PolymorphicTypeResolver.GetSubTypeDiscriminator(type, false));
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",

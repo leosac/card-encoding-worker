@@ -1,9 +1,8 @@
 ﻿using Leosac.CredentialProvisioning.Core.Contexts;
-using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip
 {
-    public abstract class LLAAction<T, C> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new() where C : LibLogicalAccess.Chip
+    public abstract class LLAAction<T, C> : EncodingAction<T> where T : Leosac.CredentialProvisioning.Encoding.EncodingActionProperties, new() where C : LibLogicalAccess.Chip
     {
         protected LLAAction(T properties) : base(properties)
         {

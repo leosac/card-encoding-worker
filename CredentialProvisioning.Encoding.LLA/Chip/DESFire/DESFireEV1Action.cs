@@ -1,5 +1,4 @@
-﻿using Leosac.CredentialProvisioning.Core.Contexts;
-using LibLogicalAccess.Card;
+﻿using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {

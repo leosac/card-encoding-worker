@@ -1,11 +1,8 @@
 ﻿using LibLogicalAccess.Card;
 using LibLogicalAccess;
 using Leosac.CredentialProvisioning.Core.Models;
-using System.Collections;
 using Leosac.CredentialProvisioning.Encoding.Key;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text.RegularExpressions;
-using System;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
@@ -43,75 +40,80 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                     }
                 }
 
-                if (k.KeyStoreType == "hsm")
-                {
-                    var ks = new PKCSKeyStorage();
-                    ks.set_key_id(new ByteVector(System.Text.Encoding.UTF8.GetBytes(k.KeyStoreReference)));
-                    // TODO: set here PKCS#11 library path and password from application configuration file
-                    key.setKeyStorage(ks);
-                }
-                else if (k.KeyStoreType == "sam")
-                {
-                    var ks = new SAMKeyStorage();
-                    byte slot = 0;
-                    byte.TryParse(k.KeyStoreReference, out slot);
-                    ks.setKeySlot(slot);
-                    key.setKeyStorage(ks);
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(k.Value))
-                    {
-                        var fvalue = Regex.Replace(k.Value, ".{2}", "$0 ").Trim();
-                        key.fromString(fvalue);
-                    }
-                }
-
-                if (div != null)
-                {
-                    if (div.Algorithm == "an0945")
-                    {
-                        var kd = new NXPAV1KeyDiversification();
-                        key.setKeyDiversification(kd);
-                    }
-                    else if (div.Algorithm == "an10922")
-                    {
-                        var kd = new NXPAV2KeyDiversification();
-                        if (div.Input != null && div.Input.Length > 0)
-                        {
-                            kd.setDivInput(new ByteVector(ComputeDivInput(cardCtx?.Credential?.Data, div.Input)));
-                        }
-                        else
-                        {
-                            if (div.RevertAID != null)
-                            {
-                                kd.setRevertAID(div.RevertAID.Value);
-                            }
-                            if (div.ForceK2Use != null)
-                            {
-                                kd.setForceK2Use(div.ForceK2Use.Value);
-                            }
-                            if (div.SystemIdentifier != null)
-                            {
-                                kd.setSystemIdentifier(new ByteVector(Convert.FromHexString(div.SystemIdentifier)));
-                            }
-                        }
-                        key.setKeyDiversification(kd);
-                    }
-                    else if (div.Algorithm == "sagem")
-                    {
-                        var kd = new SagemKeyDiversification();
-                        key.setKeyDiversification(kd);
-                    }
-                    else if (div.Algorithm == "omnitech")
-                    {
-                        var kd = new OmnitechKeyDiversification();
-                        key.setKeyDiversification(kd);
-                    }
-                }
+                SetKeyProperties(k, key, cardCtx, div);
             }
 
             return key;
+        }
+
+        public static void SetKeyProperties(CredentialKey key, LibLogicalAccess.Key llaKey, LLACardContext? cardCtx = null, Key.KeyDiversification? div = null)
+        {
+            if (key.KeyStoreType == "hsm")
+            {
+                var ks = new PKCSKeyStorage();
+                ks.set_key_id(new ByteVector(System.Text.Encoding.UTF8.GetBytes(key.KeyStoreReference)));
+                // TODO: set here PKCS#11 library path and password from application configuration file
+                llaKey.setKeyStorage(ks);
+            }
+            else if (key.KeyStoreType == "sam")
+            {
+                var ks = new SAMKeyStorage();
+                byte slot = 0;
+                byte.TryParse(key.KeyStoreReference, out slot);
+                ks.setKeySlot(slot);
+                llaKey.setKeyStorage(ks);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(key.Value))
+                {
+                    var fvalue = Regex.Replace(key.Value, ".{2}", "$0 ").Trim();
+                    llaKey.fromString(fvalue);
+                }
+            }
+
+            if (div != null)
+            {
+                if (div.Algorithm == "an0945")
+                {
+                    var kd = new NXPAV1KeyDiversification();
+                    llaKey.setKeyDiversification(kd);
+                }
+                else if (div.Algorithm == "an10922")
+                {
+                    var kd = new NXPAV2KeyDiversification();
+                    if (div.Input != null && div.Input.Length > 0)
+                    {
+                        kd.setDivInput(new ByteVector(ComputeDivInput(cardCtx?.Credential?.Data, div.Input)));
+                    }
+                    else
+                    {
+                        if (div.RevertAID != null)
+                        {
+                            kd.setRevertAID(div.RevertAID.Value);
+                        }
+                        if (div.ForceK2Use != null)
+                        {
+                            kd.setForceK2Use(div.ForceK2Use.Value);
+                        }
+                        if (div.SystemIdentifier != null)
+                        {
+                            kd.setSystemIdentifier(new ByteVector(Convert.FromHexString(div.SystemIdentifier)));
+                        }
+                    }
+                    llaKey.setKeyDiversification(kd);
+                }
+                else if (div.Algorithm == "sagem")
+                {
+                    var kd = new SagemKeyDiversification();
+                    llaKey.setKeyDiversification(kd);
+                }
+                else if (div.Algorithm == "omnitech")
+                {
+                    var kd = new OmnitechKeyDiversification();
+                    llaKey.setKeyDiversification(kd);
+                }
+            }
         }
 
         /// <summary>
