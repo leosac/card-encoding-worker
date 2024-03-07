@@ -18,6 +18,11 @@ namespace Leosac.CredentialProvisioning.Encoding
         public EncodingServiceBufferBehavior BufferBehavior { get; set; }
 
         /// <summary>
+        /// Copy the buffer, after service execution, to a credential field.
+        /// </summary>
+        public string? CopyBufferToField { get; set; }
+
+        /// <summary>
         /// An optional prefix to apply to field names of the service.
         /// </summary>
         public string? FieldNamePrefix { get; set; }

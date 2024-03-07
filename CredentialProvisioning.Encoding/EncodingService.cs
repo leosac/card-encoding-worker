@@ -63,6 +63,10 @@ namespace Leosac.CredentialProvisioning.Encoding
             {
                 cardCtx.Buffer = data;
             }
+            if (!string.IsNullOrEmpty(Properties.CopyBufferToField))
+            {
+                cardCtx.UpdateFieldValue(GetCredentialFieldName(Properties.CopyBufferToField), cardCtx.Buffer);
+            }
         }
 
         /// <summary>

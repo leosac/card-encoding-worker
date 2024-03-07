@@ -44,14 +44,19 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// </summary>
         /// <param name="fieldName">The targeted field name.</param>
         /// <param name="fieldValue">The new field value.</param>
-        public void UpdateFieldValue(string fieldName, object fieldValue)
+        public void UpdateFieldValue(string fieldName, object? fieldValue)
         {
             var data = Credential?.Data as IDictionary<string, object>;
-            if (data != null)
+            if (data != null && data.ContainsKey(fieldName))
             {
-                if (data.ContainsKey(fieldName))
+                if (fieldValue != null)
                 {
-                    if (fieldValue != null && data[fieldName]?.ToString() != fieldValue.ToString())
+                    if (fieldValue is byte[] bv)
+                    {
+                        fieldValue = Convert.ToHexString(bv);
+                    }
+
+                    if (data[fieldName]?.ToString() != fieldValue.ToString())
                     {
                         data[fieldName] = fieldValue;
                         if (!FieldsChanged.Contains(fieldName))
@@ -61,6 +66,22 @@ namespace Leosac.CredentialProvisioning.Encoding
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Get a field value from the credential details.
+        /// </summary>
+        /// <param name="fieldName">The targeted field name.</param>
+        /// <returns>The current field value.</returns>
+        public object? GetFieldValue(string fieldName)
+        {
+            var data = Credential?.Data as IDictionary<string, object>;
+            if (data != null && data.ContainsKey(fieldName))
+            {
+                return data[fieldName];
+            }
+
+            return null;
         }
     }
 }

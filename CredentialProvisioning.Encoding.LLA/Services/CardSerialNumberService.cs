@@ -47,16 +47,12 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             var fieldName = GetCredentialFieldName("CSN");
             if (Properties.CheckCSN)
             {
-                var data = cardCtx.Credential?.Data as IDictionary<string, object>;
-                if (data != null && data.ContainsKey(fieldName))
+                var expectedCsn = cardCtx.GetFieldValue(fieldName)?.ToString();
+                if (!string.IsNullOrEmpty(expectedCsn))
                 {
-                    var expectedCsn = data[fieldName].ToString();
-                    if (!string.IsNullOrEmpty(expectedCsn))
+                    if (expectedCsn.ToString() != csn.ToLower())
                     {
-                        if (expectedCsn.ToString() != csn.ToLower())
-                        {
-                            throw new EncodingException("Unexpected card (CSN doesn't match).");
-                        }
+                        throw new EncodingException("Unexpected card (CSN doesn't match).");
                     }
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
-
+using Leosac.CredentialProvisioning.Server.Shared.Crypto;
+    
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class CryptoDataService : EncodingService<Encoding.Services.CryptoDataService>
@@ -17,7 +18,31 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 throw new EncodingException("Cannot resolve the key for the crypto operation.");
             }
 
-            // TODO: implements this
+            if (cardCtx.Buffer == null)
+            {
+                throw new EncodingException("No data input for the cryptographic operation.");
+            }
+
+            byte[]? iv = null;
+            if (!string.IsNullOrEmpty(Properties.InitializationVectorField))
+            {
+                var fieldName = GetCredentialFieldName(Properties.InitializationVectorField);
+                var v = cardCtx.GetFieldValue(fieldName);
+                if (v != null)
+                {
+                    if (v is byte[] bv)
+                    {
+                        iv = bv;
+                    }
+                    else
+                    {
+                        iv = Convert.FromHexString(v.ToString()!);
+                    }
+                }
+            }
+
+            var data = Properties.Crypto.Run(key, cardCtx.Buffer, iv);
+            HandleBuffer(cardCtx, data);
         }
     }
 }

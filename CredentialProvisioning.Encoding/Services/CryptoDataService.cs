@@ -1,5 +1,5 @@
-﻿using Leosac.CredentialProvisioning.Encoding.Key;
-using System.Security.Cryptography;
+﻿using Leosac.CredentialProvisioning.Core.Models;
+using Leosac.CredentialProvisioning.Encoding.Key;
 
 namespace Leosac.CredentialProvisioning.Encoding.Services
 {
@@ -9,28 +9,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Services
     public class CryptoDataService : EncodingServiceProperties
     {
         /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public CryptoDataService()
+        {
+            Crypto = new CryptoProperties();
+        }
+
+        /// <summary>
         /// The key to use fo the crypto operation.
         /// </summary>
         public KeyReference? Key { get; set; }
 
         /// <summary>
-        /// The cryptographic operation to perform.
+        /// The cryptographic properties.
         /// </summary>
-        public CryptoOperation Operation { get; set; }
+        public CryptoProperties Crypto { get; set; }
 
         /// <summary>
-        /// The cryptographic hash algorithm to use (if required).
+        /// A credential field to use as Initialization Vector.
         /// </summary>
-        public string? HashAlgorithm { get; set; }
-
-        /// <summary>
-        /// The cipher mode (if required).
-        /// </summary>
-        public CipherMode? CipherMode { get; set; }
-
-        /// <summary>
-        /// The padding mode (if required).
-        /// </summary>
-        public PaddingMode? PaddingMode { get; set; }
+        public string? InitializationVectorField { get; set; }
     }
 }
