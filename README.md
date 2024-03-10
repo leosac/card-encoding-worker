@@ -1,5 +1,5 @@
-# Card Printing Worker [![Build Status](https://github.com/leosac/card-printing-worker/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/leosac/card-printing-worker/actions/workflows/node.js.yml)
-An autonomous (ASP.NET Core) server to generate APDU commands for RFID cards following customly defined templates.
+# Card Encoding Worker [![Build Status](https://github.com/leosac/card-encoding-worker/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/leosac/card-encoding-worker/actions/workflows/build.yml)
+An autonomous (ASP.NET Core) server to generate APDU commands for RFID cards (MIFARE DESFire, MIFARE Ultralight C, ...) following customly defined templates.
 
 It can be used as a standalone microservice and is maintained/distributed as a core component of [Leosac Credential Provisioning](https://leosac.com/credential-provisioning/) solution.
 
