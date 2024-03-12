@@ -1,5 +1,5 @@
-﻿using Leosac.CredentialProvisioning.Encoding.Key;
-using Leosac.CredentialProvisioning.Server.Shared.Crypto;
+﻿using Leosac.CredentialProvisioning.Core.Crypto;
+using Leosac.CredentialProvisioning.Encoding.Key;
     
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
