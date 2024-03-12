@@ -371,7 +371,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             if (options.ReaderType == ReaderType.Remote)
             {
+                // Virtual LLA readers through a WebSocket channel
                 app.MapHub<ReaderHub>("/reader");
+            }
+            else if (options.ReaderType == ReaderType.Rest)
+            {
+                // TODO: implements "/encode/" endpoints and handle virtual LLA readers through REST API
+                throw new NotImplementedException();
             }
             else
             {

@@ -3,6 +3,7 @@
     public enum ReaderType
     {
         Remote,
+        Rest,
         Local
     }
 }
