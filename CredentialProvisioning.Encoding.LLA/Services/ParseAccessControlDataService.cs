@@ -3,17 +3,15 @@ using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class ParseAccessControlDataService : AccessControlDataService<Encoding.Services.ParseAccessControlDataService>
+    public class ParseAccessControlDataService(Encoding.Services.ParseAccessControlDataService properties) : AccessControlDataService<Encoding.Services.ParseAccessControlDataService>(properties)
     {
-        public ParseAccessControlDataService(Encoding.Services.ParseAccessControlDataService properties) : base(properties)
-        {
-
-        }
-
         protected override void Run(CardContext cardCtx, KeyProvider? keystore, Format format)
         {
             if (cardCtx.Buffer == null)
+            {
                 throw new EncodingException("No access control data to parse.");
+            }
+
             SyncCredentialDataWithFormat(cardCtx, format);
             format.setLinearData(new ByteVector(cardCtx.Buffer));
             HandleBuffer(cardCtx, null);
@@ -21,11 +19,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 
         private void SyncCredentialDataWithFormat(CardContext cardCtx, Format format)
         {
-            if (format == null)
-                throw new ArgumentNullException("format");
-
-            if (cardCtx?.Credential == null)
-                throw new ArgumentNullException("cardCtx.Credential");
+            ArgumentNullException.ThrowIfNull(format);
+            ArgumentNullException.ThrowIfNull(cardCtx?.Credential);
 
             var fieldNames = format.getValuesFieldList();
             foreach (var fieldName in fieldNames)
@@ -42,10 +37,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     {
                         encoding = System.Text.Encoding.GetEncoding(charset);
                     }
-                    if (encoding == null)
-                    {
-                        encoding = System.Text.Encoding.UTF8;
-                    }
+                    encoding ??= System.Text.Encoding.UTF8;
                     v = encoding.GetString(sf.getRawValue().ToArray());
                 }
                 else if (field is NumberDataField nf)

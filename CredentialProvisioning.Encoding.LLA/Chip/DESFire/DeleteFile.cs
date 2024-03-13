@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class DeleteFile : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DeleteFile>
+    public class DeleteFile(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DeleteFile properties) : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DeleteFile>(properties)
     {
-        public DeleteFile(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DeleteFile properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.deleteFile(Properties.FileNo);

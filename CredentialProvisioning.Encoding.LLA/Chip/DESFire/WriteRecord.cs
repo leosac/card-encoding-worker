@@ -3,13 +3,8 @@ using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class WriteRecord : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.WriteRecord>
+    public class WriteRecord(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.WriteRecord properties) : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.WriteRecord>(properties)
     {
-        public WriteRecord(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.WriteRecord properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (cardCtx.Buffer == null || cardCtx.Buffer.Length == 0)

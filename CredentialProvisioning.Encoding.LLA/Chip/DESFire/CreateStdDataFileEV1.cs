@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class CreateStdDataFileEV1 : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFileEV1>
+    public class CreateStdDataFileEV1(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFileEV1 properties) : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFileEV1>(properties)
     {
-        public CreateStdDataFileEV1(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFileEV1 properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.IsoFID != null)

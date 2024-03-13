@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class CreateApplicationEV1 : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplicationEV1>
+    public class CreateApplicationEV1(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplicationEV1 properties) : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplicationEV1>(properties)
     {
-        public CreateApplicationEV1(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplicationEV1 properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtxdeviceCtx)
         {
             if (Properties.FidSupport == Encoding.Chip.DESFire.FidSupport.Enabled)

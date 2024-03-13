@@ -51,15 +51,17 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
             if (key.KeyStoreType == "hsm")
             {
                 var ks = new PKCSKeyStorage();
-                ks.set_key_id(new ByteVector(System.Text.Encoding.UTF8.GetBytes(key.KeyStoreReference)));
+                if (!string.IsNullOrEmpty(key.KeyStoreReference))
+                {
+                    ks.set_key_id(new ByteVector(System.Text.Encoding.UTF8.GetBytes(key.KeyStoreReference)));
+                }
                 // TODO: set here PKCS#11 library path and password from application configuration file
                 llaKey.setKeyStorage(ks);
             }
             else if (key.KeyStoreType == "sam")
             {
                 var ks = new SAMKeyStorage();
-                byte slot = 0;
-                byte.TryParse(key.KeyStoreReference, out slot);
+                _ = byte.TryParse(key.KeyStoreReference, out byte slot);
                 ks.setKeySlot(slot);
                 llaKey.setKeyStorage(ks);
             }
@@ -130,9 +132,9 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
             {
                 if (i.Type == DivInputFragmentType.DataField)
                 {
-                    if (data != null && data.ContainsKey(i.Value))
+                    if (data != null && data.TryGetValue(i.Value, out object? value))
                     {
-                        var v = data[i.Value]?.ToString();
+                        var v = value?.ToString();
                         if (!string.IsNullOrEmpty(v))
                         {
                             ret.AddRange(Convert.FromHexString(v));
@@ -144,7 +146,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                     ret.AddRange(Convert.FromHexString(i.Value));
                 }
             }
-            return ret.ToArray();
+            return [.. ret];
         }
     }
 }

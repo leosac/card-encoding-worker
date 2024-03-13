@@ -6,21 +6,15 @@ using Leosac.CredentialProvisioning.Worker;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
-    public class EncodingWorker : WorkerBase<EncodingFragmentTemplateContent>
+    public class EncodingWorker(ILogger<EncodingWorker> logger, KeyProvider keystore) : WorkerBase<EncodingFragmentTemplateContent>()
     {
-        ILogger<EncodingWorker> _logger;
+        protected readonly ILogger<EncodingWorker> _logger = logger;
 
-        public EncodingWorker(ILogger<EncodingWorker> logger, KeyProvider keystore) : base()
-        {
-            KeyStore = keystore;
-            _logger = logger;
-        }
-
-        public KeyProvider KeyStore { get; private set; }
+        public KeyProvider KeyStore { get; private set; } = keystore;
 
         protected override CredentialContext<EncodingFragmentTemplateContent> CreateCredentialContext(string templateId, EncodingFragmentTemplateContent template, IList<WorkerCredentialBase> credentials)
         {
-            return new EncodingContext() { TemplateId = templateId, TemplateContent = template, Keys = KeyStore, Credentials = credentials.ToArray() };
+            return new EncodingContext() { TemplateId = templateId, TemplateContent = template, Keys = KeyStore, Credentials = [.. credentials] };
         }
 
         protected override CredentialProcess<EncodingFragmentTemplateContent> CreateProcess()

@@ -9,8 +9,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
     public class EncodingProcess : CredentialProcess<EncodingFragmentTemplateContent>
     {
-        ILogger? _logger;
-        Assembly _assembly;
+        protected readonly ILogger? _logger;
+        protected readonly Assembly _assembly;
 
         public EncodingProcess()
         {
@@ -35,14 +35,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         if (!await deviceCtx.Initialize(CredentialContext?.TemplateContent.ForceCardType))
                             throw new EncodingException("Device initialization failed.");
 
-                        foreach (var credential in CredentialContext.Credentials)
+                        foreach (var credential in CredentialContext!.Credentials)
                         {
-                            _logger?.LogInformation("Starting new encoding process for credential `{0}` with template `{1}`", credential.Label, CredentialContext.TemplateId);
+                            _logger?.LogInformation("Starting new encoding process for credential `{Label}` with template `{TemplateId}`", credential.Label, CredentialContext.TemplateId);
 
-                            var cardCtx = await deviceCtx.PrepareCard(credential);
-                            if (cardCtx == null)
-                                throw new EncodingException("Card preparation failed.");
-
+                            var cardCtx = await deviceCtx.PrepareCard(credential) ?? throw new EncodingException("Card preparation failed.");
                             await HandleAction(CredentialContext.TemplateContent.FirstAction, CredentialContext, cardCtx);
                             await deviceCtx.CompleteCard(cardCtx);
                             await OnCredentialCompleted(GetFieldChanges(cardCtx));
@@ -67,20 +64,22 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private IDictionary<string, object>? GetFieldChanges(CardContext cardCtx)
+        private static Dictionary<string, object>? GetFieldChanges(CardContext cardCtx)
         {
             if (cardCtx.Credential == null || cardCtx.FieldsChanged == null)
                 return null;
 
             var changes = new Dictionary<string, object>();
+#pragma warning disable IDE0019 // Use pattern matching
             var fields = cardCtx.Credential?.Data as IDictionary<string, object>;
+#pragma warning restore IDE0019 // Use pattern matching
             if (fields != null)
             {
                 foreach (var fieldName in cardCtx.FieldsChanged)
                 {
-                    if (fields.ContainsKey(fieldName))
+                    if (fields.TryGetValue(fieldName, out object? value))
                     {
-                        changes.Add(fieldName, fields[fieldName]);
+                        changes.Add(fieldName, value);
                     }
                 }
             }
@@ -99,7 +98,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         {
             if (actionProp != null)
             {
-                _logger?.LogInformation("Handling encoding action `{0}`, labeled `{1}`", actionProp.Name, actionProp.Label);
+                _logger?.LogInformation("Handling encoding action `{Name}`, labeled `{Label}`", actionProp.Name, actionProp.Label);
 
                 try
                 {
@@ -123,11 +122,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogInformation("Action failed with error `{0}`, running OnFailure trigger", ex.Message);
-                    if (actionProp.OnFailure == null)
-                    {
-                        actionProp.OnFailure = new EncodingActionProperties.ActionTrigger() { Throw = true };
-                    }
+                    _logger?.LogInformation("Action failed with error `{Message}`, running OnFailure trigger", ex.Message);
+                    actionProp.OnFailure ??= new EncodingActionProperties.ActionTrigger() { Throw = true };
 
                     await ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
                 }
@@ -141,10 +137,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 foreach (var serviceProp in servicesProp)
                 {
                     var service = CreateEncodingService(serviceProp);
-                    if (service != null)
-                    {
-                        service.Run(cardCtx, keystore, currentAction);
-                    }
+                    service?.Run(cardCtx, keystore, currentAction);
                 }
             }
         }
@@ -163,16 +156,23 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         private T1? CreateMiddlewareImpl<T1, T2>(Type baseGeneric, T2 properties) where T1 : class where T2 : class, ICloneable
         {
             var cp = properties.Clone() as T2;
-            var baseType = baseGeneric.MakeGenericType(cp.GetType());
-            var type = _assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
+            Type? type = null;
+            if (cp != null)
+            {
+                var baseType = baseGeneric.MakeGenericType(cp.GetType());
+                if (baseType != null)
+                {
+                    type = _assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t)).FirstOrDefault();
+                }
+            }
             if (type != null)
             {
                 return Activator.CreateInstance(type, cp) as T1;
             }
             else
             {
-                _logger?.LogError("Cannot found dedicated {0} with properties type `{1}` on assembly `{2}`.", nameof(T1), properties.GetType().FullName, _assembly.FullName);
-                return default(T1);
+                _logger?.LogError("Cannot found dedicated {Type} with properties type `{Property}` on assembly `{Assembly}`.", nameof(T1), properties.GetType().FullName, _assembly.FullName);
+                return default;
             }
         }
 

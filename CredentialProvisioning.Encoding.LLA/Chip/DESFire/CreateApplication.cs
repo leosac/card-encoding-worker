@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class CreateApplication : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplication>
+    public class CreateApplication(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplication properties) : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplication>(properties)
     {
-        public CreateApplication(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateApplication properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.createApplication(Properties.AID, (DESFireKeySettings)Properties.KeySettings, Properties.MaxNbKeys);

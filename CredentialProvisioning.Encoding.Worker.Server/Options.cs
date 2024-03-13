@@ -22,6 +22,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         public string SAMReader { get; set; } = "SAM";
 
-        public JwtSettings? JWT { get; set; }
+        public JwtSettings JWT { get; set; } = new();
     }
 }

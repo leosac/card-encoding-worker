@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class AbortTransaction : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AbortTransaction>
+    public class AbortTransaction(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AbortTransaction properties) : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AbortTransaction>(properties)
     {
-        public AbortTransaction(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.AbortTransaction properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.abortTransaction();

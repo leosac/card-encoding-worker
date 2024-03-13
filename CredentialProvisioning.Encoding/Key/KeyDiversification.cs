@@ -8,12 +8,12 @@
         /// <summary>
         /// The diversification algorithm.
         /// </summary>
-        public string Algorithm { get; set; }
+        public string Algorithm { get; set; } = "an10922";
 
         /// <summary>
         /// Div Input fragments to use.
         /// </summary>
-        public DivInputFragment[] Input { get; set; }
+        public DivInputFragment[]? Input { get; set; }
 
         /// <summary>
         /// Use revert AID.

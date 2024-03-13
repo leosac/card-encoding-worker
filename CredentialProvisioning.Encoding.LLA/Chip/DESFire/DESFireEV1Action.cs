@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public abstract class DESFireEV1Action<T> : LLAAction<T, DESFireEV1Chip> where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new()
+    public abstract class DESFireEV1Action<T>(T properties) : LLAAction<T, DESFireEV1Chip>(properties) where T : Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireActionProperties, new()
     {
-        protected DESFireEV1Action(T properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireEV1Chip chip, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             Run(chip.getDESFireEV1Commands(), encodingCtx, cardCtx);

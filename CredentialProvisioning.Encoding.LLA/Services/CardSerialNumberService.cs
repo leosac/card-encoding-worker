@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class CardSerialNumberService : EncodingService<Encoding.Services.CardSerialNumberService>
+    public class CardSerialNumberService(Encoding.Services.CardSerialNumberService properties) : EncodingService<Encoding.Services.CardSerialNumberService>(properties)
     {
-        public CardSerialNumberService(Encoding.Services.CardSerialNumberService properties) : base(properties)
-        {
-
-        }
-
         public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction)
         {
             string? csn = null;
@@ -50,7 +45,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 var expectedCsn = cardCtx.GetFieldValue(fieldName)?.ToString();
                 if (!string.IsNullOrEmpty(expectedCsn))
                 {
-                    if (expectedCsn.ToString() != csn.ToLower())
+                    if (!expectedCsn.Equals(csn, StringComparison.CurrentCultureIgnoreCase))
                     {
                         throw new EncodingException("Unexpected card (CSN doesn't match).");
                     }

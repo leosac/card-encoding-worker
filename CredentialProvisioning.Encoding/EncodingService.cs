@@ -20,21 +20,17 @@ namespace Leosac.CredentialProvisioning.Encoding
     /// The generic base class for encoding service implementation.
     /// </summary>
     /// <typeparam name="T">The encoding service properties.</typeparam>
-    public abstract class EncodingService<T> : EncodingService where T : EncodingServiceProperties, new()
+    /// <remarks>
+    /// Base constructor.
+    /// </remarks>
+    /// <param name="properties">The associated encoding service properties.</param>
+    public abstract class EncodingService<T>(T properties) : EncodingService where T : EncodingServiceProperties, new()
     {
-        /// <summary>
-        /// Base constructor.
-        /// </summary>
-        /// <param name="properties">The associated encoding service properties.</param>
-        protected EncodingService(T properties)
-        {
-            Properties = properties;
-        }
 
         /// <summary>
         /// The associated encoding service properties.
         /// </summary>
-        public T Properties { get; set; } = new T();
+        public T Properties { get; set; } = properties;
 
         /// <summary>
         /// Handle buffer behavior.
@@ -49,14 +45,14 @@ namespace Leosac.CredentialProvisioning.Encoding
                 if (data == null)
                     behavior = EncodingServiceBufferBehavior.DoNothing;
                 else
-                    data = data.Concat(cardCtx.Buffer).ToArray();
+                    data = [.. data, .. cardCtx.Buffer];
             }
             if (behavior == EncodingServiceBufferBehavior.Append && cardCtx.Buffer != null)
             {
                 if (data == null)
                     behavior = EncodingServiceBufferBehavior.DoNothing;
                 else
-                    data = cardCtx.Buffer.Concat(data).ToArray();
+                    data = [.. cardCtx.Buffer, .. data];
             }
 
             if (behavior != EncodingServiceBufferBehavior.DoNothing)
@@ -76,8 +72,7 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// <returns>The formatted field name for the service.</returns>
         protected string GetCredentialFieldName(string fieldName)
         {
-            if (fieldName == null)
-                throw new ArgumentNullException("fieldName");
+            ArgumentNullException.ThrowIfNull(fieldName);
 
             return (Properties.FieldNamePrefix ?? string.Empty) + fieldName;
         }

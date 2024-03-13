@@ -134,9 +134,6 @@
       <Component Id="LibLogicalAccessNetCEComponent">
         <File Id="___var.LibLogicalAccessNetCE.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\LibLogicalAccessNetCE.dll" />
       </Component>
-      <Component Id="log4netComponent">
-        <File Id="___var.log4net.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\log4net.dll" />
-      </Component>
       <Component Id="MicrosoftAspNetCoreAuthenticationJwtBearerComponent">
         <File Id="___var.Microsoft.AspNetCore.Authentication.JwtBearer.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.AspNetCore.Authentication.JwtBearer.dll" />
       </Component>
@@ -185,17 +182,8 @@
       <Component Id="SystemCommandLineComponent">
         <File Id="___var.System.CommandLine.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.CommandLine.dll" />
       </Component>
-      <Component Id="SystemConfigurationConfigurationManagerComponent">
-        <File Id="___var.System.Configuration.ConfigurationManager.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.Configuration.ConfigurationManager.dll" />
-      </Component>
       <Component Id="SystemIdentityModelTokensJwtComponent">
         <File Id="___var.System.IdentityModel.Tokens.Jwt.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.IdentityModel.Tokens.Jwt.dll" />
-      </Component>
-      <Component Id="SystemSecurityCryptographyProtectedDataComponent">
-        <File Id="___var.System.Security.Cryptography.ProtectedData.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.Security.Cryptography.ProtectedData.dll" />
-      </Component>
-      <Component Id="SystemSecurityPermissionsComponent">
-        <File Id="___var.System.Security.Permissions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.Security.Permissions.dll" />
       </Component>
       <Component Id="SystemServiceProcessServiceControllerComponent">
         <File Id="___var.System.ServiceProcess.ServiceController.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.ServiceProcess.ServiceController.dll" />

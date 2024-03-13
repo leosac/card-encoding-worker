@@ -5,6 +5,9 @@
     /// </summary>
     public class InitializeKeySet : DESFireActionProperties
     {
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
         public InitializeKeySet()
         {
             KeyType = DESFireKeyType.AES128;

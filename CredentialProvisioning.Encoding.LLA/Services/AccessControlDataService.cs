@@ -4,20 +4,12 @@ using LibLogicalAccess;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public abstract class AccessControlDataService<T> : EncodingService<T> where T: AccessControlDataService, new()
+    public abstract class AccessControlDataService<T>(T properties) : EncodingService<T>(properties) where T: AccessControlDataService, new()
     {
-        protected AccessControlDataService(T properties) : base(properties)
-        {
-
-        }
-
         public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction)
         {
             var cfc = new CardsFormatComposite();
-            var format = cfc.createFormatFromXml(Properties.Format, string.Empty);
-            if (format == null)
-                throw new EncodingException("Cannot parse the access control format.");
-
+            var format = cfc.createFormatFromXml(Properties.Format, string.Empty) ?? throw new EncodingException("Cannot parse the access control format.");
             Run(cardCtx, keystore, format);
         }
 

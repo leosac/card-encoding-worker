@@ -12,7 +12,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
         /// </summary>
         public KeyProvider()
         {
-            Items = new List<CredentialKey>();
+            Items = [];
         }
 
         /// <summary>
@@ -58,7 +58,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
         /// <param name="keyRef">The key reference.</param>
         /// <param name="volatileKeys">Optional volatile keys.</param>
         /// <returns>The matching key, null otherwise.</returns>
-        public CredentialKey? Get(KeyReference keyRef, IEnumerable<CredentialKey>? volatileKeys = null)
+#pragma warning disable IDE0060 // Remove unused parameter
+        public CredentialKey? Get(KeyReference? keyRef, IEnumerable<CredentialKey>? volatileKeys = null)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             if (keyRef == null)
                 return null;

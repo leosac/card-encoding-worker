@@ -33,10 +33,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
         {
             return Task.Run(() =>
             {
-                if (ReaderUnit != null)
-                {
-                    ReaderUnit.disconnectFromReader();
-                }
+                ReaderUnit?.disconnectFromReader();
             });
         }
 
@@ -79,8 +76,10 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
         {
             return Task.Run<CardContext>(() =>
             {
-                var context = new LLACardContext(this, credential);
-                context.Chip = ReaderUnit?.getSingleChip();
+                var context = new LLACardContext(this, credential)
+                {
+                    Chip = ReaderUnit?.getSingleChip()
+                };
                 return context;
             });
         }

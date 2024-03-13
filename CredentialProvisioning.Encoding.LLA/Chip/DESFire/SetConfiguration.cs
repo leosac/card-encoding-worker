@@ -2,28 +2,14 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class SetConfiguration : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration>
+    public class SetConfiguration(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration properties) : DESFireEV1Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration>(properties)
     {
-        public SetConfiguration(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.SetConfiguration properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.DefaultKey != null)
             {
-                var key = encodingCtx.Keys?.Get(Properties.DefaultKey, cardCtx.Credential?.VolatileKeys);
-                if (key == null)
-                {
-                    throw new EncodingException("Cannot resolve the internal key reference.");
-                }
-
-                var desfireKey = key.CreateKey(cardCtx, Properties.DefaultKey?.Diversification) as DESFireKey;
-                if (desfireKey == null)
-                {
-                    throw new EncodingException("The key must be of type DESFire.");
-                }
+                var key = (encodingCtx.Keys?.Get(Properties.DefaultKey, cardCtx.Credential?.VolatileKeys)) ?? throw new EncodingException("Cannot resolve the internal key reference.");
+                var desfireKey = key.CreateKey(cardCtx, Properties.DefaultKey?.Diversification) as DESFireKey ?? throw new EncodingException("The key must be of type DESFire.");
                 cmd.setConfiguration(desfireKey);
             }
             else

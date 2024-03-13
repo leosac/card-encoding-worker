@@ -238,7 +238,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             var app = builder.Build();
 
-            var worker = app.Services.GetService<EncodingWorker>();
+            var worker = app.Services.GetRequiredService<EncodingWorker>();
             if (!string.IsNullOrEmpty(options.TemplateRepository))
             {
                 if (!Directory.Exists(options.TemplateRepository))
@@ -277,9 +277,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         if (!string.IsNullOrEmpty(req.Application))
                             claims.Add(new Claim("application", req.Application));
                         if (req.Context != null)
-                            claims.Add(new Claim("context", req.Context.ToString()));
+                            claims.Add(new Claim("context", req.Context.ToString()!));
 
-                        return Results.Ok(jwtService.CreateToken(claims.ToArray()));
+                        return Results.Ok(jwtService.CreateToken([.. claims]));
                     }
 
                     return Results.Unauthorized();

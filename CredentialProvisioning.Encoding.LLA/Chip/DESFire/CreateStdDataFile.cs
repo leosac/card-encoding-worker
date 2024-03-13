@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class CreateStdDataFile : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFile>
+    public class CreateStdDataFile(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFile properties) : DESFireAction<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFile>(properties)
     {
-        public CreateStdDataFile(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateStdDataFile properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             cmd.createStdDataFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), Properties.FileSize);

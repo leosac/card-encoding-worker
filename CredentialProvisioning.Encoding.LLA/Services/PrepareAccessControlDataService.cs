@@ -1,40 +1,29 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 using LibLogicalAccess;
-using System.Text;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class PrepareAccessControlDataService : AccessControlDataService<Encoding.Services.PrepareAccessControlDataService>
+    public class PrepareAccessControlDataService(Encoding.Services.PrepareAccessControlDataService properties) : AccessControlDataService<Encoding.Services.PrepareAccessControlDataService>(properties)
     {
-        public PrepareAccessControlDataService(Encoding.Services.PrepareAccessControlDataService properties) : base(properties)
-        {
-
-        }
-
         protected override void Run(CardContext cardCtx, KeyProvider? keystore, Format format)
         {
             SyncFormatWithCredentialData(format, cardCtx.Credential?.Data);
-            var data = format.getLinearData();
-            if (data == null)
-                throw new EncodingException("Cannot compute the access control data.");
-            HandleBuffer(cardCtx, data.ToArray());
+            var data = format.getLinearData() ?? throw new EncodingException("Cannot compute the access control data.");
+            HandleBuffer(cardCtx, [.. data]);
         }
 
         private void SyncFormatWithCredentialData(Format format, IDictionary<string, object> credentialData)
         {
-            if (format == null)
-                throw new ArgumentNullException("format");
-
-            if (credentialData == null)
-                throw new ArgumentNullException("credentialData");
+            ArgumentNullException.ThrowIfNull(format);
+            ArgumentNullException.ThrowIfNull(credentialData);
 
             var fieldNames = format.getValuesFieldList();
             foreach (var fieldName in fieldNames)
             {
                 var credFieldName = GetCredentialFieldName(fieldName);
-                if (credentialData.ContainsKey(credFieldName))
+                if (credentialData.TryGetValue(credFieldName, out object? value))
                 {
-                    var v = credentialData[credFieldName]?.ToString();
+                    var v = value?.ToString();
                     if (v != null)
                     {
                         var field = format.getFieldFromName(fieldName);
@@ -47,10 +36,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                             {
                                 encoding = System.Text.Encoding.GetEncoding(charset);
                             }
-                            if (encoding == null)
-                            {
-                                encoding = System.Text.Encoding.UTF8;
-                            }
+                            encoding ??= System.Text.Encoding.UTF8;
                             sf.setRawValue(new ByteVector(encoding.GetBytes(v)));
                         }
                         else if (field is NumberDataField nf)

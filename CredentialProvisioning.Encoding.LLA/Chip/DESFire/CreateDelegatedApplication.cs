@@ -3,13 +3,8 @@ using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
 {
-    public class CreateDelegatedApplication : DESFireEV2Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateDelegatedApplication>
+    public class CreateDelegatedApplication(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateDelegatedApplication properties) : DESFireEV2Action<Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateDelegatedApplication>(properties)
     {
-        public CreateDelegatedApplication(Leosac.CredentialProvisioning.Encoding.Chip.DESFire.CreateDelegatedApplication properties) : base(properties)
-        {
-
-        }
-
         public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtxdeviceCtx)
         {
             var daminfo = new PairByteVectorByteVector();
