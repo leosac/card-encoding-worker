@@ -65,7 +65,17 @@ namespace Leosac.CredentialProvisioning.Encoding.Key
             if (keyRef == null)
                 return null;
 
-            return Get(Guid.Parse(keyRef.KeyId));
+            if (!Guid.TryParse(keyRef.KeyId, out Guid keyId))
+                return null;
+
+            // Volatile keys have priority
+            if (volatileKeys != null)
+            {
+                var key = volatileKeys.FirstOrDefault(k => k.Id == keyId);
+                if (key != null) return key;
+            }
+
+            return Get(keyId);
         }
 
         /// <summary>
