@@ -13,6 +13,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 data = cardCtx.GetBinaryFieldValue(fieldName);
             }
 
+            if (Properties.IsDataRequired && (data == null || data.Length == 0))
+            {
+                throw new EncodingException("No data to update buffer from.");
+            }
+
             HandleBuffer(cardCtx, data);
         }
     }
