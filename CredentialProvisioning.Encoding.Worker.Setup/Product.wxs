@@ -4,7 +4,7 @@
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />
     <MediaTemplate EmbedCab="yes" />
-    <Icon Id="leosac.ico" SourceFile="leosac.ico" />
+    <Icon Id="leosac_card.ico" SourceFile="leosac_card.ico" />
 
     <Feature Id="ProductFeature" Title="$(var.ProductName)" Description="The $(var.ProductName) application" Level="1" AllowAbsent="no">
       <ComponentGroupRef Id="MainComponents" />
@@ -27,7 +27,7 @@
     <!-- The update link that appears in Add & Remove Programs. -->
     <Property Id="ARPURLUPDATEINFO" Value="$(var.UpdatesURL)" />
     <!-- The icon that appears in Add & Remove Programs. -->
-    <Property Id="ARPPRODUCTICON" Value="leosac.ico" />
+    <Property Id="ARPPRODUCTICON" Value="leosac_card.ico" />
 
     <Property Id="ApplicationFolderName" Value="$(var.Manufacturer)\$(var.ProductName)" />
     <Property Id="Platform" Value="$(var.Platform)" />
@@ -41,7 +41,7 @@
     <WixVariable Id="WixUILicenseRtf" Value="EULA.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
-    <WixVariable Id="WixUIInfoIco" Value="leosac.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="leosac_card.ico" />
   </Package>
 
   <Fragment>
