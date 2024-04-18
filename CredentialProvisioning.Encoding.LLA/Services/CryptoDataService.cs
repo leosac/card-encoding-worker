@@ -23,6 +23,16 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             byte[] data;
             if (Properties.Crypto.Operation == Core.Models.CryptoOperation.Sign && key.KeyType == "aes128" && !string.IsNullOrEmpty(key.Value))
             {
+                if (iv != null)
+                {
+                    var niv = new byte[16];
+                    Array.Copy(iv, niv, iv.Length);
+                    if (iv.Length < niv.Length)
+                    {
+                        niv[iv.Length] = 0x80;
+                    }
+                    iv = niv;
+                }
                 var cdata = LibLogicalAccess.Crypto.CMACCrypto.cmac(new LibLogicalAccess.ByteVector(Convert.FromHexString(key.Value)), "aes", new LibLogicalAccess.ByteVector(cardCtx.Buffer), new LibLogicalAccess.ByteVector(iv)).ToArray();
                 // Get the first 8 bytes only
                 data = new byte[8];
