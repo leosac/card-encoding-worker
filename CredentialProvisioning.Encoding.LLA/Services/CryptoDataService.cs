@@ -20,7 +20,18 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 iv = cardCtx.GetBinaryFieldValue(fieldName);
             }
 
-            var data = Properties.Crypto.Run(key, cardCtx.Buffer, iv);
+            byte[] data;
+            if (Properties.Crypto.Operation == Core.Models.CryptoOperation.Sign && key.KeyType == "aes128" && !string.IsNullOrEmpty(key.Value))
+            {
+                var cdata = LibLogicalAccess.Crypto.CMACCrypto.cmac(new LibLogicalAccess.ByteVector(Convert.FromHexString(key.Value)), "aes", new LibLogicalAccess.ByteVector(cardCtx.Buffer), new LibLogicalAccess.ByteVector(iv)).ToArray();
+                // Get the first 8 bytes only
+                data = new byte[8];
+                Array.Copy(cdata, data, 8);
+            }
+            else
+            {
+                data = Properties.Crypto.Run(key, cardCtx.Buffer, iv);
+            }
             HandleBuffer(cardCtx, data);
         }
     }
