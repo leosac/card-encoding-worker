@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using System.IO;
+using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -13,6 +13,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             HandlePolymorphism(jsonTypeInfo, typeof(EncodingActionProperties), EncodingActionProperties.Discriminator, EncodingActionProperties.GetAllTypes());
             HandlePolymorphism(jsonTypeInfo, typeof(EncodingServiceProperties), EncodingServiceProperties.Discriminator, EncodingServiceProperties.GetAllTypes());
+            HandlePolymorphism(jsonTypeInfo, typeof(AccessControlDataField), AccessControlDataField.Discriminator, AccessControlDataField.GetAllTypes());
 
             return jsonTypeInfo;
         }
@@ -45,6 +46,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             else if (subType.IsAssignableTo(typeof(EncodingServiceProperties)))
             {
                 namespacePrefix = "Leosac.CredentialProvisioning.Encoding.Services.";
+            }
+            else if (subType.IsAssignableTo(typeof(AccessControlDataField)))
+            {
+                namespacePrefix = "Leosac.CredentialProvisioning.Encoding.Services.AccessControl.";
             }
 
             var typeName = subType.FullName;

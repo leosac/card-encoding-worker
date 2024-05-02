@@ -1,4 +1,7 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services
+﻿using System.Text.Json.Serialization;
+using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
+
+namespace Leosac.CredentialProvisioning.Encoding.Services
 {
     /// <summary>
     /// The base access control data encoding service properties.
@@ -6,8 +9,14 @@
     public abstract class AccessControlDataService : EncodingServiceProperties
     {
         /// <summary>
-        /// The access control format to use.
+        /// The XML definition of the access control format to use.
         /// </summary>
-        public string Format { get; set; }
+        /// <remarks>This field takes priority over FormatDefinition field.</remarks>
+        public string? Format { get; set; }
+
+        /// <summary>
+        /// The format definition.
+        /// </summary>
+        public AccessControlFormat? FormatDefinition { get; set; }
     }
 }
