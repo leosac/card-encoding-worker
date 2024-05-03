@@ -1,9 +1,9 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Fields
 {
     /// <summary>
     /// Parity data field.
     /// </summary>
-    public class ParityDataField : AccessControlDataField
+    public class Parity : AccessControlDataField
     {
         /// <summary>
         /// The parity type.

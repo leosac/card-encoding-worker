@@ -1,18 +1,34 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+﻿using System.Reflection;
+
+namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
 {
     /// <summary>
-    /// Definition of an access control format.
+    /// Base class for Access Control format.
     /// </summary>
-    public class AccessControlFormat
+    public abstract class AccessControlFormat : ICloneable
     {
         /// <summary>
-        /// The format name.
+        /// Discriminator for access control format serialization
         /// </summary>
-        public string Name { get; set; } = string.Empty;
+        public const string Discriminator = "$type";
 
         /// <summary>
-        /// The format fields.
+        /// Clone the access control format.
         /// </summary>
-        public AccessControlDataField[] Fields { get; set; } = [];
+        /// <returns>The cloned object.</returns>
+        public virtual object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        /// <summary>
+        /// Get all access control format types from the executing assemblyss.
+        /// </summary>
+        /// <returns>The access control format types.</returns>
+        public static IEnumerable<Type> GetAllTypes()
+        {
+            var bt = typeof(AccessControlFormat);
+            return Assembly.GetExecutingAssembly().GetTypes().Where(t => bt.IsAssignableFrom(t) && !t.IsAbstract);
+        }
     }
 }

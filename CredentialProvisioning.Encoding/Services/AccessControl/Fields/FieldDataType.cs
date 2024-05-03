@@ -1,4 +1,4 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Fields
 {
     /// <summary>
     /// The field data type.

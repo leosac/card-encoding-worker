@@ -1,4 +1,4 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Fields
 {
     public abstract class ValueDataField : AccessControlDataField
     {

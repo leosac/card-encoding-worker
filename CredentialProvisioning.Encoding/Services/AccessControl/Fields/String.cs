@@ -1,6 +1,6 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+﻿namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Fields
 {
-    public class StringDataField : ValueDataField
+    public class String : ValueDataField
     {
         /// <summary>
         /// The string value.

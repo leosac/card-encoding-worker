@@ -5,7 +5,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
     /// <summary>
     /// Base class for an Access Control data field.
     /// </summary>
-    public abstract class AccessControlDataField
+    public abstract class AccessControlDataField : ICloneable
     {
         /// <summary>
         /// Discriminator for Data Field serialization
