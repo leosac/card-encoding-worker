@@ -42,8 +42,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             builder.Services.ConfigureOptions(optionsSetup);
             builder.Services.AddSignalR().AddJsonProtocol(options =>
             {
-                options.PayloadSerializerOptions.Converters
-                   .Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                options.PayloadSerializerOptions.Converters.Add(new EnumWithFlagsJsonConverterFactory(JsonNamingPolicy.CamelCase));
+                options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
 
             builder.Host.UseWindowsService();
@@ -185,6 +185,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
             {
                 options.SerializerOptions.TypeInfoResolver = new PolymorphicTypeResolver();
+                options.SerializerOptions.Converters.Add(new EnumWithFlagsJsonConverterFactory(JsonNamingPolicy.CamelCase));
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
 
