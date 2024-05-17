@@ -12,8 +12,9 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// </summary>
         /// <param name="cardCtx">The card context.</param>
         /// <param name="keystore">The key provider.</param>
+        /// <param name="templateProperties">Template properties.</param>
         /// <param name="currentAction">The current encoding action from where the service run.</param>
-        public abstract void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction);
+        public abstract void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction);
     }
 
     /// <summary>

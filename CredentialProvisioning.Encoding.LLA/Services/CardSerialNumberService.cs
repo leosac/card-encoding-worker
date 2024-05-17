@@ -4,7 +4,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class CardSerialNumberService(Encoding.Services.CardSerialNumberService properties) : EncodingService<Encoding.Services.CardSerialNumberService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
         {
             string? csn = null;
             if (cardCtx is LLACardContext llacardCtx)

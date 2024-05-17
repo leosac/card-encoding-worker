@@ -13,6 +13,11 @@
         /// <summary>
         /// The data field name from where to get the updated data.
         /// </summary>
-        public string SourceField { get; set; }
+        public string? SourceField { get; set; }
+
+        /// <summary>
+        /// The fragment template property from where to get the updated data.
+        /// </summary>
+        public string? SourceProperty { get; set; }
     }
 }

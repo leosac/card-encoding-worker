@@ -25,6 +25,28 @@ namespace Leosac.CredentialProvisioning.Encoding
         }
 
         /// <summary>
+        /// Fragment template global property.
+        /// </summary>
+        public class FragmentTemplateProperty
+        {
+            /// <summary>
+            /// The property name.
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// The property displayed name.
+            /// </summary>
+            /// <returns></returns>
+            public string Label { get; set; }
+
+            /// <summary>
+            /// The property value.
+            /// </summary>
+            public object? Value { get; set; }
+        }
+
+        /// <summary>
         /// The first encoding action to execute.
         /// </summary>
         public EncodingActionProperties? FirstAction { get; set; }
@@ -38,5 +60,10 @@ namespace Leosac.CredentialProvisioning.Encoding
         /// The optional SAM properties.
         /// </summary>
         public SAMProperties? SAM { get; set; }
+
+        /// <summary>
+        /// Fragment Template properties, which can be referenced by actions/services.
+        /// </summary>
+        public FragmentTemplateProperty[]? Properties { get; set; }
     }
 }
