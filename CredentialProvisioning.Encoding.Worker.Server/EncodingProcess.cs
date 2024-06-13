@@ -64,28 +64,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private static Dictionary<string, object>? GetFieldChanges(CardContext cardCtx)
-        {
-            if (cardCtx.Credential == null || cardCtx.FieldsChanged == null)
-                return null;
-
-            var changes = new Dictionary<string, object>();
-#pragma warning disable IDE0019 // Use pattern matching
-            var fields = cardCtx.Credential?.Data as IDictionary<string, object>;
-#pragma warning restore IDE0019 // Use pattern matching
-            if (fields != null)
-            {
-                foreach (var fieldName in cardCtx.FieldsChanged)
-                {
-                    if (fields.TryGetValue(fieldName, out object? value))
-                    {
-                        changes.Add(fieldName, value);
-                    }
-                }
-            }
-            return changes;
-        }
-
         private async Task HandleActions(EncodingActionProperties[] actionProps, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx)
         {
             foreach (var actionProp in actionProps)
