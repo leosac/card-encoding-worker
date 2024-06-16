@@ -63,6 +63,10 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                 var ks = new SAMKeyStorage();
                 _ = byte.TryParse(key.KeyStoreReference, out byte slot);
                 ks.setKeySlot(slot);
+                if (key.DumpFromKeyStore)
+                {
+                    ks.setDumpKey(true);
+                }
                 llaKey.setKeyStorage(ks);
             }
             else
