@@ -12,8 +12,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 throw new EncodingException("No access control data to parse.");
             }
 
-            SyncCredentialDataWithFormat(cardCtx, format);
             format.setLinearData(new ByteVector(cardCtx.Buffer));
+            SyncCredentialDataWithFormat(cardCtx, format);
             HandleBuffer(cardCtx, null);
         }
 
