@@ -3,13 +3,8 @@ using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.Mifare
 {
-    public class ChangeKeys : MifareAction<Leosac.CredentialProvisioning.Encoding.Chip.Mifare.ChangeKeys>
+    public class ChangeKeys(Leosac.CredentialProvisioning.Encoding.Chip.Mifare.ChangeKeys properties) : MifareAction<Leosac.CredentialProvisioning.Encoding.Chip.Mifare.ChangeKeys>(properties)
     {
-        public ChangeKeys(Leosac.CredentialProvisioning.Encoding.Chip.Mifare.ChangeKeys properties) : base(properties)
-        {
-
-        }
-
         public override void Run(MifareCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             MifareKey? llaKeyA = null, llaKeyB = null;

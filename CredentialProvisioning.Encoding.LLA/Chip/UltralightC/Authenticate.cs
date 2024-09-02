@@ -3,13 +3,8 @@ using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.UltralightC
 {
-    public class Authenticate : UltralightCAction<Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.Authenticate>
+    public class Authenticate(Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.Authenticate properties) : UltralightCAction<Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.Authenticate>(properties)
     {
-        public Authenticate(Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.Authenticate properties) : base(properties)
-        {
-
-        }
-
         public override void Run(MifareUltralightCCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)

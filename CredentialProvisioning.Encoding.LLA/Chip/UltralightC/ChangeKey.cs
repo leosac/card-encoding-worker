@@ -3,13 +3,8 @@ using LibLogicalAccess.Card;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.UltralightC
 {
-    public class ChangeKey : UltralightCAction<Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.ChangeKey>
+    public class ChangeKey(Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.ChangeKey properties) : UltralightCAction<Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.ChangeKey>(properties)
     {
-        public ChangeKey(Leosac.CredentialProvisioning.Encoding.Chip.UltralightC.ChangeKey properties) : base(properties)
-        {
-
-        }
-
         public override void Run(MifareUltralightCCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)

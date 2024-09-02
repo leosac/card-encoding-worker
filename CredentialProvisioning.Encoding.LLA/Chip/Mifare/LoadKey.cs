@@ -2,13 +2,8 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.Mifare
 {
-    public class LoadKey : MifareAction<Leosac.CredentialProvisioning.Encoding.Chip.Mifare.LoadKey>
+    public class LoadKey(Leosac.CredentialProvisioning.Encoding.Chip.Mifare.LoadKey properties) : MifareAction<Leosac.CredentialProvisioning.Encoding.Chip.Mifare.LoadKey>(properties)
     {
-        public LoadKey(Leosac.CredentialProvisioning.Encoding.Chip.Mifare.LoadKey properties) : base(properties)
-        {
-
-        }
-
         public override void Run(MifareCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
             if (Properties.Key == null)
