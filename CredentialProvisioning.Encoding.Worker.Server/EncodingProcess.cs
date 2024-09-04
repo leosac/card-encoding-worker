@@ -2,6 +2,7 @@
 using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Worker;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 

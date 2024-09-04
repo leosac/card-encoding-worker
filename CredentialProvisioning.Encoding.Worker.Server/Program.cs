@@ -236,6 +236,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 integrity.LoadPublicKey(options.DataIntegrityKey);
             }
             builder.Services.AddSingleton(integrity);
+            builder.Services.AddScoped<LocalReader>();
+            builder.Services.AddSingleton<ReaderMediator>();
 
             var app = builder.Build();
 
@@ -366,24 +368,34 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
             {
-                worker.Queue.Remove(templateId);
+                worker.Queue.Remove(itemId);
             })
             .WithName("DeleteFromQueue").WithTags("template", "queue");
 
             if (options.ReaderType == ReaderType.Remote)
             {
                 // Virtual LLA readers through a WebSocket channel
-                app.MapHub<ReaderHub>("/reader");
-            }
-            else if (options.ReaderType == ReaderType.Rest)
-            {
-                // TODO: implements "/encode/" endpoints and handle virtual LLA readers through REST API
-                throw new NotImplementedException();
+                app.MapHub<RemoteReaderHub>("/reader");
             }
             else
             {
-                // TODO: implements "/encode/" endpoints and use local PC/SC resources
-                throw new NotImplementedException();
+                app.MapPost("/template/{templateId}/queue/{itemId}/encode", async (string templateId, string itemId) =>
+                {
+                    var item = worker.Queue.Get(itemId);
+                    if (item == null)
+                        return Results.NotFound();
+
+                    var mediator = app.Services.GetRequiredService<ReaderMediator>();
+                    var localReader = app.Services.GetRequiredService<LocalReader>();
+                    // Use local PC/SC resources
+                    var processId = await mediator.EncodeFromQueue(item.TemplateId, itemId, localReader.Initialize);
+                    if (string.IsNullOrEmpty(processId))
+                        return Results.Problem("The encoding process cannot be started for this item.");
+
+                    worker.Queue.Remove(itemId);
+                    return Results.Ok(processId);
+                })
+                .WithName("Encode").WithTags("template", "queue", "encode");
             }
 
             app.Logger.LogInformation("App Setup completed, running...");
