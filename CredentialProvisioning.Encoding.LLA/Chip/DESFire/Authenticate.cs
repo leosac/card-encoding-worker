@@ -17,6 +17,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             }
 
             cmd.authenticate(Properties.KeyNo, desfireKey);
+            GC.KeepAlive(desfireKey);
         }
     }
 }

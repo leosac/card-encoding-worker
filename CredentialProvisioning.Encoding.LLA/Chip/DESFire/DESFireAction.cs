@@ -17,7 +17,10 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             }
 
             var chip = llaCtx.Chip as DESFireChip ?? throw new EncodingException("Wrong chip type");
-            Run(chip.getDESFireCommands(), encCtx, llaCtx);
+            var cmd = chip.getDESFireCommands();
+            Run(cmd, encCtx, llaCtx);
+            GC.KeepAlive(cmd);
+            GC.KeepAlive(chip);
         }
 
         public abstract void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx);
