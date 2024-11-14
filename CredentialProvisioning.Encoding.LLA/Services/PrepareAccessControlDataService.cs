@@ -37,15 +37,31 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                                 encoding = System.Text.Encoding.GetEncoding(charset);
                             }
                             encoding ??= System.Text.Encoding.UTF8;
-                            sf.setRawValue(new ByteVector(encoding.GetBytes(v)));
+                            var data = encoding.GetBytes(v);
+                            if (data.Length * 8 > sf.getDataLength())
+                            {
+                                throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
+                            }
+                            sf.setRawValue(new ByteVector(data));
                         }
                         else if (field is NumberDataField nf)
                         {
-                            nf.setValue(long.Parse(v));
+                            var data = long.Parse(v);
+                            var bitlength = (int)Math.Log(data, 2);
+                            if (bitlength > nf.getDataLength())
+                            {
+                                throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
+                            }
+                            nf.setValue(data);
                         }
                         else if (field is BinaryDataField bf)
                         {
-                            bf.setValue(new ByteVector(Convert.FromHexString(v)));
+                            var data = Convert.FromHexString(v);
+                            if (data.Length * 8 > bf.getDataLength())
+                            {
+                                throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
+                            }
+                            bf.setValue(new ByteVector(data));
                         }
                     }
                 }
