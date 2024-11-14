@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
+﻿using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
 
 namespace Leosac.CredentialProvisioning.Encoding.Services
 {
