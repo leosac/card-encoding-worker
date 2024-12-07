@@ -32,6 +32,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Contracts
 
         Task DisconnectFromCard(string alias);
 
+        Task<bool> ReconnectToCard(string alias, int action);
+
         Task<bool> WaitCardRemoval(string alias, uint maxwait);
     }
 }

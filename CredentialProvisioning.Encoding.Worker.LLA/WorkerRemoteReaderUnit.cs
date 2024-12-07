@@ -13,14 +13,16 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
     public class WorkerRemoteReaderUnit : LibLogicalAccess.Reader.PCSCReaderUnit
     {
         protected readonly IReaderClient _readerClient;
+        protected readonly Version? _apiVersion;
         protected readonly bool _waitRemoval;
         WorkerRemoteDataTransport? _dataTransport;
         bool _disposed;
         string? _cardContext;
         LibLogicalAccess.Chip? _cachedChip;
 
-        public WorkerRemoteReaderUnit(IReaderClient readerClient, string alias, bool waitRemoval = true) : base("")
+        public WorkerRemoteReaderUnit(IReaderClient readerClient, string apiVersion, string alias, bool waitRemoval = true) : base("")
         {
+            Version.TryParse(apiVersion, out _apiVersion);
             _readerClient = readerClient;
             Alias = alias;
             _waitRemoval = waitRemoval;
@@ -110,6 +112,20 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             if (_cachedChip != null)
             {
                 _cachedChip = null;
+            }
+        }
+
+        protected override bool reconnect(int action)
+        {
+            if (_apiVersion != null && _apiVersion >= new Version("1.1.0"))
+            {
+                var task = _readerClient.ReconnectToCard(Alias, action);
+                task.Wait();
+                return task.Result;
+            }
+            else
+            {
+                return base.reconnect(action);
             }
         }
 
