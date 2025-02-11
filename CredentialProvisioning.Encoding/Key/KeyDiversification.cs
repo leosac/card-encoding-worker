@@ -8,7 +8,7 @@
         /// <summary>
         /// The diversification algorithm.
         /// </summary>
-        public string Algorithm { get; set; } = "an10922";
+        public string Algorithm { get; set; } = string.Empty;
 
         /// <summary>
         /// Div Input fragments to use.
