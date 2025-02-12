@@ -15,9 +15,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             {
                 throw new EncodingException("The key must be of type DESFire.");
             }
-            // fail on cardCtx.LLADeviceContext.ReaderUnit.getSAMReaderUnit().reconnect()
             cmd.authenticate(Properties.KeyNo, desfireKey);
-            GC.KeepAlive(desfireKey);
         }
     }
 }

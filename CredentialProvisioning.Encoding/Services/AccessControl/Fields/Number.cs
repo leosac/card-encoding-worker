@@ -8,6 +8,6 @@
         /// <summary>
         /// The number value.
         /// </summary>
-        public long Value { get; set; }
+        public ulong Value { get; set; }
     }
 }

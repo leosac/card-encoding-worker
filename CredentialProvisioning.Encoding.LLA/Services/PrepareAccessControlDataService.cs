@@ -46,7 +46,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                         }
                         else if (field is NumberDataField nf)
                         {
-                            var data = long.Parse(v);
+                            var data = ulong.Parse(v);
                             var bitlength = (int)Math.Log(data, 2);
                             if (bitlength > nf.getDataLength())
                             {

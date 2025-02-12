@@ -43,9 +43,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             task.Wait();
             if (task.Result)
             {
+                setDataTransport(_dataTransport);
                 var rca = getDefaultReaderCardAdapter();
                 rca.setDataTransport(_dataTransport);
                 setDefaultReaderCardAdapter(rca);
+                rca = getDefaultReaderCardAdapter();
 
                 base.connectToSAM();
             }
@@ -115,7 +117,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             }
         }
 
-        protected override bool reconnect(int action)
+        public override bool reconnect(int action)
         {
             if (_apiVersion != null && _apiVersion >= new Version("1.1.0"))
             {
@@ -191,8 +193,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
                 var cmd = chip.getCommands();
                 if (cmd != null)
                 {
+                    // TODO: fix this, it shouldn't be required
                     var rca = cmd.getReaderCardAdapter();
-                    rca?.setDataTransport(_dataTransport);
+                    rca?.setDataTransport(getDefaultReaderCardAdapter().getDataTransport());
                 }
             }
 
@@ -232,17 +235,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
             return _cachedChip;
         }
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            //base.Dispose();
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
+
+            base.Dispose(disposing);
 
             if (disposing)
             {
