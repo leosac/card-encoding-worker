@@ -1,4 +1,5 @@
 ﻿using Leosac.CredentialProvisioning.Server.Shared;
+using Leosac.ServerHelper;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {

@@ -14,7 +14,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
     {
         protected readonly ILogger<RemoteReaderHub> _logger = logger;
         protected readonly EncodingWorker _worker = worker;
-        protected readonly WorkerCredentialDataIntegrity _integrity = integrity;
+        protected readonly WorkerCredentialDataIntegrity _integrity = integrity; 
 
         public Task<string?> EncodeFromQueue(string templateId, string itemId, Func<CredentialProcess<EncodingFragmentTemplateContent>?, DeviceTarget> initializeDevices)
         {
