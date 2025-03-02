@@ -2,6 +2,7 @@ using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Encoding.Key;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
+using Leosac.ServerHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.WindowsServices;
