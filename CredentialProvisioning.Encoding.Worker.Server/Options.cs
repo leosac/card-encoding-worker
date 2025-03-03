@@ -1,5 +1,4 @@
-﻿using Leosac.CredentialProvisioning.Server.Shared;
-using Leosac.ServerHelper;
+﻿using Leosac.ServerHelper;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -24,5 +23,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         public string SAMReader { get; set; } = "SAM";
 
         public JwtSettings JWT { get; set; } = new();
+
+        public JwtSettings? CompletionJWT { get; set; }
     }
 }

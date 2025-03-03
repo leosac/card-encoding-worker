@@ -270,12 +270,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             //app.UseHttpsRedirection();
 
+            if (options.CompletionJWT != null)
+            {
+                worker.SetupCompletionTokenJWT(options.CompletionJWT);
+            }
+
             var jwtService = new JwtService(options.JWT);
             if (options.ManagementApi.GetValueOrDefault(true))
             {
                 app.MapPost("/auth", (AuthenticateWithAPIKeyRequest req) =>
                 {
-                    if (req.ApiKey == options.APIKey && !string.IsNullOrEmpty(options.JWT?.Key))
+                    var key = options.JWT?.GetKey();
+                    if (req.ApiKey == options.APIKey && key != null)
                     {
                         var claims = new List<Claim>(jwtService.CreateBaseClaims());
                         if (!string.IsNullOrEmpty(req.Application))
