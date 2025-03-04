@@ -1,5 +1,5 @@
 ﻿<?include config.wxi ?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui" xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx">
   <Package Name="$(var.ProductName)" Language="1033" Version="$(var.Version)" Manufacturer="$(var.Manufacturer)" UpgradeCode="09646696-D659-4ABD-AE0F-4072ED1FC75D">
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of $(var.ProductName) is already installed." />
@@ -42,6 +42,9 @@
     <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
     <WixVariable Id="WixUIInfoIco" Value="leosac_card.ico" />
+
+    <netfx:DotNetCompatibilityCheck RuntimeType="aspnet" Platform="$(var.Platform)" RollForward="latestMinor" Version ="8.0.0" Property="NETCORESTATUS" />
+    <Launch Condition="Installed OR NETCORESTATUS=&quot;0&quot;" Message="[ProductName] requires Microsoft .NET 8 ASP.NET Core." />
   </Package>
 
   <Fragment>
