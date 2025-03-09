@@ -21,6 +21,11 @@
         public DESFireKeySettings KeySettings { get; set; }
 
         /// <summary>
+        /// The change key.
+        /// </summary>
+        public byte ChangeKey { get; set; }
+
+        /// <summary>
         /// Number of PICC keys inside the application.
         /// </summary>
         public byte MaxNbKeys { get; set; }

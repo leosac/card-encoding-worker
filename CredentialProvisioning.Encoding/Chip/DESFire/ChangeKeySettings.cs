@@ -14,5 +14,10 @@
         /// The new key settings.
         /// </summary>
         public DESFireKeySettings KeySettings { get; set; }
+
+        /// <summary>
+        /// The change key.
+        /// </summary>
+        public byte ChangeKey { get; set; }
     }
 }

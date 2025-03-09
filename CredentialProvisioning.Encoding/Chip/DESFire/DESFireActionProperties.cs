@@ -148,15 +148,15 @@
         /// </summary>
         ConfigurationChangeable = 8,
         /// <summary>
-        /// Change keys with Master Key
+        /// Change keys with Master Key. Deprecated by changeKey parameter.
         /// </summary>
         ChangeKeyWithMasterKey = 0,
         /// <summary>
-        /// Change keys with targeted key number
+        /// Change keys with targeted key number. Deprecated by changeKey parameter.
         /// </summary>
         ChangeKeyWithTargetedKeyNo = 224,
         /// <summary>
-        /// Change key is frozen
+        /// Change key is frozen. Deprecated by changeKey parameter.
         /// </summary>
         ChangeKeyFrozen = 240,
         /// <summary>
