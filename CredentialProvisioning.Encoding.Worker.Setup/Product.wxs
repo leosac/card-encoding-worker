@@ -125,6 +125,9 @@
       <Component Id="ServerHelperComponent">
         <File Id="___var.ServerHelper.dll.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\ServerHelper.dll" />
       </Component>
+      <Component Id="llaConfigComponent">
+        <File Id="___var.liblogicalaccess.config.TargetPath_" Source="$(var.SolutionDir)\liblogicalaccess.config" />
+      </Component>
     </ComponentGroup>
 
     <ComponentGroup Id="DependenciesResourcesFR" Directory="RESOURCESFR">
