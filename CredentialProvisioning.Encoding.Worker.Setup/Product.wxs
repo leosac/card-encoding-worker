@@ -122,6 +122,9 @@
       <Component Id="CredentialProvisioningWorkerComponent">
         <File Id="___var.CredentialProvisioning.Worker.dll.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\CredentialProvisioning.Worker.dll" />
       </Component>
+      <Component Id="ServerHelperComponent">
+        <File Id="___var.ServerHelper.dll.TargetPath_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\ServerHelper.dll" />
+      </Component>
     </ComponentGroup>
 
     <ComponentGroup Id="DependenciesResourcesFR" Directory="RESOURCESFR">
@@ -140,8 +143,44 @@
       <Component Id="MicrosoftAspNetCoreAuthenticationJwtBearerComponent">
         <File Id="___var.Microsoft.AspNetCore.Authentication.JwtBearer.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.AspNetCore.Authentication.JwtBearer.dll" />
       </Component>
+      <Component Id="MicrosoftAspNetCoreCryptographyInternalComponent">
+        <File Id="___var.Microsoft.AspNetCore.Cryptography.Internal.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.AspNetCore.Cryptography.Internal.dll" />
+      </Component>
+      <Component Id="MicrosoftAspNetCoreCryptographyKeyDerivationComponent">
+        <File Id="___var.Microsoft.AspNetCore.Cryptography.KeyDerivation.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll" />
+      </Component>
       <Component Id="MicrosoftAspNetCoreOpenApiComponent">
         <File Id="___var.Microsoft.AspNetCore.OpenApi.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.AspNetCore.OpenApi.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsConfigurationBinderComponent">
+        <File Id="___var.Microsoft.Extensions.Configuration.Binder.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Configuration.Binder.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsConfigurationFileExtensionsComponent">
+        <File Id="___var.Microsoft.Extensions.Configuration.FileExtensions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Configuration.FileExtensions.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsConfigurationJsonComponent">
+        <File Id="___var.Microsoft.Extensions.Configuration.Json.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Configuration.Json.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsConfigurationUserSecretsComponent">
+        <File Id="___var.Microsoft.Extensions.Configuration.UserSecrets.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Configuration.UserSecrets.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsDependencyInjectionAbstractionsComponent">
+        <File Id="___var.Microsoft.Extensions.DependencyInjection.Abstractions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsDependencyInjectionComponent">
+        <File Id="___var.Microsoft.Extensions.DependencyInjection.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.DependencyInjection.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsDiagnosticsAbstractionsComponent">
+        <File Id="___var.Microsoft.Extensions.Diagnostics.Abstractions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Diagnostics.Abstractions.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsDiagnosticsComponent">
+        <File Id="___var.Microsoft.Extensions.Diagnostics.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Diagnostics.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsHostingAbstractionsComponent">
+        <File Id="___var.Microsoft.Extensions.Hosting.Abstractions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Hosting.Abstractions.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsHostingComponent">
+        <File Id="___var.Microsoft.Extensions.Hosting.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Hosting.dll" />
       </Component>
       <Component Id="MicrosoftExtensionsHostingSystemdComponent">
         <File Id="___var.Microsoft.Extensions.Hosting.Systemd.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Hosting.Systemd.dll" />
@@ -149,11 +188,41 @@
       <Component Id="MicrosoftExtensionsHostingWindowsServicesComponent">
         <File Id="___var.Microsoft.Extensions.Hosting.WindowsServices.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Hosting.WindowsServices.dll" />
       </Component>
-      <Component Id="MicrosoftIdentityModelJsonWebTokensComponent">
-        <File Id="___var.Microsoft.IdentityModel.JsonWebTokens.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.IdentityModel.JsonWebTokens.dll" />
+      <Component Id="MicrosoftExtensionsIdentityCoreComponent">
+        <File Id="___var.Microsoft.Extensions.Identity.Core.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Identity.Core.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsIdentityStoresComponent">
+        <File Id="___var.Microsoft.Extensions.Identity.Stores.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Identity.Stores.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingAbstractionsComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.Abstractions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.Abstractions.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingConfigurationComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.Configuration.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.Configuration.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingConsoleComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.Console.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.Console.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingDebugComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.Debug.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.Debug.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingEventLogComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.EventLog.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.EventLog.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsLoggingEventSourceComponent">
+        <File Id="___var.Microsoft.Extensions.Logging.EventSource.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Logging.EventSource.dll" />
+      </Component>
+      <Component Id="MicrosoftExtensionsOptionsComponent">
+        <File Id="___var.Microsoft.Extensions.Options.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.Extensions.Options.dll" />
       </Component>
       <Component Id="MicrosoftIdentityModelAbstractionsComponent">
         <File Id="___var.Microsoft.IdentityModel.Abstractions.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.IdentityModel.Abstractions.dll" />
+      </Component>
+      <Component Id="MicrosoftIdentityModelJsonWebTokensComponent">
+        <File Id="___var.Microsoft.IdentityModel.JsonWebTokens.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.IdentityModel.JsonWebTokens.dll" />
       </Component>
       <Component Id="MicrosoftIdentityModelLoggingComponent">
         <File Id="___var.Microsoft.IdentityModel.Logging.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Microsoft.IdentityModel.Logging.dll" />
@@ -185,6 +254,9 @@
       <Component Id="SystemCommandLineComponent">
         <File Id="___var.System.CommandLine.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.CommandLine.dll" />
       </Component>
+      <Component Id="SystemDiagnosticsEventLogComponent">
+        <File Id="___var.System.Diagnostics.EventLog.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.Diagnostics.EventLog.dll" />
+      </Component>
       <Component Id="SystemIdentityModelTokensJwtComponent">
         <File Id="___var.System.IdentityModel.Tokens.Jwt.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.IdentityModel.Tokens.Jwt.dll" />
       </Component>
@@ -193,6 +265,9 @@
       </Component>
     </ComponentGroup>
     <ComponentGroup Id="WinRuntimeComponents" Directory="RUNTIMEWINNET8">
+      <Component Id="SystemDiagnosticsEventLogWinComponent">
+        <File Id="___var.System.Diagnostics.EventLog.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll" />
+      </Component>
       <Component Id="SystemServiceProcessServiceControllerWinComponent">
         <File Id="___var.System.ServiceProcess.ServiceController.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll" />
       </Component>
