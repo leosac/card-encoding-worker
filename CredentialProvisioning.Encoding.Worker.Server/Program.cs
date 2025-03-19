@@ -47,6 +47,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 options.PayloadSerializerOptions.Converters.Add(new EnumWithFlagsJsonConverterFactory(JsonNamingPolicy.CamelCase));
                 options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
+            builder.Services.AddProblemDetails();
 
             builder.Host.UseWindowsService();
             builder.Host.UseSystemd();
