@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
 using System.CommandLine;
+using System.CommandLine.Parsing;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -289,7 +290,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         if (req.Context != null)
                             claims.Add(new Claim("context", req.Context.ToString()!));
 
-                        return Results.Ok(jwtService.CreateToken([.. claims]));
+                        var token = jwtService.CreateToken([.. claims]);
+                        return Results.Ok(new AuthenticationToken()
+                        {
+                            TokenValue = token,
+                            Expiration = jwtService.GetExpirationDate(token)
+                        });
                     }
 
                     return Results.Unauthorized();
