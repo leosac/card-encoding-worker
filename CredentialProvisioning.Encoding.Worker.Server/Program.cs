@@ -6,6 +6,7 @@ using Leosac.ServerHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting.WindowsServices;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.CommandLine;
 using System.CommandLine.Parsing;
@@ -192,14 +193,26 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
 
+            bool requireAuth = false;
             if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
             {
+                requireAuth = true;
                 builder.Services.AddAuthentication(o =>
                 {
                     o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 }).AddJwtBearer(o =>
                 {
+                    o.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = options.JWT.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(options.JWT.GetKey())
+                    };
+
                     // We have to use the query string instead of headers because of limitations in Browser API...
                     // Hate that, as it is against best practice but there is no choice. We should also consider
                     // https://docs.microsoft.com/aspnet/core/signalr/security#access-token-logging
@@ -219,6 +232,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         }
                     };
                 });
+
+                builder.Services.AddAuthorization();
             }
 
             KeyProvider? keystore = null;
@@ -243,6 +258,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             builder.Services.AddSingleton<ReaderMediator>();
 
             var app = builder.Build();
+
+            if (requireAuth)
+            {
+                app.UseAuthentication();
+                app.UseAuthorization();
+            }
 
             var worker = app.Services.GetRequiredService<EncodingWorker>();
             if (!string.IsNullOrEmpty(options.TemplateRepository))
@@ -301,6 +322,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                     return Results.Unauthorized();
                 })
+                .AllowAnonymous()
                 .WithName("Authenticate").WithTags("authentication");
 
                 app.MapPost("/key", (CredentialKey key) =>
@@ -308,6 +330,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     keystore.Add(key);
                     return true;
                 })
+                .RequireAuthorization()
                 .WithName("LoadKey").WithTags("key");
 
                 app.MapPost("/keys", (CredentialKey[] keys) =>
@@ -318,6 +341,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     }
                     return true;
                 })
+                .RequireAuthorization()
                 .WithName("LoadKeys").WithTags("key");
 
                 app.MapPost("/template", (EncodingFragmentTemplateContent template) =>
@@ -326,6 +350,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     worker.LoadTemplate(templateId, template);
                     return new ObjectIdResponse<string> { Id = templateId.ToString() };
                 })
+                .RequireAuthorization()
                 .WithName("LoadTemplate").WithTags("template");
 
                 app.MapPost("/template/{templateId}", (string templateId, EncodingFragmentTemplateContent template, [FromQuery] long? revision) =>
@@ -333,24 +358,28 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     worker.LoadTemplate(templateId, template, revision);
                     return new ObjectIdResponse<string> { Id = templateId };
                 })
+                .RequireAuthorization()
                 .WithName("LoadTemplateWithId").WithTags("template");
 
                 app.MapGet("/templates", () =>
                 {
                     return worker.GetTemplates();
                 })
+                .RequireAuthorization()
                 .WithName("GetTemplates").WithTags("template");
 
                 app.MapGet("/template/{templateId}/check", (string templateId, [FromQuery] long? revision) =>
                 {
                     return (worker.GetTemplate(templateId, revision) != null);
                 })
+                .RequireAuthorization()
                 .WithName("CheckTemplate").WithTags("template");
 
                 app.MapGet("/template/{templateId}/fields", (string templateId) =>
                 {
 
                 })
+                .RequireAuthorization()
                 .WithName("GetTemplateFields").WithTags("template");
             }
 
@@ -368,6 +397,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 var itemId = worker.Queue.Add(templateId, credential);
                 return Results.Ok(new ObjectIdResponse<string>() { Id = itemId });
             })
+            .RequireAuthorization()
             .WithName("AddToQueue").WithTags("template", "queue");
 
             app.MapGet("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
@@ -378,12 +408,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 return Results.Ok(item.Credential);
             })
+            .RequireAuthorization()
             .WithName("GetFromQueue").WithTags("template", "queue");
 
             app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
             {
                 worker.Queue.Remove(itemId);
             })
+            .RequireAuthorization()
             .WithName("DeleteFromQueue").WithTags("template", "queue");
 
             if (options.ReaderType == ReaderType.Remote)
@@ -409,6 +441,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     worker.Queue.Remove(itemId);
                     return Results.Ok(processId);
                 })
+                .RequireAuthorization()
                 .WithName("Encode").WithTags("template", "queue", "encode");
             }
 
