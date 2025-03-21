@@ -3,6 +3,7 @@ using Leosac.CredentialProvisioning.Encoding.LLA;
 using Leosac.CredentialProvisioning.Encoding.Worker.Contracts;
 using Leosac.CredentialProvisioning.Encoding.Worker.LLA;
 using Leosac.CredentialProvisioning.Worker;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
@@ -20,11 +21,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             return Task.FromResult(API_VERSION);
         }
 
+        [Authorize("queue")]
         public Task<string?> EncodeFromQueue(string templateId, string itemId, bool waitRemoval = true)
         {
             return _readerMediator.EncodeFromQueue(templateId, itemId, (process) => Initialize(process, waitRemoval));
         }
 
+        [Authorize]
         public Task<string?> Encode(string templateId, WorkerCredentialBase credential, bool waitRemoval = true)
         {
             return _readerMediator.Encode(templateId, credential, (process) => Initialize(process, waitRemoval));

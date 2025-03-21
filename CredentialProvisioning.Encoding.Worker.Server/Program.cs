@@ -4,9 +4,8 @@ using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Leosac.ServerHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -247,14 +246,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                             if (!context.User.HasClaim(c => c.Type == "context"))
                                 return true;
 
+                            var claimCtx = context.User.Claims.Where(c => c.Type == "context").FirstOrDefault();
                             if (context.Resource is HttpContext hctx)
                             {
                                 object? itemId = null;
                                 if (hctx.Request.RouteValues.TryGetValue("itemId", out itemId) && itemId != null)
                                 {
-                                    var claimCtx = context.User.Claims.Where(c => c.Type == "context").FirstOrDefault();
                                     return claimCtx != null && claimCtx.Value == itemId.ToString();
                                 }
+                            }
+                            else if (context.Resource is HubInvocationContext hictx)
+                            {
+                                return claimCtx != null && hictx.HubMethodArguments.Count >= 2 && claimCtx.Value == hictx.HubMethodArguments[1]?.ToString();
                             }
 
                             return false;
