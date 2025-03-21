@@ -4,7 +4,9 @@ using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Leosac.ServerHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -233,7 +235,32 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     };
                 });
 
-                builder.Services.AddAuthorization();
+                builder.Services.AddAuthorizationBuilder()
+                    .AddDefaultPolicy("global", policy => {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireAssertion(context => !context.User.HasClaim(c => c.Type == "context"));
+                    })
+                    .AddPolicy("queue", policy => {
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireAssertion(context =>
+                        {
+                            if (!context.User.HasClaim(c => c.Type == "context"))
+                                return true;
+
+                            if (context.Resource is HttpContext hctx)
+                            {
+                                object? itemId = null;
+                                if (hctx.Request.RouteValues.TryGetValue("itemId", out itemId) && itemId != null)
+                                {
+                                    var claimCtx = context.User.Claims.Where(c => c.Type == "context").FirstOrDefault();
+                                    return claimCtx != null && claimCtx.Value == itemId.ToString();
+                                }
+                            }
+
+                            return false;
+                        });
+                    });
+
             }
 
             KeyProvider? keystore = null;
@@ -301,30 +328,6 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             var jwtService = new JwtService(options.JWT);
             if (options.ManagementApi.GetValueOrDefault(true))
             {
-                app.MapPost("/auth", (AuthenticateWithAPIKeyRequest req) =>
-                {
-                    var key = options.JWT?.GetKey();
-                    if (req.ApiKey == options.APIKey && key != null)
-                    {
-                        var claims = new List<Claim>(jwtService.CreateBaseClaims());
-                        if (!string.IsNullOrEmpty(req.Application))
-                            claims.Add(new Claim("application", req.Application));
-                        if (req.Context != null)
-                            claims.Add(new Claim("context", req.Context.ToString()!));
-
-                        var token = jwtService.CreateToken([.. claims]);
-                        return Results.Ok(new AuthenticationToken()
-                        {
-                            TokenValue = token,
-                            Expiration = jwtService.GetExpirationDate(token)
-                        });
-                    }
-
-                    return Results.Unauthorized();
-                })
-                .AllowAnonymous()
-                .WithName("Authenticate").WithTags("authentication");
-
                 app.MapPost("/key", (CredentialKey key) =>
                 {
                     keystore.Add(key);
@@ -386,7 +389,33 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             app.MapGet("/", () =>
             {
                 return Results.Ok(new { Message = "Leosac Card Encoding Worker instance" });
-            }).WithName("Ping");
+            })
+            .AllowAnonymous()
+            .WithName("Ping");
+
+            app.MapPost("/auth", (AuthenticateWithAPIKeyRequest req) =>
+            {
+                var key = options.JWT?.GetKey();
+                if (req.ApiKey == options.APIKey && key != null)
+                {
+                    var claims = new List<Claim>(jwtService.CreateBaseClaims());
+                    if (!string.IsNullOrEmpty(req.Application))
+                        claims.Add(new Claim("application", req.Application));
+                    if (req.Context != null)
+                        claims.Add(new Claim("context", req.Context.ToString()!));
+
+                    var token = jwtService.CreateToken([.. claims]);
+                    return Results.Ok(new AuthenticationToken()
+                    {
+                        TokenValue = token,
+                        Expiration = jwtService.GetExpirationDate(token)
+                    });
+                }
+
+                return Results.Unauthorized();
+            })
+            .AllowAnonymous()
+            .WithName("Authenticate").WithTags("authentication");
 
             app.MapPost("/template/{templateId}/queue", (string templateId, WorkerCredentialBase credential) =>
             {
@@ -408,14 +437,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
                 return Results.Ok(item.Credential);
             })
-            .RequireAuthorization()
+            .RequireAuthorization("queue")
             .WithName("GetFromQueue").WithTags("template", "queue");
 
             app.MapDelete("/template/{templateId}/queue/{itemId}", (string templateId, string itemId) =>
             {
                 worker.Queue.Remove(itemId);
             })
-            .RequireAuthorization()
+            .RequireAuthorization("queue")
             .WithName("DeleteFromQueue").WithTags("template", "queue");
 
             if (options.ReaderType == ReaderType.Remote)
@@ -441,7 +470,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     worker.Queue.Remove(itemId);
                     return Results.Ok(processId);
                 })
-                .RequireAuthorization()
+                .RequireAuthorization("queue")
                 .WithName("Encode").WithTags("template", "queue", "encode");
             }
 
