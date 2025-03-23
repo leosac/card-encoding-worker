@@ -6,7 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
-            cmd.initliazeKeySet(Properties.KeySetNo, (DESFireKeyType)Properties.KeyType);
+            cmd.initializeKeySet(Properties.KeySetNo, (DESFireKeyType)Properties.KeyType);
         }
     }
 }

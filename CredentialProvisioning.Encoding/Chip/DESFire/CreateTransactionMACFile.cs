@@ -16,10 +16,5 @@ namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
         /// The transaction MAC key.
         /// </summary>
         public KeyReference? Key { get; set; }
-
-        /// <summary>
-        /// The transaction MAC key version.
-        /// </summary>
-        public byte KeyVersion { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             }
             var key = (encodingCtx.Keys?.Get(Properties.Key, cardCtx.Credential?.VolatileKeys)) ?? throw new EncodingException("Cannot resolve the internal key reference.");
             var desfireKey = key.CreateKey(cardCtx, Properties.Key?.Diversification) as DESFireKey ?? throw new EncodingException("The key must be of type DESFire.");
-            cmd.createTransactionMACFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), desfireKey, Properties.KeyVersion);
+            cmd.createTransactionMACFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), desfireKey);
         }
     }
 }

@@ -11,5 +11,18 @@
             r.changeAccess = (LibLogicalAccess.Card.TaskAccessRights)rights.ChangeAccess;
             return r;
         }
+
+        public static LibLogicalAccess.Card.DESFireAccessRightsVector ConvertForLLA(this Leosac.CredentialProvisioning.Encoding.Chip.DESFire.DESFireAccessRights[] rights)
+        {
+            var v = new LibLogicalAccess.Card.DESFireAccessRightsVector();
+            if (rights != null)
+            {
+                foreach (var r in rights)
+                {
+                    v.Add(r.ConvertForLLA());
+                }
+            }
+            return v;
+        }
     }
 }
