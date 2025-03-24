@@ -1,21 +1,16 @@
 ﻿using System.Reflection;
 
-namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
+namespace Leosac.CredentialProvisioning.Encoding.Services.Ndef
 {
     /// <summary>
-    /// Base class for an Access Control data field.
+    /// Base class for NDEF record definition.
     /// </summary>
-    public abstract class AccessControlDataField : ICloneable
+    public abstract class NdefRecord : ICloneable
     {
         /// <summary>
-        /// Discriminator for Data Field serialization
+        /// Discriminator for NDEF record serialization
         /// </summary>
         public const string Discriminator = "$type";
-
-        /// <summary>
-        /// The field name.
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Clone the data field.
@@ -27,12 +22,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Services.AccessControl
         }
 
         /// <summary>
-        /// Get all data field types from the executing assembly.
+        /// Get all NDEF records types from the executing assembly.
         /// </summary>
-        /// <returns>The data field types.</returns>
+        /// <returns>The NDEF record types.</returns>
         public static IEnumerable<Type> GetAllTypes()
         {
-            var bt = typeof(AccessControlDataField);
+            var bt = typeof(NdefRecord);
             return Assembly.GetExecutingAssembly().GetTypes().Where(t => bt.IsAssignableFrom(t) && !t.IsAbstract);
         }
     }

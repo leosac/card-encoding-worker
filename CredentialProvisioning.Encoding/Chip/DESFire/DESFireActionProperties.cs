@@ -148,6 +148,10 @@
         /// </summary>
         ConfigurationChangeable = 8,
         /// <summary>
+        /// Enable NXP DAM Keys (PICC level only)
+        /// </summary>
+        EnableNxpDamKeys = 16,
+        /// <summary>
         /// Change keys with Master Key. Deprecated by changeKey parameter.
         /// </summary>
         ChangeKeyWithMasterKey = 0,

@@ -10,7 +10,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
             if (cardCtx.Buffer == null || cardCtx.Buffer.Length == 0)
                 throw new EncodingException("No data to write.");
 
-            cmd.writeData(Properties.FileNo, Properties.Offset, new ByteVector(cardCtx.Buffer), (LibLogicalAccess.Card.EncryptionMode)Properties.EncryptionMode);
+            cmd.writeData(Properties.FileNo, Properties.Offset, [.. cardCtx.Buffer], (LibLogicalAccess.Card.EncryptionMode)Properties.EncryptionMode);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
+using Leosac.CredentialProvisioning.Encoding.Services.Ndef;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {
@@ -15,6 +16,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             HandlePolymorphism(jsonTypeInfo, typeof(EncodingServiceProperties), EncodingServiceProperties.Discriminator, EncodingServiceProperties.GetAllTypes());
             HandlePolymorphism(jsonTypeInfo, typeof(AccessControlDataField), AccessControlDataField.Discriminator, AccessControlDataField.GetAllTypes());
             HandlePolymorphism(jsonTypeInfo, typeof(AccessControlFormat), AccessControlFormat.Discriminator, AccessControlFormat.GetAllTypes());
+            HandlePolymorphism(jsonTypeInfo, typeof(NdefRecord), NdefRecord.Discriminator, NdefRecord.GetAllTypes());
 
             return jsonTypeInfo;
         }

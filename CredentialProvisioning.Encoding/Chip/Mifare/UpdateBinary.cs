@@ -8,7 +8,7 @@
         /// <summary>
         /// See <see cref="EncodingActionProperties.Name" />.
         /// </summary>
-        public override string Name => "Write Binary";
+        public override string Name => "Update Binary";
 
         /// <summary>
         /// The block number.
