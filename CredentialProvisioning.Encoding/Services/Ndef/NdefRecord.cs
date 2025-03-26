@@ -13,6 +13,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Services.Ndef
         public const string Discriminator = "$type";
 
         /// <summary>
+        /// The credential field containing data.
+        /// </summary>
+        public string? FromField { get; set; }
+
+        /// <summary>
         /// Clone the data field.
         /// </summary>
         /// <returns>The cloned object.</returns>
