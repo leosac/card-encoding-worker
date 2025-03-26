@@ -126,6 +126,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     }
                 }
             }
+
+            HandleBuffer(cardCtx, [.. buf]);
         }
 
         private bool ArrayIsEmpty(byte[] finger, byte emptyByte = 0x00)
