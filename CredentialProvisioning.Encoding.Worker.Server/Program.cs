@@ -263,7 +263,16 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                             return false;
                         });
                     });
-
+            }
+            else
+            {
+                builder.Services.AddAuthorizationBuilder()
+                    .AddDefaultPolicy("global", policy => {
+                        policy.RequireAssertion(context => true);
+                    })
+                    .AddPolicy("queue", policy => {
+                        policy.RequireAssertion(context => true);
+                    });
             }
 
             KeyProvider? keystore = null;
@@ -292,8 +301,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             if (requireAuth)
             {
                 app.UseAuthentication();
-                app.UseAuthorization();
             }
+            app.UseAuthorization();
 
             var worker = app.Services.GetRequiredService<EncodingWorker>();
             if (!string.IsNullOrEmpty(options.TemplateRepository))
