@@ -188,7 +188,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
                 // Todo: check, and init identifier crypto on chip creation
                 if (chip.getGenericCardType() == "DESFire")
                 {
-                    (chip as LibLogicalAccess.Card.DESFireChip)?.getCrypto().setIdentifier(identifier);
+                    var dfchip = chip as LibLogicalAccess.Card.DESFireChip;
+                    if (dfchip != null)
+                    {
+                        dfchip.getCrypto().setIdentifier(identifier);
+                        dfchip.setHasRealUID(IsRealUid(identifier));
+                    }
                 }
                 var cmd = chip.getCommands();
                 if (cmd != null)
@@ -202,6 +207,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 #pragma warning disable CS8603 // Possible null reference return.
             return chip;
 #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        public static bool IsRealUid(LibLogicalAccess.ByteVector csn)
+        {
+            return !(csn == null || csn.Count < 1 || csn[0] == 0x08);
         }
 
         public override LibLogicalAccess.ChipVector getChipList()
