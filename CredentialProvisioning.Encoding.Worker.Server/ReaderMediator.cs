@@ -65,7 +65,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 {
                     isoConfig.setCheckSAMReaderIsAvailable(false);
                     isoConfig.setAutoConnectToSAMReader(true);
-                    isoConfig.setSAMType("SAM_AV2"); // TODO: support additional SAM technologies
+                    isoConfig.setSAMType(process.CredentialContext?.TemplateContent?.SAM?.SAMType ?? "SAM_AUTO");
                     if (!string.IsNullOrEmpty(process.CredentialContext?.TemplateContent?.SAM?.UnlockKey?.KeyId))
                     {
                         var unlockkey = (worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey)) ?? throw new EncodingException("Cannot resolve the internal unlock key reference.");
