@@ -52,7 +52,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 ReaderUnit = new WorkerRemoteReaderUnit(caller, apiVersion, _options.Value.ContactlessReader, waitRemoval)
             };
 
-            if (process?.CredentialContext?.TemplateContent?.SAM != null)
+            if (!string.IsNullOrEmpty(process?.CredentialContext?.TemplateContent?.SAM?.UnlockKey?.KeyId))
             {
                 t.SAMDevice = new LLADeviceContext
                 {

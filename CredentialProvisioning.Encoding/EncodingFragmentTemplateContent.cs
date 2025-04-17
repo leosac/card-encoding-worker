@@ -14,9 +14,29 @@ namespace Leosac.CredentialProvisioning.Encoding
         public class SAMProperties
         {
             /// <summary>
+            /// The SAM authentication mode.
+            /// </summary>
+            public enum SAMAuthenticationMode
+            {
+                /// <summary>
+                /// Unlock
+                /// </summary>
+                Unlock,
+                /// <summary>
+                /// Authenticate Host
+                /// </summary>
+                AuthenticateHost
+            }
+
+            /// <summary>
             /// The SAM card type. If undefined, SAM_AUTO will be used.
             /// </summary>
             public string? SAMType { get; set; }
+
+            /// <summary>
+            /// The SAM Authenticate Host key number.
+            /// </summary>
+            public SAMAuthenticationMode AuthenticationMode { get; set; } = SAMAuthenticationMode.Unlock;
 
             /// <summary>
             /// The SAM unlock key number.

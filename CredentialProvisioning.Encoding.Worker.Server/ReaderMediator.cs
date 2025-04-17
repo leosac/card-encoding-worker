@@ -70,6 +70,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     {
                         var unlockkey = (worker.KeyStore?.Get(process.CredentialContext.TemplateContent.SAM.UnlockKey)) ?? throw new EncodingException("Cannot resolve the internal unlock key reference.");
                         isoConfig.setSAMUnlockKey(unlockkey.CreateKey() as DESFireKey, process.CredentialContext.TemplateContent.SAM.UnlockKeyNo);
+                        isoConfig.setUseSAMAuthenticateHost(process.CredentialContext.TemplateContent.SAM.AuthenticationMode == EncodingFragmentTemplateContent.SAMProperties.SAMAuthenticationMode.AuthenticateHost);
                     }
                     t.ContactlessDevice.ReaderUnit.setConfiguration(isoConfig);
                 }
