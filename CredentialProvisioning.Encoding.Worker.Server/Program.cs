@@ -1,5 +1,6 @@
 using Leosac.CredentialProvisioning.Core.Models;
 using Leosac.CredentialProvisioning.Encoding.Key;
+using Leosac.CredentialProvisioning.Encoding.LLA;
 using Leosac.CredentialProvisioning.Server.Contracts.Models;
 using Leosac.CredentialProvisioning.Server.Shared;
 using Leosac.ServerHelper;
@@ -121,6 +122,18 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     getDefaultValue: () => options.SAMReader
                 );
 
+                var pkcs11LibraryOption = new Option<string?>(
+                    name: "--pkcs11-library",
+                    description: "The path to PKCS#11 library.",
+                    getDefaultValue: () => options.PKCS11Library
+                );
+
+                var pkcs11PasswordOption = new Option<string?>(
+                    name: "--pkcs11-password",
+                    description: "The password to open the PKCS#11 session.",
+                    getDefaultValue: () => options.PKCS11Password
+                );
+
                 var rootCommand = new RootCommand("Leosac Credential Provisioning Encoding Worker");
                 rootCommand.AddGlobalOption(repositoryOption);
                 rootCommand.AddGlobalOption(keyStoreOption);
@@ -130,10 +143,12 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 runCommand.AddOption(readerTypeOption);
                 runCommand.AddOption(contactlessReaderOption);
                 runCommand.AddOption(samReaderOption);
+                runCommand.AddOption(pkcs11LibraryOption);
+                runCommand.AddOption(pkcs11PasswordOption);
                 runCommand.SetHandler((o) =>
                 {
                     RunWorkerServer(builder, options);
-                }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption));
+                }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption, pkcs11LibraryOption, pkcs11PasswordOption));
                 rootCommand.AddCommand(runCommand);
                 rootCommand.Invoke(args);
             }
@@ -323,6 +338,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     }
                 }
             }
+
+            CredentialKeyExt.PKCS11Library = options.PKCS11Library;
+            CredentialKeyExt.PKCS11Password = options.PKCS11Password;
 
             if (options.EnableSwagger.GetValueOrDefault(true))
             {

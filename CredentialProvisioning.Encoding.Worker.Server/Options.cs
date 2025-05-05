@@ -22,6 +22,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         public string SAMReader { get; set; } = "SAM";
 
+        public string? PKCS11Library { get; set; }
+
+        public string? PKCS11Password { get; set; }
+
         public JwtSettings JWT { get; set; } = new();
 
         public JwtSettings? CompletionJWT { get; set; }

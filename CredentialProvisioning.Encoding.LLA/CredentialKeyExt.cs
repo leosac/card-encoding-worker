@@ -8,6 +8,10 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
 {
     public static class CredentialKeyExt
     {
+        public static string? PKCS11Library { get; set; }
+
+        public static string? PKCS11Password { get; set; }
+
         public static LibLogicalAccess.Key? CreateKey(this CredentialKey k, LLACardContext? cardCtx = null, Key.KeyDiversification? div = null)
         {
             LibLogicalAccess.Key? key = null;
@@ -55,7 +59,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA
                 {
                     ks.set_key_id(new ByteVector(System.Text.Encoding.UTF8.GetBytes(key.KeyStoreReference)));
                 }
-                // TODO: set here PKCS#11 library path and password from application configuration file
+                ks.set_pkcs_shared_object_path(PKCS11Library);
+                ks.set_pkcs_session_password(PKCS11Password);
                 llaKey.setKeyStorage(ks);
             }
             else if (key.KeyStoreType == "sam")

@@ -16,8 +16,10 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
         private readonly Option<ReaderType> _readerTypeOption;
         private readonly Option<string> _contactlessReaderOption;
         private readonly Option<string> _samReaderOption;
+        private readonly Option<string?> _pkcs11LibraryOption;
+        private readonly Option<string?> _pkcs11PasswordOption;
 
-        public OptionsBinder(Options? options, Option<string?> repositoryOption, Option<string?> keyStoreOption, Option<bool?> mgtapiOption, Option<string?> apikeyOption, Option<string?> integritykeyOption, Option<ReaderType> readerTypeOption, Option<string> contactlessReaderOption, Option<string> samReaderOption)
+        public OptionsBinder(Options? options, Option<string?> repositoryOption, Option<string?> keyStoreOption, Option<bool?> mgtapiOption, Option<string?> apikeyOption, Option<string?> integritykeyOption, Option<ReaderType> readerTypeOption, Option<string> contactlessReaderOption, Option<string> samReaderOption, Option<string?> pkcs11LibraryOption, Option<string?> pkcs11PasswordOption)
         {
             _options = options;
             _repositoryOption = repositoryOption;
@@ -28,6 +30,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             _readerTypeOption = readerTypeOption;
             _contactlessReaderOption = contactlessReaderOption;
             _samReaderOption = samReaderOption;
+            _pkcs11LibraryOption = pkcs11LibraryOption;
+            _pkcs11PasswordOption = pkcs11PasswordOption;
         }
 
         protected override Options GetBoundValue(BindingContext bindingContext)
@@ -41,6 +45,8 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             options.ReaderType = bindingContext.ParseResult.GetValueForOption(_readerTypeOption);
             options.ContactlessReader = bindingContext.ParseResult.GetValueForOption(_contactlessReaderOption);
             options.SAMReader = bindingContext.ParseResult.GetValueForOption(_samReaderOption);
+            options.PKCS11Library = bindingContext.ParseResult.GetValueForOption(_pkcs11LibraryOption);
+            options.PKCS11Password = bindingContext.ParseResult.GetValueForOption(_pkcs11PasswordOption);
             return options;
         }
     }
