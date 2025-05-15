@@ -91,7 +91,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         _logger?.LogInformation("Action passed, running OnSuccess trigger");
                         if (actionProp.OnSuccess != null)
                         {
-                            await ActionTrigger(actionProp.OnSuccess, encodingCtx, cardCtx);
+                            await ActionTrigger(actionProp.Label ?? actionProp.Name, actionProp.OnSuccess, encodingCtx, cardCtx);
                         }
                     }
                     else
@@ -104,7 +104,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     _logger?.LogInformation("Action failed with error `{Message}`, running OnFailure trigger", ex.Message);
                     actionProp.OnFailure ??= new EncodingActionProperties.ActionTrigger() { Throw = true };
 
-                    await ActionTrigger(actionProp.OnFailure, encodingCtx, cardCtx, ex);
+                    await ActionTrigger(actionProp.Label ?? actionProp.Name, actionProp.OnFailure, encodingCtx, cardCtx, ex);
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private async Task ActionTrigger(EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, Exception? ex = null)
+        private async Task ActionTrigger(string? actionName, EncodingActionProperties.ActionTrigger trigger, CredentialContext<EncodingFragmentTemplateContent> encodingCtx, CardContext cardCtx, Exception? ex = null)
         {
             if (trigger.CallActions != null)
             {
@@ -170,11 +170,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 }
                 else if (ex != null)
                 {
-                    throw ex;
+                    throw new EncodingException(string.Format("Action `{0}` failed with error: {1}.", actionName, ex?.Message), ex);
                 }
                 else
                 {
-                    throw new EncodingException();
+                    throw new EncodingException(string.Format("Action `{0}` handled as an error.", actionName));
                 }
             }
         }

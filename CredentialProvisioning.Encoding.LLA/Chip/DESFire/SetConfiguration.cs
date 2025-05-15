@@ -6,7 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
-            if (Properties.DefaultKey != null)
+            if (!string.IsNullOrEmpty(Properties.DefaultKey?.KeyId))
             {
                 var key = (encodingCtx.Keys?.Get(Properties.DefaultKey, cardCtx.Credential?.VolatileKeys)) ?? throw new EncodingException("Cannot resolve the internal key reference.");
                 var desfireKey = key.CreateKey(cardCtx, Properties.DefaultKey?.Diversification) as DESFireKey ?? throw new EncodingException("The key must be of type DESFire.");
