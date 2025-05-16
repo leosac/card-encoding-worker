@@ -6,7 +6,10 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV2Chip chip, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
-            Run(chip.getDESFireEV2Commands(), encodingCtx, cardCtx);
+            if (chip is DESFireEV3Chip chip3)
+                Run(chip3.getDESFireEV3Commands(), encodingCtx, cardCtx);
+            else
+                Run(chip.getDESFireEV2Commands(), encodingCtx, cardCtx);
         }
 
         public abstract void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx);
