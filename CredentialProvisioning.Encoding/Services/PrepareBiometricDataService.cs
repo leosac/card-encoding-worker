@@ -17,7 +17,11 @@
             /// <summary>
             /// Morpho Access SIGMA reader.
             /// </summary>
-            MorphoAccessSIGMA
+            MorphoAccessSIGMA,
+            /// <summary>
+            /// STid biometric reader.
+            /// </summary>
+            STid
         }
 
         public enum TemplateFormat
@@ -61,28 +65,28 @@
         public TemplateFormat Format { get; set; }
 
         /// <summary>
-        /// The CardId field.
+        /// The finger templates fields.
+        /// </summary>
+        public string[] Templates { get; set; } = ["BioData_0"];
+
+        /// <summary>
+        /// The CardId field (Morpho only).
         /// </summary>
         public string? CardIdField { get; set; } = "Uid";
 
         /// <summary>
-        /// The Username field.
+        /// The Username field (Morpho only).
         /// </summary>
         public string? UsernameField { get; set; } = "Username";
 
         /// <summary>
-        /// The finger #1 field.
-        /// </summary>
-        public string? Finger1Field { get; set; } = "BioData_0";
-
-        /// <summary>
-        /// The finger #2 field.
-        /// </summary>
-        public string? Finger2Field { get; set; }
-
-        /// <summary>
-        /// The duress finger field.
+        /// The duress finger field (Morpho only).
         /// </summary>
         public string? DuressFingerField { get; set; }
+
+        /// <summary>
+        /// Fingerprint exemption field (STid only).
+        /// </summary>
+        public string? FingerExemptionField { get; set; }
     }
 }

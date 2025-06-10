@@ -1,4 +1,5 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
+using System.Security.Cryptography;
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
@@ -8,8 +9,11 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
         {
             var cardId = string.Empty;
             var userName = string.Empty;
-            var firstTemplate = new byte[0];
-            var secondTemplate = new byte[0];
+            if (Properties.Templates == null)
+            {
+                Properties.Templates = [];
+            }
+            var templates = new byte[Properties.Templates.Length][];
             var duressTemplate = new byte[0];
 
             if (!string.IsNullOrEmpty(Properties.CardIdField))
@@ -20,13 +24,14 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             {
                 userName = cardCtx.GetFieldValue(Properties.UsernameField)?.ToString() ?? string.Empty;
             }
-            if (!string.IsNullOrEmpty(Properties.Finger1Field))
+            for (int i = 0; i < templates.Length; ++i)
             {
-                firstTemplate = cardCtx.GetBinaryFieldValue(Properties.Finger1Field);
-            }
-            if (!string.IsNullOrEmpty(Properties.Finger2Field))
-            {
-                secondTemplate = cardCtx.GetBinaryFieldValue(Properties.Finger2Field);
+                var tplField = Properties.Templates[i];
+                if (string.IsNullOrEmpty(tplField))
+                {
+                    tplField = "BioData_" + i.ToString();
+                }
+                templates[i] = cardCtx.GetBinaryFieldValue(tplField) ?? [];
             }
             if (!string.IsNullOrEmpty(Properties.DuressFingerField))
             {
@@ -72,6 +77,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                 }
                 buf.AddRange(nameBuf);
 
+                byte[]? firstTemplate = templates.Length >= 1 ? templates[0] : null;
+                byte[]? secondTemplate = templates.Length >= 2 ? templates[1] : null;
                 if (Properties.Format == Encoding.Services.PrepareBiometricDataService.TemplateFormat.Morpho_CFV)
                 {
                     if (firstTemplate != null && firstTemplate.Length > 0)
@@ -111,7 +118,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     {
                         // Template 2 field = TL + template length
                         buf.Add(0x08); // T
-                        buf.Add((byte)secondTemplate.Length); // L
+                        buf.Add((byte)secondTemplate!.Length); // L
                         buf.Add((byte)((secondTemplate.Length & 0xff00) >> 8)); // L
                         buf.AddRange(secondTemplate); // V
                     }
@@ -120,17 +127,54 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     {
                         // Duress Template field = TL + template length
                         buf.Add(0x38); // T
-                        buf.Add((byte)duressTemplate.Length); // L
+                        buf.Add((byte)duressTemplate!.Length); // L
                         buf.Add((byte)((duressTemplate.Length & 0xff00) >> 8)); // L
                         buf.AddRange(duressTemplate); // V
                     }
                 }
             }
+            else if (Properties.Product == Encoding.Services.PrepareBiometricDataService.BiometricProduct.STid)
+            {
+                int totallen = 1;
+                bool exempt = false;
+                if (!string.IsNullOrEmpty(Properties.FingerExemptionField))
+                {
+                    var bstr = cardCtx.GetFieldValue(Properties.FingerExemptionField)?.ToString()?.ToLowerInvariant();
+                    exempt = (!string.IsNullOrEmpty(bstr) && (bstr == "1" || bstr == "true" || bstr == "y" || bstr == "o" || bstr == "yes" || bstr == "oui"));
+                }
+                
+                if (exempt)
+                {
+                    var csn = cardCtx.GetFieldValue("CSN")?.ToString();
+                    if (!string.IsNullOrEmpty(csn))
+                    {
+                        var tpl = CalculateExemptionHash(csn);
+                        templates = [tpl];
+                    }
+                }
+                for (int i = 0; i < templates.Length; ++i)
+                {
+                    totallen += templates[i].Length + 1;
+                }
+
+                buf.Add((byte)(totallen >> 8));
+                buf.Add((byte)totallen);
+                buf.Add((byte)templates.Length);
+                foreach (var tpl in templates)
+                {
+                    buf.Add((byte)tpl.Length);
+                    buf.AddRange(tpl);
+                }
+            }
+            else
+            {
+                throw new EncodingException("Unknown Biometric product.");
+            }
 
             HandleBuffer(cardCtx, [.. buf]);
         }
 
-        private bool ArrayIsEmpty(byte[] finger, byte emptyByte = 0x00)
+        private bool ArrayIsEmpty(byte[]? finger, byte emptyByte = 0x00)
         {
             if (finger != null && finger.Length > 0)
             {
@@ -146,7 +190,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             return true;
         }
 
-        private byte[]? FormatTemplateData(byte[] template)
+        private byte[]? FormatTemplateData(byte[]? template)
         {
             if (template != null && template.Length > 0)
             {
@@ -159,6 +203,17 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             }
 
             return template;
+        }
+
+        private byte[] CalculateExemptionHash(string csn)
+        {
+            var sha = SHA256.Create();
+            var salt = new byte[] { 0xA4, 0xB7, 0x78, 0xD5, 0x36, 0xE5, 0x44, 0x57, 0xAB, 0x31, 0xE0, 0x15, 0x53, 0x09, 0x46, 0xFA };
+            var bcsn = Convert.FromHexString(csn);
+            var data = new byte[salt.Length + bcsn.Length];
+            Array.Copy(salt, 0, data, 0, salt.Length);
+            Array.Copy(bcsn, 0, data, salt.Length, bcsn.Length);
+            return sha.ComputeHash(data);
         }
     }
 }
