@@ -192,7 +192,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
                     if (dfchip != null)
                     {
                         dfchip.getCrypto().setIdentifier(identifier);
-                        dfchip.setHasRealUID(IsRealUid(identifier));
+                        dfchip.setHasRealUID(IsRealUid(identifier, "DESFire"));
                     }
                 }
                 var cmd = chip.getCommands();
@@ -209,9 +209,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.LLA
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
-        public static bool IsRealUid(LibLogicalAccess.ByteVector csn)
+        public static bool IsRealUid(LibLogicalAccess.ByteVector csn, string? cardType = null)
         {
-            return !(csn == null || csn.Count < 1 || csn[0] == 0x08);
+            return !(csn == null || csn.Count < 1 || csn[0] == 0x08 || (!string.IsNullOrEmpty(cardType) && cardType == "DESFire" && csn[0] == 0x80));
         }
 
         public override LibLogicalAccess.ChipVector getChipList()
