@@ -16,14 +16,14 @@
 ### Changed
 - DESFire EV1 legacy random UID detection on cardprobe
 - Global option to use system readers (for PC/SC only atm)
-- Avoid default use of DESFire ISO Authenticate command and create dedicated iso_authenticate method
-- Fix reference to SAM chip and check for old key object init on DESFire change key
+- Avoid default use of DESFire ISO Authenticate command
+- Fix reference to SAM chip and check for old key declaration on DESFire change key
 
 ## v1.18.1
 ### Added
 - Options to configure a global PKCS#11 library
 - Handle SAM Authenticate Host option
-- New parameter to force the SAM card type
+- New parameter to force the SAM type
 
 ## v1.17.0
 ### Added
