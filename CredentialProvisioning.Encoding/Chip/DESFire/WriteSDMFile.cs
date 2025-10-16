@@ -1,4 +1,6 @@
-﻿namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
+﻿using Leosac.CredentialProvisioning.Encoding.Key;
+
+namespace Leosac.CredentialProvisioning.Encoding.Chip.DESFire
 {
     /// <summary>
     /// Write on SDM file. Always as a URI record.
@@ -39,5 +41,10 @@
         /// The ISO FID for the NDEF file.
         /// </summary>
         public ushort IsoFIDNDEFFile { get; set; } = 0xe104;
+
+        /// <summary>
+        /// The NFC application key if changed, may be required to update SDM file metadata.
+        /// </summary>
+        public KeyReference? NFCApplicationKey { get; set; }
     }
 }
