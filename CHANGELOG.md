@@ -1,4 +1,8 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.21.0
+### Changed
+- Add optional NFCApplicationKey property on WriteSDMFile
+- Fix potential segfault on InitializeKeySet DESFire command
 
 ## v1.20.0
 ### Changed
