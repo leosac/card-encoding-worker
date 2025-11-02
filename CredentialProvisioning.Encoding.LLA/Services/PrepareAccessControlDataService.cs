@@ -38,7 +38,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                             }
                             encoding ??= System.Text.Encoding.UTF8;
                             var data = encoding.GetBytes(v);
-                            if (data.Length * 8 > sf.getDataLength())
+                            if (Properties.CheckFieldValueMaxLength.GetValueOrDefault(true) && data.Length * 8 > sf.getDataLength())
                             {
                                 throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
                             }
@@ -48,7 +48,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                         {
                             var data = ulong.Parse(v);
                             var bitlength = (int)Math.Log(data, 2);
-                            if (bitlength > nf.getDataLength())
+                            if (Properties.CheckFieldValueMaxLength.GetValueOrDefault(true) && bitlength > nf.getDataLength())
                             {
                                 throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
                             }
@@ -57,7 +57,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                         else if (field is BinaryDataField bf)
                         {
                             var data = Convert.FromHexString(v);
-                            if (data.Length * 8 > bf.getDataLength())
+                            if (Properties.CheckFieldValueMaxLength.GetValueOrDefault(true) && data.Length * 8 > bf.getDataLength())
                             {
                                 throw new ArgumentOutOfRangeException(string.Format("The field `{0}` value exceed the maximum size.", fieldName));
                             }

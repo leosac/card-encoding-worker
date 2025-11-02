@@ -12,5 +12,10 @@
         {
             BufferBehavior = EncodingServiceBufferBehavior.Overwrite;
         }
+
+        /// <summary>
+        /// Check the field value maximum length. Default is true.
+        /// </summary>
+        public bool? CheckFieldValueMaxLength { get; set; }
     }
 }
