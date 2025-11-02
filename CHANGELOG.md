@@ -1,4 +1,9 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.22.0
+### Changed
+- Add CheckFieldValueMaxLength property on access control service
+- Skip NFCApplicationKey parameter on WriteSDMFile action if KeyId is empty
+
 ## v1.21.0
 ### Changed
 - Add optional NFCApplicationKey property on WriteSDMFile
