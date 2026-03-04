@@ -84,19 +84,21 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
                     if (firstTemplate != null && firstTemplate.Length > 0)
                     {
                         // Template 1 field = TL + 170 bytes
+                        var tpl170 = EnsureTemplate170(firstTemplate);
                         buf.Add(0x30); // T
                         buf.Add(0xAA); // L
                         buf.Add(0x00); // L
-                        buf.AddRange(firstTemplate); // V
+                        buf.AddRange(tpl170); // V
                     }
 
                     if (secondTemplate != null && secondTemplate.Length > 0)
                     {
                         // Template 2 field = TL + 170 bytes
+                        var tpl170 = EnsureTemplate170(secondTemplate);
                         buf.Add(0x31); // T
                         buf.Add(0xAA); // L
                         buf.Add(0x00); // L
-                        buf.AddRange(secondTemplate); // V
+                        buf.AddRange(tpl170); // V
                     }
                 }
                 else
@@ -203,6 +205,28 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             }
 
             return template;
+        }
+
+        private byte[] EnsureTemplate170(byte[] template)
+        {
+            const int RequiredLen = 0xAA;
+            if (template.Length == RequiredLen)
+            {
+                return template;
+            }
+
+            var fixedTpl = new byte[RequiredLen];
+            if (template.Length >= RequiredLen)
+            {
+                Array.Copy(template, 0, fixedTpl, 0, RequiredLen);
+            }
+            else
+            {
+                Array.Copy(template, 0, fixedTpl, 0, template.Length);
+                // remaining bytes are already 0x00
+            }
+
+            return fixedTpl;
         }
 
         private byte[] CalculateExemptionHash(string csn)

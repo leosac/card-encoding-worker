@@ -1,4 +1,8 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.22.1
+### Changed
+- Fix template data alignment when using Morpho CFV format
+
 ## v1.22.0
 ### Changed
 - Add CheckFieldValueMaxLength property on access control service
