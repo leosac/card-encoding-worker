@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Options;
-using System.CommandLine;
-using System.IO;
 
 namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 {

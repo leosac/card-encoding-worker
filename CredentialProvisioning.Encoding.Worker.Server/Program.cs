@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using System.CommandLine;
-using System.CommandLine.Parsing;
+using Microsoft.OpenApi;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -64,93 +62,51 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
             else
             {
-                var repositoryOption = new Option<string?>(
-                    name: "--template-repository",
-                    description: "Folder where template files are located.",
-                    getDefaultValue: () => options.TemplateRepository
-                );
-
-                var keyStoreOption = new Option<string?>(
-                    name: "--keystore",
-                    description: "File key store to load.",
-                    getDefaultValue: () => options.KeyStore
-                );
-
-                var runCommand = new Command(
-                    name: "--run",
-                    description: "Run the worker server"
-                );
-
-                var svcCommand = new Command(
-                    name: "--service",
-                    description: "Run as a service"
-                );
-
-                var mgtapiOption = new Option<bool?>(
-                    name: "--management-api",
-                    description: "Enable Worker Management API.",
-                    getDefaultValue: () => options.ManagementApi
-                );
-
-                var apikeyOption = new Option<string?>(
-                    name: "--api-key",
-                    description: "API key. Undefined means unsecure API calls.",
-                    getDefaultValue: () => options.APIKey
-                );
-
-                var integritykeyOption = new Option<string?>(
-                    name: "--integrity-key",
-                    description: "The public key for data integrity verification. Undefined means data integrity is not checked.",
-                    getDefaultValue: () => options.DataIntegrityKey
-                );
-
-                var readerTypeOption = new Option<ReaderType>(
-                    name: "--reader-type",
-                    description: "Type of reader technology. Remote = use readers from a remote client over WebSocket / Local = use local PC/SC reader resources.",
-                    getDefaultValue: () => options.ReaderType
-                );
-
-                var contactlessReaderOption = new Option<string>(
-                    name: "--reader-contactless",
-                    description: "The contactless reader alias/name.",
-                    getDefaultValue: () => options.ContactlessReader
-                );
-
-                var samReaderOption = new Option<string>(
-                    name: "--reader-sam",
-                    description: "The SAM reader alias/name.",
-                    getDefaultValue: () => options.SAMReader
-                );
-
-                var pkcs11LibraryOption = new Option<string?>(
-                    name: "--pkcs11-library",
-                    description: "The path to PKCS#11 library.",
-                    getDefaultValue: () => options.PKCS11Library
-                );
-
-                var pkcs11PasswordOption = new Option<string?>(
-                    name: "--pkcs11-password",
-                    description: "The password to open the PKCS#11 session.",
-                    getDefaultValue: () => options.PKCS11Password
-                );
-
-                var rootCommand = new RootCommand("Leosac Credential Provisioning Encoding Worker");
-                rootCommand.AddGlobalOption(repositoryOption);
-                rootCommand.AddGlobalOption(keyStoreOption);
-                runCommand.AddOption(mgtapiOption);
-                runCommand.AddOption(apikeyOption);
-                runCommand.AddOption(integritykeyOption);
-                runCommand.AddOption(readerTypeOption);
-                runCommand.AddOption(contactlessReaderOption);
-                runCommand.AddOption(samReaderOption);
-                runCommand.AddOption(pkcs11LibraryOption);
-                runCommand.AddOption(pkcs11PasswordOption);
-                runCommand.SetHandler((o) =>
+                // Simple command-line parsing
+                var boundOptions = options;
+                for (int i = 0; i < args.Length; i++)
                 {
-                    RunWorkerServer(builder, options);
-                }, new OptionsBinder(options, repositoryOption, keyStoreOption, mgtapiOption, apikeyOption, integritykeyOption, readerTypeOption, contactlessReaderOption, samReaderOption, pkcs11LibraryOption, pkcs11PasswordOption));
-                rootCommand.AddCommand(runCommand);
-                rootCommand.Invoke(args);
+                    var a = args[i];
+                    switch (a)
+                    {
+                        case "--template-repository":
+                            if (i + 1 < args.Length) boundOptions.TemplateRepository = args[++i];
+                            break;
+                        case "--keystore":
+                            if (i + 1 < args.Length) boundOptions.KeyStore = args[++i];
+                            break;
+                        case "--management-api":
+                            if (i + 1 < args.Length && bool.TryParse(args[i + 1], out var m)) { boundOptions.ManagementApi = m; ++i; }
+                            else { boundOptions.ManagementApi = true; }
+                            break;
+                        case "--api-key":
+                            if (i + 1 < args.Length) boundOptions.APIKey = args[++i];
+                            break;
+                        case "--integrity-key":
+                            if (i + 1 < args.Length) boundOptions.DataIntegrityKey = args[++i];
+                            break;
+                        case "--reader-type":
+                            if (i + 1 < args.Length && Enum.TryParse<ReaderType>(args[i + 1], true, out var rt)) { boundOptions.ReaderType = rt; ++i; }
+                            break;
+                        case "--reader-contactless":
+                            if (i + 1 < args.Length) boundOptions.ContactlessReader = args[++i];
+                            break;
+                        case "--reader-sam":
+                            if (i + 1 < args.Length) boundOptions.SAMReader = args[++i];
+                            break;
+                        case "--pkcs11-library":
+                            if (i + 1 < args.Length) boundOptions.PKCS11Library = args[++i];
+                            break;
+                        case "--pkcs11-password":
+                            if (i + 1 < args.Length) boundOptions.PKCS11Password = args[++i];
+                            break;
+                        default:
+                            // ignore unknown
+                            break;
+                    }
+                }
+
+                RunWorkerServer(builder, boundOptions);
             }
         }
 
@@ -179,19 +135,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
                 {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
+                    [new OpenApiSecuritySchemeReference("Bearer", document)] = []
                 });
 
                 var xmlFile = $"{typeof(EncodingAction).Assembly.GetName().Name}.xml";

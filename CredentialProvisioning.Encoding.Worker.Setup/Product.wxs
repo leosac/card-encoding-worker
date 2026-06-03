@@ -131,9 +131,6 @@
     </ComponentGroup>
 
     <ComponentGroup Id="DependenciesResourcesFR" Directory="RESOURCESFR">
-      <Component Id="SystemCommandLineResourcesFRComponent">
-        <File Id="___var.System.CommandLine.ResourcesFR_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\fr\System.CommandLine.resources.dll" />
-      </Component>
     </ComponentGroup>
 
     <ComponentGroup Id="DependenciesComponents" Directory="APPLICATIONFOLDER">
@@ -253,9 +250,6 @@
       </Component>
       <Component Id="SwashbuckleAspNetCoreSwaggerUIComponent">
         <File Id="___var.Swashbuckle.AspNetCore.SwaggerUI.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\Swashbuckle.AspNetCore.SwaggerUI.dll" />
-      </Component>
-      <Component Id="SystemCommandLineComponent">
-        <File Id="___var.System.CommandLine.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.CommandLine.dll" />
       </Component>
       <Component Id="SystemDiagnosticsEventLogComponent">
         <File Id="___var.System.Diagnostics.EventLog.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.Diagnostics.EventLog.dll" />
