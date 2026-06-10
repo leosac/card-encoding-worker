@@ -12,7 +12,11 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
         public string? APIKey { get; set; }
 
+        public string? APIKeyFile { get; set; }
+
         public string? DataIntegrityKey { get; set; }
+
+        public string? DataIntegrityKeyFile { get; set; }
 
         public bool? EnableSwagger { get; set; }
 

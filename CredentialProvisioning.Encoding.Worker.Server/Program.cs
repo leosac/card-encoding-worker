@@ -82,8 +82,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                         case "--api-key":
                             if (i + 1 < args.Length) boundOptions.APIKey = args[++i];
                             break;
+                        case "--api-key-file":
+                            if (i + 1 < args.Length) boundOptions.APIKeyFile = args[++i];
+                            break;
                         case "--integrity-key":
                             if (i + 1 < args.Length) boundOptions.DataIntegrityKey = args[++i];
+                            break;
+                        case "--integrity-key-file":
+                            if (i + 1 < args.Length) boundOptions.DataIntegrityKeyFile = args[++i];
                             break;
                         case "--reader-type":
                             if (i + 1 < args.Length && Enum.TryParse<ReaderType>(args[i + 1], true, out var rt)) { boundOptions.ReaderType = rt; ++i; }
@@ -234,6 +240,23 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     .AddPolicy("queue", policy => {
                         policy.RequireAssertion(context => true);
                     });
+            }
+
+            if (!string.IsNullOrEmpty(options.APIKeyFile))
+            {
+                if (!File.Exists(options.APIKeyFile))
+                {
+                    throw new Exception("The API key file doesn't exist.");
+                }
+                options.APIKey = File.ReadAllText(options.APIKeyFile);
+            }
+            if (!string.IsNullOrEmpty(options.DataIntegrityKeyFile))
+            {
+                if (!File.Exists(options.DataIntegrityKeyFile))
+                {
+                    throw new Exception("The data integrity key file doesn't exist.");
+                }
+                options.DataIntegrityKey = File.ReadAllText(options.DataIntegrityKeyFile);
             }
 
             KeyProvider? keystore = null;
