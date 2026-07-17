@@ -6,7 +6,7 @@ It can be used as a standalone microservice and is maintained/distributed as a c
 # Run
 
 ## From source
- * Install ASP.NET Core Runtime 8.
+ * Install ASP.NET Core Runtime 10.
  * `git clone https://github.com/leosac/card-encoding-worker.git`
  * Build the full solution CredentialProvisioning.Encoding.sln
  * Run CredentialProvisioning.Encoding.Worker.Server project

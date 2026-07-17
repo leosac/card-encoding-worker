@@ -1,4 +1,8 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.24.0
+### Changed
+- Upgrade from .NET 8.0 to .NET 10.0
+
 ## v1.23.0
 ### Changed
 - Fix MAC calculation on DESFire chained command over a SAM AV2 host secure channel

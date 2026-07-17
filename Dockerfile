@@ -1,8 +1,8 @@
-#FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+#FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 FROM ubuntu:26.04 AS base
 EXPOSE 5100
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY ["CredentialProvisioning.Encoding.Worker.Server/CredentialProvisioning.Encoding.Worker.Server.csproj", "CredentialProvisioning.Encoding.Worker.Server/"]
 RUN dotnet restore "CredentialProvisioning.Encoding.Worker.Server/CredentialProvisioning.Encoding.Worker.Server.csproj"

@@ -43,8 +43,8 @@
     <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
     <WixVariable Id="WixUIInfoIco" Value="leosac_card.ico" />
 
-    <netfx:DotNetCompatibilityCheck RuntimeType="aspnet" Platform="$(var.Platform)" RollForward="latestMinor" Version ="8.0.0" Property="NETCORESTATUS" />
-    <Launch Condition="Installed OR NETCORESTATUS=&quot;0&quot;" Message="[ProductName] requires Microsoft .NET 8 ASP.NET Core." />
+    <netfx:DotNetCompatibilityCheck RuntimeType="aspnet" Platform="$(var.Platform)" RollForward="latestMinor" Version ="10.0.0" Property="NETCORESTATUS" />
+    <Launch Condition="Installed OR NETCORESTATUS=&quot;0&quot;" Message="[ProductName] requires Microsoft .NET 10 ASP.NET Core." />
   </Package>
 
   <Fragment>
@@ -55,7 +55,7 @@
           <Directory Id="APPRUNTIMES" Name="runtimes">
             <Directory Id="RUNTIMEWIN" Name="win">
               <Directory Id="RUNTIMEWINLIB" Name="lib">
-                <Directory Id="RUNTIMEWINNET8" Name="net8.0" />
+                <Directory Id="RUNTIMEWINNET10" Name="net10.0" />
               </Directory>
             </Directory>
           </Directory>
@@ -261,12 +261,12 @@
         <File Id="___var.System.ServiceProcess.ServiceController.dll_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\System.ServiceProcess.ServiceController.dll" />
       </Component>
     </ComponentGroup>
-    <ComponentGroup Id="WinRuntimeComponents" Directory="RUNTIMEWINNET8">
+    <ComponentGroup Id="WinRuntimeComponents" Directory="RUNTIMEWINNET10">
       <Component Id="SystemDiagnosticsEventLogWinComponent">
-        <File Id="___var.System.Diagnostics.EventLog.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll" />
+        <File Id="___var.System.Diagnostics.EventLog.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net10.0\System.Diagnostics.EventLog.dll" />
       </Component>
       <Component Id="SystemServiceProcessServiceControllerWinComponent">
-        <File Id="___var.System.ServiceProcess.ServiceController.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net8.0\System.ServiceProcess.ServiceController.dll" />
+        <File Id="___var.System.ServiceProcess.ServiceController.dll_win_" Source="$(var.CredentialProvisioning.Encoding.Worker.Server.TargetDir)\runtimes\win\lib\net10.0\System.ServiceProcess.ServiceController.dll" />
       </Component>
     </ComponentGroup>
 
