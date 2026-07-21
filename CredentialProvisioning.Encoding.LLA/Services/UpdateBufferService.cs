@@ -7,10 +7,17 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
         public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
         {
             byte[]? data = null;
-            if (!string.IsNullOrEmpty(Properties.FromField))
+            if (!string.IsNullOrEmpty(Properties.FixedValue))
             {
-                var fieldName = GetCredentialFieldName(Properties.FromField);
-                data = cardCtx.GetBinaryFieldValue(fieldName);
+                data = Convert.FromHexString(Properties.FixedValue);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(Properties.FromField))
+                {
+                    var fieldName = GetCredentialFieldName(Properties.FromField);
+                    data = cardCtx.GetBinaryFieldValue(fieldName);
+                }
             }
 
             if (Properties.IsDataRequired && (data == null || data.Length == 0))

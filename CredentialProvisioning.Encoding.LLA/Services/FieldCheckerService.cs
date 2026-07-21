@@ -2,14 +2,14 @@
 
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
-    public class FieldCheckerDataService(Encoding.Services.FieldCheckerDataService properties) : EncodingService<Encoding.Services.FieldCheckerDataService>(properties)
+    public class FieldCheckerService(Encoding.Services.FieldCheckerService properties) : EncodingService<Encoding.Services.FieldCheckerService>(properties)
     {
         public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
         {
             if (!string.IsNullOrEmpty(Properties.Field))
             {
                 var fieldValue = cardCtx.GetFieldValue(Properties.Field)?.ToString();
-                if (Properties.Required && string.IsNullOrEmpty(fieldValue))
+                if (Properties.IsDataRequired && string.IsNullOrEmpty(fieldValue))
                 {
                     throw new EncodingException($"Field `{Properties.Field}` not defined.");
                 }

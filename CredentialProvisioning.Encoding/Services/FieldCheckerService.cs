@@ -3,7 +3,7 @@
     /// <summary>
     /// Field Checker encoding service properties.
     /// </summary>
-    public class FieldCheckerDataService : EncodingServiceProperties
+    public class FieldCheckerService : EncodingServiceProperties
     {
         /// <summary>
         /// The field to check.
@@ -16,9 +16,9 @@
         public string? ExpectedValue { get; set; }
 
         /// <summary>
-        /// Whether the field is required or not.
+        /// Whether the field data is required or not.
         /// </summary>
-        public bool Required { get; set; }
+        public bool IsDataRequired { get; set; }
 
         /// <summary>
         /// Whether to reverse the check (i.e. check that the field does NOT match the value).

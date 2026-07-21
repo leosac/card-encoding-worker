@@ -11,6 +11,11 @@
         public string? FromField { get; set; }
 
         /// <summary>
+        /// The fixed value (override any data from field if defined).
+        /// </summary>
+        public string? FixedValue { get; set; }
+
+        /// <summary>
         /// True if data is required (will throw), false otherwise (will be ignored).
         /// </summary>
         public bool IsDataRequired { get; set; }
