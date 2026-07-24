@@ -162,7 +162,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             });
 
             bool requireAuth = false;
-            if (!string.IsNullOrEmpty(options.APIKey) && !string.IsNullOrEmpty(options.JWT?.Key))
+            if (!string.IsNullOrEmpty(options.APIKey))
             {
                 requireAuth = true;
                 builder.Services.AddAuthentication(o =>
