@@ -134,7 +134,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 c.SchemaFilter<ParameterizedValueSchemaFilter>();
                 c.SelectDiscriminatorNameUsing((baseType) => "$type");
                 c.SelectDiscriminatorValueUsing((subType) => PolymorphicTypeResolver.GetSubTypeDiscriminator(subType));
-                c.CustomSchemaIds((type) => PolymorphicTypeResolver.GetSubTypeDiscriminator(type, false));
+                c.CustomSchemaIds((type) => type.IsGenericType
+                    ? $"{type.GetGenericTypeDefinition().Name.Split('`')[0]}Of{string.Join("And", type.GetGenericArguments().Select(t => t.Name))}"
+                    : PolymorphicTypeResolver.GetSubTypeDiscriminator(type, false));
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",

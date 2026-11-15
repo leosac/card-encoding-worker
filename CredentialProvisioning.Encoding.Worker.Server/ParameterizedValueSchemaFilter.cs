@@ -12,6 +12,9 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 return;
 
             var valueType = context.Type.GetGenericArguments()[0];
+            if (schema is OpenApiSchema openApiSchema && openApiSchema.OneOf == null)
+                openApiSchema.OneOf = [];
+
             schema.OneOf.Add(new OpenApiSchema
             {
                 Type = valueType == typeof(byte) || valueType == typeof(uint) ? JsonSchemaType.Integer : JsonSchemaType.Number,
