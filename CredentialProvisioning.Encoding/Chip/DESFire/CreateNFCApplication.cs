@@ -13,7 +13,7 @@
         /// <summary>
         /// The new application identifier.
         /// </summary>
-        public uint AID { get; set; }
+        public ParameterizedValue<uint> AID { get; set; }
 
         /// <summary>
         /// The ISO FID for the application.

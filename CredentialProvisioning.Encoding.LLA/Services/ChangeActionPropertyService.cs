@@ -2,6 +2,8 @@
 using Leosac.CredentialProvisioning.Encoding.Key;
 using System.Text.Json;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class ChangeActionPropertyService : EncodingService<Encoding.Services.ChangeActionPropertyService>
@@ -11,7 +13,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 
         }
 
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             if (string.IsNullOrEmpty(Properties.PropertyName))
                 throw new EncodingException("PropertyName is undefined.");
@@ -37,9 +39,9 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
             }
             else
             {
-                if (templateProperties != null)
+                if (parameters != null)
                 {
-                    var prop = templateProperties.SingleOrDefault(p => p.Name == Properties.SourceProperty);
+                    var prop = parameters.SingleOrDefault(p => p.Name == Properties.SourceProperty);
                     if (prop == null)
                     {
                         throw new EncodingException("The template proprty cannot be found.");

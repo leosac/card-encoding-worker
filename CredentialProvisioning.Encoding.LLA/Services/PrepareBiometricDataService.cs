@@ -1,11 +1,13 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 using System.Security.Cryptography;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class PrepareBiometricDataService(Encoding.Services.PrepareBiometricDataService properties) : EncodingService<Encoding.Services.PrepareBiometricDataService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             var cardId = string.Empty;
             var userName = string.Empty;

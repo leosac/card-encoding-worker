@@ -6,6 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
+            Properties.AID = encodingCtx.Resolve(Properties.AID);
             var ev1chip = (cardCtx.Chip as DESFireEV1Chip);
             var svc = ev1chip?.getService(LibLogicalAccess.CardServiceType.CST_NFC_TAG) as DESFireEV1NFCTag4CardService;
 

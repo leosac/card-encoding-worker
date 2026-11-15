@@ -4,11 +4,13 @@ using Leosac.CredentialProvisioning.Encoding.Services.AccessControl;
 using Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Fields;
 using Leosac.CredentialProvisioning.Encoding.Services.AccessControl.Formats;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public abstract class AccessControlDataService<T>(T properties) : EncodingService<T>(properties) where T: AccessControlDataService, new()
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             var format = GetFormat() ?? throw new EncodingException("Cannot parse the access control format.");
             Run(cardCtx, keystore, format);

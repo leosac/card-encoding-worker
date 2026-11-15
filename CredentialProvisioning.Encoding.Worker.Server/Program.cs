@@ -131,6 +131,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 c.UseAllOfToExtendReferenceSchemas();
                 c.UseAllOfForInheritance();
                 c.UseOneOfForPolymorphism();
+                c.SchemaFilter<ParameterizedValueSchemaFilter>();
                 c.SelectDiscriminatorNameUsing((baseType) => "$type");
                 c.SelectDiscriminatorValueUsing((subType) => PolymorphicTypeResolver.GetSubTypeDiscriminator(subType));
                 c.CustomSchemaIds((type) => PolymorphicTypeResolver.GetSubTypeDiscriminator(type, false));

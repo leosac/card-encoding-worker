@@ -6,6 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV1Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
+            Properties.FileNo = encodingCtx.Resolve(Properties.FileNo);
             if (Properties.IsoFID != null)
                 cmd.createStdDataFile(Properties.FileNo, (EncryptionMode)Properties.EncryptionMode, Properties.AccessRights.ConvertForLLA(), Properties.FileSize, Properties.IsoFID.Value);
             else

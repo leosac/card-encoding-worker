@@ -13,7 +13,7 @@
         /// <summary>
         /// The targeted file number to change settings for.
         /// </summary>
-        public byte FileNo { get; set; }
+        public ParameterizedValue<byte> FileNo { get; set; }
 
         /// <summary>
         /// The new security communication with the file.

@@ -6,6 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
+            Properties.FileNo = encodingCtx.Resolve(Properties.FileNo);
             if (Properties.Key == null)
             {
                 throw new EncodingException("A key must be defined.");

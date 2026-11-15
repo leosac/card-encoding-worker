@@ -7,6 +7,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV2Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtxdeviceCtx)
         {
+            Properties.AID = encodingCtx.Resolve(Properties.AID);
             var daminfo = new PairByteVectorByteVector();
             throw new NotImplementedException();
             //cmd.createDelegatedApplication(daminfo, Properties.AID, Properties.DAMSlotNo, Properties.DAMSlotVersion, Properties.QuotaLimit, (DESFireKeySettings)Properties.KeySettings, Properties.MaxNbKeys, (DESFireKeyType)Properties.KeyType, (FidSupport)Properties.FidSupport, Properties.IsoFID.GetValueOrDefault(0), Properties.IsoDFName?.ToByteVector() ?? [], Properties.NumberKeySets, Properties.MaxKeySize, Properties.ActualKeySetVersion, Properties.RollKeyNo, Properties.SpecificCapabilityData, Properties.SpecificVCKeys);

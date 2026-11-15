@@ -1,10 +1,12 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class FieldCheckerService(Encoding.Services.FieldCheckerService properties) : EncodingService<Encoding.Services.FieldCheckerService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             if (!string.IsNullOrEmpty(Properties.Field))
             {

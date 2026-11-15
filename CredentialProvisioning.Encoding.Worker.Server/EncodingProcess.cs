@@ -84,15 +84,16 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                     var action = CreateAction(actionProp);
                     if (action != null)
                     {
-                        CreateAndRunServices(actionProp.ServicesBefore, cardCtx, (encodingCtx as EncodingContext)?.Keys, encodingCtx.TemplateContent?.Properties, action);
+                        CreateAndRunServices(actionProp.ServicesBefore, cardCtx, (encodingCtx as EncodingContext)?.Keys, (encodingCtx as EncodingContext)?.Parameters, action);
                         action.Run(encodingCtx, cardCtx);
-                        CreateAndRunServices(actionProp.ServicesAfter, cardCtx, (encodingCtx as EncodingContext)?.Keys, encodingCtx.TemplateContent?.Properties, action);
+                        CreateAndRunServices(actionProp.ServicesAfter, cardCtx, (encodingCtx as EncodingContext)?.Keys, (encodingCtx as EncodingContext)?.Parameters, action);
 
                         _logger?.LogInformation("Action passed, running OnSuccess trigger");
                         if (actionProp.OnSuccess != null)
                         {
                             await ActionTrigger(actionProp.Label ?? actionProp.Name, actionProp.OnSuccess, encodingCtx, cardCtx);
                         }
+
                     }
                     else
                     {
@@ -109,14 +110,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             }
         }
 
-        private void CreateAndRunServices(IEnumerable<EncodingServiceProperties>? servicesProp, CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        private void CreateAndRunServices(IEnumerable<EncodingServiceProperties>? servicesProp, CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             if (servicesProp != null)
             {
                 foreach (var serviceProp in servicesProp)
                 {
                     var service = CreateEncodingService(serviceProp);
-                    service?.Run(cardCtx, keystore, templateProperties, currentAction);
+                    service?.Run(cardCtx, keystore, parameters, currentAction);
                 }
             }
         }

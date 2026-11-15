@@ -6,6 +6,7 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireEV3Commands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
+            Properties.FileNo = encodingCtx.Resolve(Properties.FileNo);
             if (Properties.AccessRights == null || Properties.AccessRights.Length == 0)
             {
                 throw new EncodingException("At least one file access rights is expected.");

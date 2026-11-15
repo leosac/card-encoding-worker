@@ -13,6 +13,6 @@
         /// <summary>
         /// The targeted application identifier.
         /// </summary>
-        public uint AID { get; set; }
+        public ParameterizedValue<uint> AID { get; set; }
     }
 }

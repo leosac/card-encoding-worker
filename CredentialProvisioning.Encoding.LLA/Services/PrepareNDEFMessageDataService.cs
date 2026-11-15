@@ -1,11 +1,13 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 using LibLogicalAccess;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class PrepareNdefMessageDataService(Encoding.Services.PrepareNdefMessageDataService properties) : EncodingService<Encoding.Services.PrepareNdefMessageDataService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             var msg = new NdefMessage();
             foreach (var r in Properties.Records)

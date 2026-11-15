@@ -13,11 +13,11 @@
         /// <summary>
         /// The targeted file number.
         /// </summary>
-        public byte TargetFileNo { get; set; }
+        public ParameterizedValue<byte> TargetFileNo { get; set; }
 
         /// <summary>
         /// The source file number.
         /// </summary>
-        public byte SourceFileNo { get; set; }
+        public ParameterizedValue<byte> SourceFileNo { get; set; }
     }
 }

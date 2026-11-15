@@ -1,10 +1,12 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class UpdateBufferService(Encoding.Services.UpdateBufferService properties) : EncodingService<Encoding.Services.UpdateBufferService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             byte[]? data = null;
             if (!string.IsNullOrEmpty(Properties.FixedValue))

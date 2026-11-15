@@ -1,10 +1,12 @@
 ﻿using Leosac.CredentialProvisioning.Encoding.Key;
 
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class CardSerialNumberService(Encoding.Services.CardSerialNumberService properties) : EncodingService<Encoding.Services.CardSerialNumberService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             string? csn = null;
             if (cardCtx is LLACardContext llacardCtx)

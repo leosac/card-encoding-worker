@@ -13,7 +13,7 @@
         /// <summary>
         /// The targeted file number.
         /// </summary>
-        public byte FileNo { get; set; }
+        public ParameterizedValue<byte> FileNo { get; set; }
 
         /// <summary>
         /// The value to debit.

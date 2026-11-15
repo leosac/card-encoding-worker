@@ -6,7 +6,8 @@ namespace Leosac.CredentialProvisioning.Encoding.LLA.Chip.DESFire
     {
         public override void Run(DESFireCommands cmd, EncodingContext encodingCtx, LLACardContext cardCtx)
         {
-            cmd.debit(Properties.FileNo, Properties.Value, (EncryptionMode)Properties.EncryptionMode);
+            var fileNo = encodingCtx.Resolve(Properties.FileNo);
+            cmd.debit(fileNo, Properties.Value, (EncryptionMode)Properties.EncryptionMode);
         }
     }
 }

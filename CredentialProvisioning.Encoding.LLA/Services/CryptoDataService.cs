@@ -1,11 +1,13 @@
 ﻿using Leosac.CredentialProvisioning.Core.Crypto;
 using Leosac.CredentialProvisioning.Encoding.Key;
     
+using Leosac.CredentialProvisioning.Core.Models;
+
 namespace Leosac.CredentialProvisioning.Encoding.LLA.Services
 {
     public class CryptoDataService(Encoding.Services.CryptoDataService properties) : EncodingService<Encoding.Services.CryptoDataService>(properties)
     {
-        public override void Run(CardContext cardCtx, KeyProvider? keystore, EncodingFragmentTemplateContent.FragmentTemplateProperty[]? templateProperties, EncodingAction currentAction)
+        public override void Run(CardContext cardCtx, KeyProvider? keystore, CredentialFragmentTemplateParameter[]? parameters, EncodingAction currentAction)
         {
             var key = (keystore?.Get(Properties.Key, cardCtx.Credential?.VolatileKeys)) ?? throw new EncodingException("Cannot resolve the key for the crypto operation.");
             if (cardCtx.Buffer == null)
