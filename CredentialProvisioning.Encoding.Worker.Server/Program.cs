@@ -363,6 +363,14 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 .RequireAuthorization()
                 .WithName("LoadTemplateWithId").WithTags("template");
 
+                app.MapPost("/template/{templateId}/variant/{variantCode}", (string templateId, string variantCode, CredentialFragmentTemplateParameter[]? parameters) =>
+                {
+                    worker.LoadTemplateVariant(templateId, variantCode, parameters);
+                    return new ObjectIdResponse<string> { Id = templateId };
+                })
+                .RequireAuthorization()
+                .WithName("LoadTemplateVariant").WithTags("template");
+
                 app.MapGet("/templates", () =>
                 {
                     return worker.GetTemplates();
@@ -376,6 +384,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 })
                 .RequireAuthorization()
                 .WithName("CheckTemplate").WithTags("template");
+
+                app.MapGet("/template/{templateId}/variant/{variantCode}/check", (string templateId, string variantCode) =>
+                {
+                    return (worker.GetTemplateVariantParameters(templateId, variantCode) != null);
+                })
+                .RequireAuthorization()
+                .WithName("CheckTemplateVariant").WithTags("template");
 
                 app.MapGet("/template/{templateId}/fields", (string templateId) =>
                 {
@@ -416,13 +431,13 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
             .AllowAnonymous()
             .WithName("Authenticate").WithTags("authentication");
 
-            app.MapPost("/template/{templateId}/queue", (string templateId, WorkerCredentialBase credential) =>
+            app.MapPost("/template/{templateId}/queue", (string templateId, WorkerCredentialBase credential, [FromQuery]string? variantCode = null) =>
             {
                 if (integrity.IsEnabled() && !integrity.Verify(credential))
                 {
                     return Results.BadRequest("Invalid credential signature.");
                 }
-                var itemId = worker.Queue.Add(templateId, credential);
+                var itemId = worker.Queue.Add(templateId, credential, variantCode);
                 return Results.Ok(new ObjectIdResponse<string>() { Id = itemId });
             })
             .RequireAuthorization()
