@@ -1,4 +1,8 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.25.0
+### Changed
+- Add variants and parameterized properties support
+
 ## v1.24.0
 ### Changed
 - Upgrade from .NET 8.0 to .NET 10.0
