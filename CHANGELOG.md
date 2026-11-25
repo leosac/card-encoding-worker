@@ -1,4 +1,8 @@
 # Leosac Credential Provisioning Encoding Worker - Changelog
+## v1.26.0
+### Changed
+- Add CORS
+
 ## v1.25.0
 ### Changed
 - Add variants and parameterized properties support
