@@ -29,3 +29,5 @@ Configuration is done through appsettings.json file and environment specific app
 # Use
 By default, the server can be reached on http://localhost:5100/.
 The REST API is documented with an embedded Swagger UI on http://localhost:5100/swagger/.
+
+CORS allows requests from any origin by default when `Cors:Origins` is null or empty. To restrict origins, set `Cors:Origins` in appsettings to a list of origins, for example `"Cors": { "Origins": ["https://example.com"] }`. Origins must not include a trailing slash. Any method and headers are allowed; credentialed cross-origin requests (such as requests using cookies) are not supported. Restart the server after changing the CORS settings. CORS is not an authentication mechanism; configure an API key to protect the API.

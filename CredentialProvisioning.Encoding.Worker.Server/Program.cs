@@ -49,6 +49,15 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
                 options.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
             });
             builder.Services.AddProblemDetails();
+            var corsOrigins = builder.Configuration.GetSection("Cors:Origins").Get<string[]>();
+            builder.Services.AddCors(cors => cors.AddDefaultPolicy(policy =>
+            {
+                if (corsOrigins == null || corsOrigins.Length == 0)
+                    policy.AllowAnyOrigin();
+                else
+                    policy.WithOrigins(corsOrigins);
+                policy.AllowAnyMethod().AllowAnyHeader();
+            }));
 
             builder.Host.UseWindowsService();
             builder.Host.UseSystemd();
@@ -285,6 +294,7 @@ namespace Leosac.CredentialProvisioning.Encoding.Worker.Server
 
             var app = builder.Build();
 
+            app.UseCors();
             if (requireAuth)
             {
                 app.UseAuthentication();
